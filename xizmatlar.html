@@ -5,13 +5,11 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <meta name="theme-color" content="#f6fcf8" />
     <title>Pro Hisobchi — Xizmatlar</title>
-
     <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
     <link
       href="https://cdn.jsdelivr.net/npm/flowbite@2.5.2/dist/flowbite.min.css"
       rel="stylesheet"
     />
-
     <style>
       *,
       *::before,
@@ -25,9 +23,16 @@
       body {
         margin: 0;
         min-height: 100vh;
-        overflow-x: hidden;
-        background: #f6fcf8;
+        overflow-x: clip;
         color: #1f2937;
+        background:
+          radial-gradient(900px 520px at 6% 38%, #d1fae566, transparent 60%),
+          radial-gradient(800px 520px at 100% 62%, #dbeafe66, transparent 60%),
+          #f6fcf8;
+      }
+      :focus-visible {
+        outline: 3px solid #10b981;
+        outline-offset: 2px;
       }
       .gradient-text {
         background: linear-gradient(120deg, #059669, #2563eb);
@@ -35,25 +40,34 @@
         background-clip: text;
         -webkit-text-fill-color: transparent;
       }
-      .services-page {
-        width: 100%;
-        padding-top: 76px;
-        overflow: hidden;
+      .g-h {
+        background: linear-gradient(
+          110deg,
+          #064e3b 0%,
+          #059669 45%,
+          #2563eb 100%
+        );
+        -webkit-background-clip: text;
+        background-clip: text;
+        -webkit-text-fill-color: transparent;
+        padding-bottom: 0.1em;
       }
-      .services-page > section {
-        width: 100%;
+      .page {
+        padding-top: 76px;
+        overflow: visible;
+        overflow-x: clip;
+      }
+      .page > section {
         margin: 30px 0;
         padding: 38px 0;
-        background: transparent;
       }
-      .section-wrap {
+      .wrap {
         width: min(1200px, 100%);
         margin: 0 auto;
         padding: 0 24px;
       }
-      .section-label {
+      .label {
         display: inline-flex;
-        align-items: center;
         padding: 8px 13px;
         border: 1px solid #bbf7d0;
         background: #ecfdf5;
@@ -68,7 +82,8 @@
         line-height: 1.12;
         letter-spacing: -1.8px;
       }
-      .uiverse-btn {
+      /* buttons */
+      .btn {
         display: inline-flex;
         align-items: center;
         justify-content: center;
@@ -76,141 +91,53 @@
         padding: 15px 23px;
         border: 0;
         border-radius: 10px;
-        background: #059669;
         color: #fff;
         font-size: 14px;
         font-weight: 700;
         text-decoration: none;
         cursor: pointer;
-        transition: 0.25s ease;
-        box-shadow: 0 7px 20px #05966926;
+        transition: 0.25s;
+        background: linear-gradient(120deg, #059669, #2563eb);
+        background-size: 170% 100%;
+        box-shadow: 0 10px 26px #2563eb30;
       }
-      .uiverse-btn:hover {
-        background: #047857;
+      .btn:hover {
+        background-position: 100% 0;
         transform: translateY(-2px);
-        box-shadow: 0 12px 25px #05966938;
+        box-shadow: 0 16px 34px #2563eb45;
       }
-      .uiverse-btn span {
-        transition: transform 0.25s ease;
+      .btn span {
+        transition: transform 0.25s;
       }
-      .uiverse-btn:hover span {
+      .btn:hover span {
         transform: translateX(5px);
       }
-
-      .service-card,
-      .package-card {
-        height: 100%;
-        min-width: 0;
-        padding: 26px;
+      .btn.solid {
+        background: #059669;
+        box-shadow: 0 7px 20px #05966926;
+      }
+      .btn.solid:hover {
+        background: #047857;
+        box-shadow: 0 12px 25px #05966938;
+      }
+      .btn.ghost {
         background: #fff;
-        border: 1px solid #e5eee8;
-        border-radius: 16px;
-        transition: 0.25s ease;
-      }
-      .package-card {
-        display: flex;
-        flex-direction: column;
-      }
-      .package-card .package-action {
-        margin-top: auto !important;
-        padding-top: 28px;
-      }
-      .package-card .package-action .uiverse-btn {
-        width: 100%;
-      }
-      .service-card:hover,
-      .package-card:hover {
-        transform: translateY(-4px);
-        border-color: #86efac;
-        box-shadow: 0 14px 32px #0f4b3212;
-      }
-      .number-box {
-        width: 42px;
-        height: 42px;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        flex-shrink: 0;
-        border-radius: 10px;
-        background: #ecfdf5;
         color: #047857;
-        font-size: 13px;
-        font-weight: 900;
+        border: 1px solid #a7f3d0;
+        box-shadow: none;
       }
-      .package-featured {
-        border: 2px solid #059669;
+      .btn.ghost:hover {
+        background: #ecfdf5;
       }
-      .process-item {
-        display: flex;
-        align-items: flex-start;
-        gap: 16px;
-        min-width: 0;
-      }
-      .faq-item {
-        background: #fff;
-        border: 1px solid #e5eee8;
-        border-radius: 12px;
-        overflow: hidden;
-      }
-      .faq-item summary {
-        cursor: pointer;
-        list-style: none;
-        display: flex;
-        align-items: center;
-        justify-content: space-between;
-        gap: 15px;
-        padding: 19px;
-        color: #1f2937;
-        font-size: 14px;
-        font-weight: 700;
-      }
-      .faq-item summary::-webkit-details-marker {
-        display: none;
-      }
-      .faq-item summary::after {
-        content: "+";
-        flex-shrink: 0;
-        color: #059669;
-        font-size: 22px;
-        font-weight: 500;
-      }
-      .faq-item[open] summary::after {
-        content: "−";
-      }
-      .faq-answer {
-        padding: 0 19px 19px;
-        color: #6b7280;
-        font-size: 13px;
-        line-height: 1.8;
-      }
-      .trust-panel {
-        background: linear-gradient(120deg, #064e3b, #065f46 55%, #1e40af);
-        border-radius: 22px;
-      }
-      .services-page .grid,
-      .services-page .grid > * {
-        min-width: 0;
-      }
-      .services-page h1,
-      .services-page h2,
-      .services-page h3,
-      .services-page h4,
-      .services-page p {
-        overflow-wrap: break-word;
-      }
-      .services-page img {
-        max-width: 100%;
-      }
-
-      .dashboard-card {
-        position: relative;
+      /* hero (asl holatida) */
+      .dash {
         background: #fff;
         border: 1px solid #e5eee8;
         border-radius: 22px;
         padding: 22px;
         box-shadow: 0 18px 45px #0f513015;
       }
-      .dashboard-metric {
+      .metric {
         padding: 17px;
         border-radius: 14px;
         min-width: 0;
@@ -221,205 +148,18 @@
         letter-spacing: -0.7px;
         white-space: nowrap;
       }
-      .progress-track {
+      .track {
         height: 8px;
         overflow: hidden;
         border-radius: 20px;
         background: #edf2ef;
       }
-      .progress-fill {
+      .fill {
         height: 100%;
         border-radius: 20px;
       }
-      .sample-note {
-        font-size: 10px;
-        color: #9ca3af;
-        line-height: 1.5;
-      }
-
-      .contact-cta-card {
-        position: relative;
-        display: grid;
-        grid-template-columns: 1.2fr 0.8fr;
-        align-items: center;
-        gap: 28px;
-        min-height: 370px;
-        padding: 55px 60px;
-        overflow: hidden;
-        isolation: isolate;
-        background: #f7faf8;
-        border: 1px solid #dce9e1;
-        border-radius: 24px;
-      }
-      .contact-cta-card:before {
-        content: "";
-        position: absolute;
-        width: 420px;
-        height: 420px;
-        top: -250px;
-        left: -130px;
-        border-radius: 50%;
-        background: #10b9810d;
-        z-index: -1;
-      }
-      .cta-label {
-        display: flex;
-        align-items: center;
-        gap: 10px;
-        color: #047857;
-        font-size: 11px;
-        font-weight: 800;
-        letter-spacing: 2px;
-      }
-      .cta-label-line {
-        width: 23px;
-        height: 2px;
-        background: #10b981;
-        border-radius: 10px;
-      }
-      .cta-heading {
-        max-width: 650px;
-        margin: 22px 0 0;
-        color: #10251d;
-        font-size: clamp(30px, 3.8vw, 46px);
-        font-weight: 850;
-        line-height: 1.15;
-        letter-spacing: -1.5px;
-      }
-      .cta-heading span {
-        display: block;
-        color: #059669;
-      }
-      .cta-copy {
-        max-width: 530px;
-        margin: 17px 0 0;
-        color: #68766f;
-        font-size: 14px;
-        line-height: 1.9;
-      }
-      .cta-actions {
-        display: flex;
-        flex-direction: column;
-        align-items: flex-start;
-        gap: 14px;
-        margin-top: 26px;
-      }
-      .cta-note {
-        display: flex;
-        align-items: center;
-        gap: 9px;
-        color: #718078;
-        font-size: 11px;
-      }
-      .cta-dot {
-        width: 7px;
-        height: 7px;
-        border-radius: 50%;
-        background: #10b981;
-        box-shadow: 0 0 0 4px #10b9811f;
-      }
-      .cta-decoration {
-        position: relative;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        min-height: 250px;
-      }
-      .cta-ring {
-        position: absolute;
-        border: 1px solid #05966920;
-        border-radius: 50%;
-      }
-      .cta-ring.one {
-        width: 300px;
-        height: 300px;
-      }
-      .cta-ring.two {
-        width: 230px;
-        height: 230px;
-      }
-      .cta-preview {
-        position: relative;
-        z-index: 2;
-        width: min(100%, 300px);
-        padding: 23px;
-        background: #fff;
-        border: 1px solid #e5eee8;
-        border-radius: 16px;
-        box-shadow: 0 20px 55px #0f2d1f17;
-        transform: rotate(-3deg);
-        transition: 0.3s;
-      }
-      .cta-preview:hover {
-        transform: rotate(0) translateY(-4px);
-      }
-      .preview-top,
-      .preview-bottom {
-        display: flex;
-        align-items: center;
-        justify-content: space-between;
-        gap: 10px;
-      }
-      .preview-mark {
-        display: grid;
-        place-items: center;
-        width: 39px;
-        height: 39px;
-        background: #e9f8f0;
-        color: #047857;
-        border-radius: 9px;
-        font-size: 12px;
-        font-weight: 900;
-      }
-      .preview-status {
-        padding: 7px 9px;
-        color: #047857;
-        background: #ecfdf5;
-        border-radius: 6px;
-        font-size: 9px;
-        font-weight: 700;
-      }
-      .preview-title {
-        margin-top: 22px;
-        color: #172b22;
-        font-size: 17px;
-        font-weight: 800;
-      }
-      .preview-text {
-        margin-top: 7px;
-        color: #87938c;
-        font-size: 11px;
-        line-height: 1.7;
-      }
-      .preview-bars {
-        display: grid;
-        gap: 8px;
-        margin-top: 20px;
-      }
-      .preview-bars span {
-        height: 7px;
-        border-radius: 10px;
-        background: #edf3ef;
-      }
-      .preview-bars span:nth-child(2) {
-        width: 75%;
-        background: #d1fae5;
-      }
-      .preview-bars span:nth-child(3) {
-        width: 88%;
-      }
-      .preview-bottom {
-        margin-top: 21px;
-        padding-top: 13px;
-        border-top: 1px solid #edf1ee;
-        color: #9aa69f;
-        font-size: 9px;
-        font-weight: 800;
-        letter-spacing: 1px;
-      }
-
-      /* Modal */
-      .contact-modal {
+      /* modal */
+      .modal {
         position: fixed;
         inset: 0;
         z-index: 99999;
@@ -434,18 +174,18 @@
           opacity 0.25s,
           visibility 0.25s;
       }
-      .contact-modal.is-open {
+      .modal.open {
         visibility: visible;
         opacity: 1;
         pointer-events: auto;
       }
-      .modal-overlay {
+      .overlay {
         position: absolute;
         inset: 0;
         background: #08160fc2;
         backdrop-filter: blur(5px);
       }
-      .modal-box {
+      .box {
         position: relative;
         z-index: 2;
         width: 100%;
@@ -454,23 +194,22 @@
         overflow-y: auto;
         padding: 32px;
         background: #fff;
-        border: 1px solid #e6eee9;
         border-radius: 17px;
         box-shadow: 0 25px 80px #0003;
         transform: translateY(18px) scale(0.98);
         transition: transform 0.25s;
       }
-      .contact-modal.is-open .modal-box {
-        transform: translateY(0) scale(1);
+      .modal.open .box {
+        transform: none;
       }
-      .modal-close {
+      .x {
         position: absolute;
         top: 14px;
         right: 14px;
-        display: grid;
-        place-items: center;
         width: 35px;
         height: 35px;
+        display: grid;
+        place-items: center;
         color: #64746b;
         background: #f3f6f4;
         border: 0;
@@ -478,227 +217,817 @@
         font-size: 24px;
         cursor: pointer;
       }
-      .modal-close:hover {
+      .x:hover {
         color: #047857;
         background: #e6f5ec;
       }
-      .modal-kicker {
-        color: #059669;
-        font-size: 10px;
-        font-weight: 900;
-        letter-spacing: 2px;
-      }
-      .modal-title {
-        margin: 11px 0 0;
-        color: #14271e;
-        font-size: 26px;
-        font-weight: 850;
-        letter-spacing: -0.6px;
-      }
-      .modal-description {
-        margin: 9px 0 0;
-        color: #7b8981;
-        font-size: 13px;
-        line-height: 1.7;
-      }
-      .contact-form {
-        display: grid;
-        gap: 15px;
-        margin-top: 24px;
-      }
-      .form-group {
+      .field {
         display: grid;
         gap: 7px;
       }
-      .form-group label {
+      .field label {
         color: #26372e;
         font-size: 12px;
-        font-weight: 750;
+        font-weight: 700;
       }
-      .form-group label span {
-        color: #9ba69f;
-        font-weight: 500;
-      }
-      .form-group input,
-      .form-group select,
-      .form-group textarea {
+      .field input,
+      .field select,
+      .field textarea {
         width: 100%;
         min-height: 45px;
         padding: 11px 13px;
-        color: #24352c;
         background: #fbfcfb;
         border: 1px solid #e1e9e3;
         border-radius: 8px;
         outline: none;
         font: inherit;
-        font-size: 13px;
+        font-size: 14px;
         transition: 0.2s;
       }
-      .form-group textarea {
+      .field textarea {
         min-height: 82px;
         resize: vertical;
       }
-      .form-group input:focus,
-      .form-group select:focus,
-      .form-group textarea:focus {
+      .field input:focus,
+      .field select:focus,
+      .field textarea:focus {
         border-color: #10a879;
-        box-shadow: 0 0 0 3px #10a87917;
+        box-shadow: 0 0 0 3px #10a87920;
       }
-      .modal-submit {
-        display: flex;
-        align-items: center;
-        justify-content: space-between;
-        width: 100%;
-        min-height: 49px;
-        padding: 0 17px;
-        color: #fff;
-        background: #047857;
-        border: 0;
-        border-radius: 8px;
-        font-size: 13px;
-        font-weight: 750;
-        cursor: pointer;
-        transition: 0.2s;
+      .field input.bad {
+        border-color: #ef4444;
       }
-      .modal-submit:hover {
-        background: #065f46;
-      }
-      .modal-submit span {
-        font-size: 20px;
-      }
-      .form-result {
+      .result {
         display: none;
         padding: 11px 13px;
         border-radius: 8px;
         font-size: 12px;
         line-height: 1.6;
       }
-      .form-result.show {
+      .result.show {
         display: block;
       }
-      .form-result.success {
+      .result.ok {
         color: #047857;
         background: #ecfdf5;
         border: 1px solid #bbf7d0;
       }
-      .form-result.error {
+      .result.err {
         color: #b42318;
         background: #fef2f2;
         border: 1px solid #fecaca;
       }
-      .modal-privacy {
-        color: #9aa69f;
-        font-size: 10px;
-        line-height: 1.6;
-        text-align: center;
+      .page h1,
+      .page h2,
+      .page h3,
+      .page p {
+        overflow-wrap: break-word;
       }
-
-      @media (max-width: 1024px) {
-        .contact-cta-card {
-          padding: 45px 35px;
-          grid-template-columns: 1.1fr 0.9fr;
+      .grid,
+      .grid > * {
+        min-width: 0;
+      }
+      /* ---- bo'lim sarlavhasi ---- */
+      .rp {
+        position: fixed;
+        top: 0;
+        left: 0;
+        right: 0;
+        height: 3px;
+        z-index: 60;
+        transform-origin: left;
+        transform: scaleX(0);
+        background: linear-gradient(90deg, #10b981, #2563eb);
+      }
+      .sec-head {
+        display: grid;
+        grid-template-columns: 1.1fr 0.9fr;
+        gap: 30px;
+        align-items: end;
+        margin-bottom: 38px;
+      }
+      .sec-head h2 {
+        font-size: clamp(30px, 4vw, 52px);
+        font-weight: 900;
+        line-height: 1.08;
+        letter-spacing: -1.6px;
+        margin: 16px 0 0;
+        padding-bottom: 0.1em;
+      }
+      .sec-head p {
+        justify-self: end;
+        max-width: 440px;
+        color: #6b7280;
+        font-size: 15px;
+        line-height: 1.85;
+      }
+      .sw {
+        animation: swap 0.35s ease;
+      }
+      @keyframes swap {
+        from {
+          opacity: 0.15;
+          transform: translateY(10px);
         }
-        .cta-heading {
-          font-size: 38px;
+        to {
+          opacity: 1;
+          transform: none;
+        }
+      }
+      /* ---- 1. XIZMATLAR SAHNASI ---- */
+      .stage {
+        position: relative;
+        display: grid;
+        grid-template-columns: minmax(290px, 370px) minmax(0, 1fr);
+        border-radius: 34px;
+        overflow: hidden;
+        background:
+          radial-gradient(900px 520px at 100% 0, #2563eb55, transparent 55%),
+          radial-gradient(700px 520px at 0 100%, #10b98152, transparent 55%),
+          linear-gradient(135deg, #04271d, #064e3b 52%, #142a63);
+        box-shadow: 0 44px 96px #06402e45;
+      }
+      .stage::after {
+        content: "";
+        position: absolute;
+        inset: 0;
+        background-image:
+          linear-gradient(#ffffff09 1px, transparent 1px),
+          linear-gradient(90deg, #ffffff09 1px, transparent 1px);
+        background-size: 42px 42px;
+        pointer-events: none;
+      }
+      .idx {
+        position: relative;
+        z-index: 1;
+        display: flex;
+        flex-direction: column;
+        padding: 26px 0;
+        border-right: 1px solid #ffffff1c;
+      }
+      .row {
+        position: relative;
+        display: flex;
+        align-items: center;
+        gap: 16px;
+        width: 100%;
+        padding: 21px 28px;
+        border: 0;
+        background: none;
+        text-align: left;
+        font-family: inherit;
+        color: #ffffff88;
+        cursor: pointer;
+        transition:
+          color 0.25s,
+          background 0.25s;
+      }
+      .row::before {
+        content: "";
+        position: absolute;
+        left: 0;
+        top: 14px;
+        bottom: 14px;
+        width: 4px;
+        border-radius: 0 4px 4px 0;
+        background: linear-gradient(#34d399, #60a5fa);
+        transform: scaleY(0);
+        transition: transform 0.3s;
+      }
+      .row .ri {
+        display: grid;
+        place-items: center;
+        width: 42px;
+        height: 42px;
+        flex-shrink: 0;
+        border-radius: 12px;
+        background: #ffffff12;
+        border: 1px solid #ffffff1f;
+        transition: 0.25s;
+      }
+      .row .t {
+        flex: 1;
+        font-size: clamp(17px, 1.6vw, 20px);
+        font-weight: 800;
+        letter-spacing: -0.4px;
+        line-height: 1.2;
+      }
+      .row .arr {
+        opacity: 0;
+        transform: translateX(-8px);
+        transition: 0.25s;
+      }
+      .row:hover {
+        color: #fff;
+      }
+      .row:hover .arr,
+      .row[aria-selected="true"] .arr {
+        opacity: 1;
+        transform: none;
+      }
+      .row[aria-selected="true"] {
+        color: #fff;
+        background: linear-gradient(90deg, #ffffff20, transparent);
+      }
+      .row[aria-selected="true"]::before {
+        transform: none;
+      }
+      .row[aria-selected="true"] .ri {
+        background: linear-gradient(135deg, #34d399, #3b82f6);
+        border-color: transparent;
+        color: #04271d;
+        box-shadow: 0 10px 24px #0006;
+      }
+      .view {
+        position: relative;
+        z-index: 1;
+        padding: 46px 50px 42px;
+        color: #fff;
+        min-width: 0;
+      }
+      .vhead {
+        display: flex;
+        gap: 20px;
+        align-items: center;
+      }
+      .vico {
+        display: grid;
+        place-items: center;
+        width: 68px;
+        height: 68px;
+        flex-shrink: 0;
+        border-radius: 20px;
+        background: linear-gradient(135deg, #34d399, #3b82f6);
+        color: #04271d;
+        box-shadow: 0 18px 40px #0007;
+      }
+      .vtitle {
+        margin: 0;
+        font-size: clamp(28px, 3.4vw, 44px);
+        font-weight: 900;
+        letter-spacing: -1.3px;
+        line-height: 1.08;
+        padding-bottom: 0.08em;
+        background: linear-gradient(110deg, #fff, #a7f3d0 55%, #bfdbfe);
+        -webkit-background-clip: text;
+        background-clip: text;
+        -webkit-text-fill-color: transparent;
+      }
+      .vlead {
+        margin: 18px 0 0;
+        max-width: 560px;
+        color: #c5e3d6;
+        line-height: 1.85;
+      }
+      .vgrid {
+        display: grid;
+        grid-template-columns: 1.05fr 0.95fr;
+        gap: 26px;
+        margin-top: 30px;
+        align-items: start;
+      }
+      .vlist {
+        display: grid;
+        gap: 10px;
+      }
+      .vi {
+        display: flex;
+        gap: 12px;
+        align-items: flex-start;
+        padding: 14px 16px;
+        border-radius: 14px;
+        background: #ffffff10;
+        border: 1px solid #ffffff1c;
+        font-size: 14px;
+        line-height: 1.55;
+        color: #e6f6ee;
+        transition: 0.2s;
+      }
+      .vi:hover {
+        background: #ffffff1a;
+        transform: translateX(4px);
+      }
+      .vi::before {
+        content: "✓";
+        display: grid;
+        place-items: center;
+        width: 22px;
+        height: 22px;
+        flex-shrink: 0;
+        margin-top: 1px;
+        border-radius: 50%;
+        background: linear-gradient(135deg, #34d399, #60a5fa);
+        color: #04271d;
+        font-size: 12px;
+        font-weight: 900;
+      }
+      .vfoot {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 14px;
+        margin-top: 24px;
+      }
+      .vbox {
+        padding: 18px 20px;
+        border-radius: 16px;
+        background: #ffffff12;
+        border: 1px solid #ffffff1e;
+      }
+      .vbox b {
+        font-size: 11px;
+        font-weight: 800;
+        letter-spacing: 1.4px;
+        color: #6ee7b7;
+      }
+      .vbox p {
+        margin: 8px 0 0;
+        font-size: 14px;
+        line-height: 1.7;
+        color: #e6f6ee;
+      }
+      .vneed {
+        display: flex;
+        flex-wrap: wrap;
+        align-items: center;
+        gap: 8px;
+        margin-top: 22px;
+      }
+      .vneed .k {
+        margin-right: 4px;
+        font-size: 12px;
+        font-weight: 700;
+        color: #9fd1bd;
+      }
+      .vneed .c {
+        padding: 7px 12px;
+        border-radius: 999px;
+        background: #ffffff14;
+        border: 1px solid #ffffff24;
+        font-size: 12px;
+        font-weight: 600;
+        color: #d8f1e7;
+      }
+      .btn.light {
+        background: #fff;
+        color: #065f46;
+        box-shadow: 0 14px 30px #0005;
+      }
+      .btn.light:hover {
+        background: #ecfdf5;
+      }
+      /* namunaviy hujjat (mock) */
+      .mock {
+        padding: 20px 22px;
+        border-radius: 22px;
+        background: #fff;
+        color: #1f2937;
+        box-shadow: 0 34px 70px #0008;
+        transform: rotate(1.4deg);
+        transition: transform 0.3s;
+      }
+      .mock:hover {
+        transform: none;
+      }
+      .mhead {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        gap: 10px;
+        padding-bottom: 12px;
+        border-bottom: 1px solid #e5eee8;
+      }
+      .mhead b {
+        font-size: 14px;
+        font-weight: 800;
+        background: linear-gradient(110deg, #047857, #2563eb);
+        -webkit-background-clip: text;
+        background-clip: text;
+        -webkit-text-fill-color: transparent;
+      }
+      .mhead em {
+        font-style: normal;
+        padding: 4px 9px;
+        border-radius: 999px;
+        background: #ecfdf5;
+        color: #047857;
+        font-size: 10px;
+        font-weight: 800;
+      }
+      .mrow {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        gap: 10px;
+        padding: 12px 0;
+        border-bottom: 1px dashed #e3ece6;
+        font-size: 13px;
+        color: #4b5563;
+      }
+      .pos {
+        color: #047857;
+        font-weight: 800;
+      }
+      .neg {
+        color: #1d4ed8;
+        font-weight: 800;
+      }
+      .mtot {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-top: 14px;
+        padding: 13px 15px;
+        border-radius: 12px;
+        background: linear-gradient(120deg, #ecfdf5, #eff6ff);
+        font-size: 13px;
+        font-weight: 700;
+        color: #065f46;
+      }
+      .mtot b {
+        font-size: 17px;
+        font-weight: 900;
+      }
+      .st {
+        font-style: normal;
+        padding: 4px 10px;
+        border-radius: 999px;
+        font-size: 11px;
+        font-weight: 800;
+      }
+      .st.ok {
+        background: #d1fae5;
+        color: #047857;
+      }
+      .st.wait {
+        background: #dbeafe;
+        color: #1d4ed8;
+      }
+      .st.plan {
+        background: #f1f5f9;
+        color: #64748b;
+      }
+      .mbig {
+        margin-top: 14px;
+        font-size: 46px;
+        font-weight: 900;
+        letter-spacing: -2px;
+        line-height: 1;
+        background: linear-gradient(120deg, #059669, #2563eb);
+        -webkit-background-clip: text;
+        background-clip: text;
+        -webkit-text-fill-color: transparent;
+      }
+      .mbars {
+        display: flex;
+        align-items: flex-end;
+        gap: 9px;
+        height: 96px;
+        margin-top: 16px;
+      }
+      .mbars i {
+        flex: 1;
+        border-radius: 8px 8px 3px 3px;
+        background: linear-gradient(180deg, #2563eb, #10b981);
+      }
+      .bub {
+        max-width: 88%;
+        margin-top: 12px;
+        padding: 11px 14px;
+        border-radius: 14px;
+        font-size: 13px;
+        line-height: 1.55;
+      }
+      .bub.me {
+        background: #f1f5f9;
+        color: #334155;
+        border-bottom-left-radius: 4px;
+      }
+      .bub.us {
+        margin-left: auto;
+        background: linear-gradient(120deg, #059669, #2563eb);
+        color: #fff;
+        border-bottom-right-radius: 4px;
+      }
+      /* ---- 2. ISH JARAYONI ---- */
+      .steps2 {
+        list-style: none;
+        margin: 0;
+        padding: 0;
+        display: grid;
+        grid-template-columns: repeat(6, 1fr);
+      }
+      .st2 {
+        position: relative;
+        padding: 0 14px;
+      }
+      .st2::before,
+      .st2::after {
+        content: "";
+        position: absolute;
+        top: 8px;
+        left: 23px;
+        width: 100%;
+        height: 3px;
+        border-radius: 3px;
+      }
+      .st2::before {
+        background: #d9e8df;
+      }
+      .st2::after {
+        background: linear-gradient(90deg, #059669, #2563eb);
+        transform: scaleX(0);
+        transform-origin: left;
+        transition: transform 0.7s ease;
+      }
+      .st2.done::after {
+        transform: scaleX(1);
+      }
+      .st2:last-child::before,
+      .st2:last-child::after {
+        display: none;
+      }
+      .dot {
+        position: relative;
+        z-index: 2;
+        width: 19px;
+        height: 19px;
+        border-radius: 50%;
+        background: #fff;
+        border: 3px solid #c3dccf;
+        transition: 0.4s;
+      }
+      .st2.done .dot {
+        border-color: transparent;
+        background: linear-gradient(135deg, #059669, #2563eb);
+        box-shadow: 0 0 0 7px #10b9812a;
+      }
+      .big {
+        margin-top: 24px;
+        font-size: 70px;
+        font-weight: 900;
+        letter-spacing: -3px;
+        line-height: 1;
+        color: transparent;
+        -webkit-text-stroke: 1.5px #b4d3c3;
+        transition: 0.4s;
+      }
+      .st2.done .big {
+        background: linear-gradient(120deg, #059669, #2563eb);
+        -webkit-background-clip: text;
+        background-clip: text;
+        -webkit-text-stroke: 0;
+      }
+      .st2 h3 {
+        display: flex;
+        flex-wrap: wrap;
+        align-items: center;
+        gap: 8px;
+        margin: 12px 0 0;
+        font-size: 19px;
+        font-weight: 800;
+        letter-spacing: -0.4px;
+        line-height: 1.2;
+      }
+      .st2 h3 span.n {
+        background: linear-gradient(110deg, #064e3b, #059669 50%, #2563eb);
+        -webkit-background-clip: text;
+        background-clip: text;
+        -webkit-text-fill-color: transparent;
+      }
+      .who {
+        padding: 3px 9px;
+        border-radius: 999px;
+        background: #ecfdf5;
+        color: #047857;
+        font-size: 10.5px;
+        font-weight: 800;
+      }
+      .st2 p {
+        margin: 10px 0 0;
+        font-size: 13.5px;
+        line-height: 1.75;
+        color: #6b7280;
+      }
+      .st2 .out {
+        margin-top: 14px;
+        padding-top: 12px;
+        border-top: 1px dashed #c3dccf;
+        font-size: 12px;
+        font-weight: 700;
+        color: #047857;
+      }
+      .cta2 {
+        position: relative;
+        display: grid;
+        grid-template-columns: 1.15fr 0.85fr;
+        gap: 34px;
+        align-items: center;
+        margin-top: 72px;
+        padding: 54px 58px;
+        overflow: hidden;
+        border-radius: 32px;
+        background:
+          radial-gradient(circle at 92% 0, #3b82f666, transparent 50%),
+          radial-gradient(circle at 0 100%, #10b98140, transparent 50%),
+          linear-gradient(120deg, #064e3b, #065f46 55%, #1e40af);
+        box-shadow: 0 36px 84px #1e40af36;
+      }
+      .cta2::after {
+        content: "";
+        position: absolute;
+        inset: 0;
+        background-image:
+          linear-gradient(#ffffff0b 1px, transparent 1px),
+          linear-gradient(90deg, #ffffff0b 1px, transparent 1px);
+        background-size: 42px 42px;
+        pointer-events: none;
+      }
+      .cta2 > * {
+        position: relative;
+        z-index: 1;
+      }
+      .cta2 h3 {
+        margin: 18px 0 0;
+        font-size: clamp(28px, 3.6vw, 46px);
+        font-weight: 900;
+        letter-spacing: -1.4px;
+        line-height: 1.1;
+        padding-bottom: 0.08em;
+        background: linear-gradient(110deg, #fff, #a7f3d0 55%, #bfdbfe);
+        -webkit-background-clip: text;
+        background-clip: text;
+        -webkit-text-fill-color: transparent;
+      }
+      .cta2 p {
+        margin: 14px 0 0;
+        max-width: 470px;
+        color: #c5e3d6;
+        line-height: 1.8;
+      }
+      .cta2 ul {
+        list-style: none;
+        margin: 0;
+        padding: 0;
+        display: grid;
+        gap: 12px;
+      }
+      .cta2 li {
+        display: flex;
+        align-items: center;
+        gap: 14px;
+        padding: 16px 18px;
+        border-radius: 16px;
+        background: #ffffff14;
+        border: 1px solid #ffffff28;
+        backdrop-filter: blur(6px);
+        color: #eafaf3;
+        font-size: 14px;
+        font-weight: 600;
+      }
+      .cta2 li b {
+        display: grid;
+        place-items: center;
+        width: 32px;
+        height: 32px;
+        flex-shrink: 0;
+        border-radius: 10px;
+        background: linear-gradient(135deg, #34d399, #60a5fa);
+        color: #04271d;
+        font-size: 13px;
+        font-weight: 900;
+      }
+      .label.inv {
+        background: #ffffff14;
+        border-color: #ffffff30;
+        color: #a7f3d0;
+      }
+      @media (max-width: 1100px) {
+        .sec-head {
+          grid-template-columns: 1fr;
+        }
+        .sec-head p {
+          justify-self: start;
+        }
+        .steps2 {
+          grid-template-columns: 1fr;
+        }
+        .st2 {
+          padding: 0 0 34px 62px;
+        }
+        .st2::before,
+        .st2::after {
+          top: 10px;
+          left: 11px;
+          width: 3px;
+          height: 100%;
+        }
+        .st2::after {
+          background: linear-gradient(#059669, #2563eb);
+          transform: scaleY(0);
+          transform-origin: top;
+        }
+        .st2.done::after {
+          transform: scaleY(1);
+        }
+        .dot {
+          position: absolute;
+          left: 3px;
+          top: 3px;
+        }
+        .big {
+          margin-top: 0;
+          font-size: 46px;
+        }
+      }
+      @media (max-width: 900px) {
+        .stage {
+          grid-template-columns: 1fr;
+          border-radius: 26px;
+        }
+        .idx {
+          flex-direction: row;
+          gap: 8px;
+          overflow-x: auto;
+          padding: 14px;
+          border-right: 0;
+          border-bottom: 1px solid #ffffff1c;
+          scrollbar-width: none;
+        }
+        .row {
+          width: auto;
+          flex-shrink: 0;
+          padding: 10px 16px 10px 10px;
+          border-radius: 999px;
+          background: #ffffff0f;
+        }
+        .row::before,
+        .row .arr {
+          display: none;
+        }
+        .row .ri {
+          width: 34px;
+          height: 34px;
+        }
+        .row .t {
+          font-size: 14px;
+          white-space: nowrap;
+        }
+        .row[aria-selected="true"] {
+          background: #ffffff22;
+        }
+        .view {
+          padding: 30px 22px;
+        }
+        .vgrid,
+        .vfoot {
+          grid-template-columns: 1fr;
+        }
+        .mock {
+          transform: none;
+        }
+        .cta2 {
+          grid-template-columns: 1fr;
+          padding: 38px 26px;
+          border-radius: 24px;
         }
       }
       @media (max-width: 768px) {
-        .services-page {
+        .page {
           padding-top: 65px;
         }
-        .services-page > section {
+        .page > section {
           padding: 27px 0;
         }
-        .section-wrap {
+        .wrap {
           padding: 0 19px;
         }
-        .contact-cta-card {
-          grid-template-columns: 1fr;
-          gap: 5px;
-          padding: 36px 27px;
-        }
-        .cta-heading {
-          font-size: clamp(30px, 6vw, 39px);
-        }
-        .cta-decoration {
-          min-height: 220px;
-          margin-top: 10px;
-        }
-        .cta-ring.one {
-          width: 240px;
-          height: 240px;
-        }
-        .cta-ring.two {
-          width: 185px;
-          height: 185px;
-        }
-        .trust-panel {
-          padding: 30px 24px;
+        .box {
+          padding: 27px 19px;
         }
       }
       @media (max-width: 480px) {
-        .services-page {
-          padding-top: 55px;
-        }
-        .services-page > section {
+        .page > section {
           margin: 25px 0;
           padding: 22px 0;
         }
-        .section-wrap {
+        .wrap {
           padding: 0 15px;
         }
-        .service-card,
-        .package-card {
-          padding: 20px;
-        }
-        .uiverse-btn {
+        .btn {
           width: 100%;
-          padding: 14px 17px;
-        }
-        .hero-title {
-          font-size: clamp(33px, 9vw, 43px);
-          letter-spacing: -1.2px;
-        }
-        .faq-item summary {
-          padding: 16px;
-          font-size: 13px;
-        }
-        .faq-answer {
-          padding: 0 16px 16px;
-        }
-        .process-item {
-          gap: 12px;
         }
         .hero-stats {
-          gap: 10px;
+          gap: 10px !important;
         }
         .hero-stats h3 {
           font-size: 20px;
         }
-        .contact-cta-card {
-          padding: 30px 20px 22px;
-          border-radius: 18px;
+        .vhead {
+          gap: 14px;
         }
-        .cta-heading {
-          font-size: 30px;
-          letter-spacing: -1px;
-        }
-        .cta-copy {
-          font-size: 13px;
-        }
-        .cta-main-button {
-          width: 100%;
-          justify-content: space-between;
-        }
-        .cta-preview {
-          width: min(100%, 275px);
-          transform: none;
-        }
-        .modal-box {
-          padding: 27px 19px;
-        }
-        .modal-title {
-          font-size: 23px;
+        .vico {
+          width: 56px;
+          height: 56px;
         }
       }
       @media (prefers-reduced-motion: reduce) {
@@ -714,7 +1043,7 @@
   </head>
 
   <body class="font-sans antialiased text-gray-800">
-   <header
+    <header
       class="fixed top-0 left-0 w-full z-40 border-b border-green-200/50 shadow-sm"
       style="
         background-color: rgba(255, 255, 255, 0.188);
@@ -733,9 +1062,8 @@
           <div class="flex flex-col">
             <span
               class="text-[9px] font-extrabold uppercase tracking-widest text-emerald-700 bg-emerald-100 px-1.5 py-[1px] rounded w-fit"
+              >PRO</span
             >
-              PRO
-            </span>
             <h2
               class="text-lg sm:text-xl font-black tracking-tight gradient-text"
             >
@@ -743,57 +1071,49 @@
             </h2>
           </div>
         </a>
-
-        <nav class="nav hidden md:flex items-center gap-8">
+        <nav
+          class="hidden md:flex items-center gap-8"
+          aria-label="Asosiy menyu"
+        >
           <a
             href="./index.html"
             class="text-sm font-semibold text-gray-700 hover:text-emerald-600 transition-colors"
+            >Bosh sahifa</a
           >
-            Bosh sahifa
-          </a>
           <a
             href="./xizmatlar.html"
-            class="text-sm font-semibold text-gray-700 hover:text-emerald-600 transition-colors"
+            class="text-sm font-bold text-emerald-600"
+            aria-current="page"
+            >Xizmatlar</a
           >
-            Xizmatlar
-          </a>
           <a
             href="./to'lovlar.html"
             class="text-sm font-semibold text-gray-700 hover:text-emerald-600 transition-colors"
+            >To'lovlar</a
           >
-            To'lovlar
-          </a>
           <a
             href="./aloqa.html"
             class="text-sm font-semibold text-gray-700 hover:text-emerald-600 transition-colors"
+            >Aloqa</a
           >
-            Aloqa
-          </a>
         </nav>
-
         <div class="flex items-center gap-3 shrink-0">
-          <a href="./profil.html" class="relative block">
-            <div class="flex items-center gap-[10px]">
-              <img
-                src="./images/image copy.png"
-                class="w-9 h-9 sm:w-10 sm:h-10 rounded-full ring-2 ring-emerald-500/60 object-cover"
-                alt="Profil"
-              />
-              <div>
-                <p
-                  class="gradient-text text-[20px] max-[768px]:hidden font-bold"
-                >
-                  Profil
-                </p>
-              </div>
-            </div>
+          <a href="./profil.html" class="flex items-center gap-[10px]">
+            <img
+              src="./images/image copy.png"
+              class="w-9 h-9 sm:w-10 sm:h-10 rounded-full ring-2 ring-emerald-500/60 object-cover"
+              alt="Profil"
+            />
+            <p class="gradient-text text-[20px] max-[768px]:hidden font-bold">
+              Profil
+            </p>
           </a>
-
           <button
             type="button"
             data-drawer-target="drawer-navigation"
             data-drawer-show="drawer-navigation"
             aria-controls="drawer-navigation"
+            aria-label="Menyuni ochish"
             class="md:hidden p-2 text-gray-600 hover:text-emerald-600 hover:bg-emerald-50 rounded-xl transition-all cursor-pointer"
           >
             <svg
@@ -813,175 +1133,98 @@
         </div>
       </div>
     </header>
+    <div class="rp" id="rp" aria-hidden="true"></div>
 
-    <div>
+    <div
+      id="drawer-navigation"
+      class="fixed top-0 left-0 z-50 h-screen p-5 overflow-y-auto transition-transform -translate-x-full bg-white w-80 border-e border-emerald-100 shadow-2xl"
+      tabindex="-1"
+      aria-labelledby="drawer-label"
+    >
       <div
-        id="drawer-navigation"
-        class="fixed top-0 left-0 z-50 h-screen p-5 overflow-y-auto transition-transform -translate-x-full bg-white w-80 border-e border-emerald-100 shadow-2xl"
-        tabindex="-1"
-        aria-labelledby="drawer-navigation-label"
+        class="pb-4 mb-4 border-b border-gray-100 flex items-center justify-between"
       >
-        <div
-          class="pb-4 mb-4 border-b border-gray-100 flex items-center justify-between"
-        >
-          <a href="#" class="flex items-center space-x-3">
-            <img
-              src="./images/image.png"
-              class="h-10 w-10 rounded-xl shadow-sm border border-emerald-100"
-              alt="Pro Hisobchi Logo"
-            />
-            <div class="flex flex-col">
-              <span
-                class="text-[9px] font-extrabold tracking-widest text-emerald-700 bg-emerald-100 px-1.5 py-0.5 rounded w-fit"
-                >PRO</span
-              >
-              <span class="text-base font-bold gradient-text"
-                >Pro Hisobchi</span
-              >
-            </div>
-          </a>
-          <button
-            type="button"
-            data-drawer-hide="drawer-navigation"
-            aria-controls="drawer-navigation"
-            class="text-gray-400 bg-transparent hover:bg-emerald-50 hover:text-emerald-600 rounded-xl w-9 h-9 flex items-center justify-center transition-all cursor-pointer"
-          >
-            <svg
-              class="w-5 h-5"
-              fill="none"
-              stroke="currentColor"
-              viewBox="0 0 24 24"
+        <a href="./index.html" class="flex items-center space-x-3">
+          <img
+            src="./images/image.png"
+            class="h-10 w-10 rounded-xl shadow-sm border border-emerald-100"
+            alt="Pro Hisobchi Logo"
+          />
+          <div class="flex flex-col">
+            <span
+              class="text-[9px] font-extrabold tracking-widest text-emerald-700 bg-emerald-100 px-1.5 py-0.5 rounded w-fit"
+              >PRO</span
             >
-              <path
-                stroke-linecap="round"
-                stroke-linejoin="round"
-                stroke-width="2"
-                d="M6 18 17.94 6M18 18 6.06 6"
-              />
-            </svg>
-            <span class="sr-only">Menyuni yopish</span>
-          </button>
-        </div>
-
-        <div class="py-2">
-          <ul class="space-y-2 font-medium">
-            <li>
-              <a
-                href="./index.html"
-                class="flex items-center p-3 text-gray-700 rounded-xl hover:bg-emerald-50 hover:text-emerald-600 transition-all group"
-              >
-                <svg
-                  class="w-5 h-5 text-gray-400 group-hover:text-emerald-600 transition-colors"
-                  fill="none"
-                  stroke="currentColor"
-                  viewBox="0 0 24 24"
-                >
-                  <path
-                    stroke-linecap="round"
-                    stroke-linejoin="round"
-                    stroke-width="2"
-                    d="m4 12 8-8 8 8M6 10.5V19a1 1 0 0 0 1 1h3v-3a1 1 0 0 1 1-1h2a1 1 0 0 1 1 1v3h3a1 1 0 0 0 1-1v-8.5"
-                  />
-                </svg>
-                <span class="ms-3 text-sm font-semibold">Bosh sahifa</span>
-              </a>
-            </li>
-
-            <li>
-              <a
-                href="./xizmatlar.html"
-                class="flex items-center p-3 text-gray-700 rounded-xl hover:bg-emerald-50 hover:text-emerald-600 transition-all group"
-              >
-                <svg
-                  class="w-5 h-5 text-gray-400 group-hover:text-emerald-600 transition-colors"
-                  fill="none"
-                  stroke="currentColor"
-                  viewBox="0 0 24 24"
-                >
-                  <path
-                    stroke-linecap="round"
-                    stroke-linejoin="round"
-                    stroke-width="2"
-                    d="M10 6.025A7.5 7.5 0 1 0 17.975 14H10V6.025Z"
-                  />
-                  <path
-                    stroke-linecap="round"
-                    stroke-linejoin="round"
-                    stroke-width="2"
-                    d="M13.5 3c-.169 0-.334.014-.5.025V11h7.975c.011-.166.025-.331.025-.5A7.5 7.5 0 0 0 13.5 3Z"
-                  />
-                </svg>
-                <span class="ms-3 text-sm font-semibold">Xizmatlar</span>
-              </a>
-            </li>
-
-            <li>
-              <a
-                href="./to'lovlar.html"
-                class="flex items-center p-3 text-gray-700 rounded-xl hover:bg-emerald-50 hover:text-emerald-600 transition-all group"
-              >
-                <svg
-                  class="w-5 h-5 text-gray-400 group-hover:text-emerald-600 transition-colors"
-                  fill="none"
-                  stroke="currentColor"
-                  viewBox="0 0 24 24"
-                >
-                  <path
-                    stroke-linecap="round"
-                    stroke-linejoin="round"
-                    stroke-width="2"
-                    d="M15 5v14M9 5v14M4 5h16a1 1 0 0 1 1 1v12a1 1 0 0 1-1 1H4a1 1 0 0 1-1-1V6a1 1 0 0 1 1-1Z"
-                  />
-                </svg>
-                <span class="ms-3 text-sm font-semibold flex-1">To'lovlar</span>
-                <span
-                  class="bg-emerald-100 border border-emerald-200 text-emerald-700 text-[10px] font-bold px-2 py-0.5 rounded-md"
-                  >Pro</span
-                >
-              </a>
-            </li>
-
-            <li>
-              <a
-                href="./aloqa.html"
-                class="flex items-center p-3 text-gray-700 rounded-xl hover:bg-emerald-50 hover:text-emerald-600 transition-all group"
-              >
-                <svg
-                  class="w-5 h-5 text-gray-400 group-hover:text-emerald-600 transition-colors"
-                  fill="none"
-                  stroke="currentColor"
-                  viewBox="0 0 24 24"
-                >
-                  <path
-                    stroke-linecap="round"
-                    stroke-linejoin="round"
-                    stroke-width="2"
-                    d="M18.42 15.61a2.1 2.1 0 0 0-2.97 0l-1 1a1.23 1.23 0 0 1-1.32.3 12.37 12.37 0 0 1-5.18-5.18 1.23 1.23 0 0 1 .3-1.32l1-1a2.1 2.1 0 0 0 0-2.97L7.3 4.5a2.1 2.1 0 0 0-2.97 0L3.1 5.73A3.1 3.1 0 0 0 2.2 8a17.2 17.2 0 0 0 13.8 13.8 3.1 3.1 0 0 0 2.27-.9l1.23-1.23a2.1 2.1 0 0 0 0-2.97l-1.08-1.09Z"
-                  />
-                </svg>
-                <span class="ms-3 text-sm font-semibold">Aloqa</span>
-              </a>
-            </li>
-          </ul>
-        </div>
-        <div
-          class="box flex items-center justify-between rounded-[6px] p-[8px]"
-        >
-       
-          <div>
-            <h2 class="italic text-[20px]! font-bold" id="counter"></h2>
+            <span id="drawer-label" class="text-base font-bold gradient-text"
+              >Pro Hisobchi</span
+            >
           </div>
-        </div>
+        </a>
+        <button
+          type="button"
+          data-drawer-hide="drawer-navigation"
+          aria-controls="drawer-navigation"
+          class="text-gray-400 hover:bg-emerald-50 hover:text-emerald-600 rounded-xl w-9 h-9 flex items-center justify-center transition-all cursor-pointer"
+        >
+          <svg
+            class="w-5 h-5"
+            fill="none"
+            stroke="currentColor"
+            viewBox="0 0 24 24"
+          >
+            <path
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              stroke-width="2"
+              d="M6 18 17.94 6M18 18 6.06 6"
+            />
+          </svg>
+          <span class="sr-only">Menyuni yopish</span>
+        </button>
       </div>
+      <ul class="space-y-2 font-medium py-2">
+        <li>
+          <a
+            href="./index.html"
+            class="flex items-center p-3 text-gray-700 rounded-xl hover:bg-emerald-50 hover:text-emerald-600 text-sm font-semibold"
+            >Bosh sahifa</a
+          >
+        </li>
+        <li>
+          <a
+            href="./xizmatlar.html"
+            class="flex items-center p-3 rounded-xl bg-emerald-50 text-emerald-600 text-sm font-semibold"
+            >Xizmatlar</a
+          >
+        </li>
+        <li>
+          <a
+            href="./to'lovlar.html"
+            class="flex items-center p-3 text-gray-700 rounded-xl hover:bg-emerald-50 hover:text-emerald-600 text-sm font-semibold"
+            ><span class="flex-1">To'lovlar</span
+            ><span
+              class="bg-emerald-100 border border-emerald-200 text-emerald-700 text-[10px] font-bold px-2 py-0.5 rounded-md"
+              >Pro</span
+            ></a
+          >
+        </li>
+        <li>
+          <a
+            href="./aloqa.html"
+            class="flex items-center p-3 text-gray-700 rounded-xl hover:bg-emerald-50 hover:text-emerald-600 text-sm font-semibold"
+            >Aloqa</a
+          >
+        </li>
+      </ul>
     </div>
 
-    <main class="services-page">
-    
+    <main class="page">
+      <!-- HERO (asl holatida) -->
       <section>
-        <div class="section-wrap ">
+        <div class="wrap">
           <div class="grid lg:grid-cols-2 gap-12 lg:gap-16 items-center">
             <div>
-              <span class="section-label">PRO HISOBCHI / XIZMATLAR</span>
+              <span class="label">PRO HISOBCHI / XIZMATLAR</span>
               <h1 class="hero-title font-black text-gray-900 mt-7">
                 Biznesingiz uchun
                 <span class="gradient-text">professional</span> moliyaviy
@@ -997,7 +1240,7 @@
               <div class="mt-8">
                 <button
                   type="button"
-                  class="uiverse-btn"
+                  class="btn solid"
                   data-scroll-to="xizmatlar"
                 >
                   Xizmatlar bilan tanishish <span>→</span>
@@ -1011,21 +1254,21 @@
                   <p class="text-xs text-gray-500 mt-2">Xizmat turi</p>
                 </div>
                 <div>
-                  <h3 class="text-2xl font-black text-gray-900">03</h3>
-                  <p class="text-xs text-gray-500 mt-2">Xizmat paketi</p>
+                  <h3 class="text-2xl font-black text-gray-900">06</h3>
+                  <p class="text-xs text-gray-500 mt-2">Ish bosqichi</p>
                 </div>
                 <div>
-                  <h3 class="text-2xl font-black text-gray-900">08</h3>
-                  <p class="text-xs text-gray-500 mt-2">Sahifa bo‘limi</p>
+                  <h3 class="text-2xl font-black text-gray-900">04</h3>
+                  <p class="text-xs text-gray-500 mt-2">Biznes yo‘nalishi</p>
                 </div>
               </div>
             </div>
-
             <div class="relative">
               <div
                 class="absolute inset-0 bg-emerald-100 blur-3xl opacity-60 rounded-full"
+                aria-hidden="true"
               ></div>
-              <div class="dashboard-card relative">
+              <div class="dash relative">
                 <div
                   class="flex justify-between items-center gap-3 pb-5 border-b border-gray-100"
                 >
@@ -1040,16 +1283,15 @@
                     >Namuna</span
                   >
                 </div>
-
                 <div class="grid grid-cols-2 gap-3 sm:gap-4 mt-5">
-                  <div class="dashboard-metric bg-emerald-50">
+                  <div class="metric bg-emerald-50">
                     <p class="text-xs text-gray-500">Jami daromad</p>
                     <h3 class="metric-value text-emerald-700 mt-3">45 mln</h3>
                     <p class="text-xs text-emerald-700 mt-2">
                       Biznesga tushgan mablag‘
                     </p>
                   </div>
-                  <div class="dashboard-metric bg-blue-50">
+                  <div class="metric bg-blue-50">
                     <p class="text-xs text-gray-500">Jami xarajat</p>
                     <h3 class="metric-value text-blue-700 mt-3">18 mln</h3>
                     <p class="text-xs text-blue-700 mt-2">
@@ -1057,7 +1299,6 @@
                     </p>
                   </div>
                 </div>
-
                 <div class="mt-4 p-4 sm:p-5 border border-gray-100 rounded-2xl">
                   <div class="flex justify-between items-center gap-3">
                     <div>
@@ -1077,14 +1318,10 @@
                     Sof foyda ulushi — daromadning xarajatlardan keyin qolgan
                     qismi.
                   </p>
-                  <div class="progress-track mt-4">
-                    <div
-                      class="progress-fill bg-emerald-500"
-                      style="width: 60%"
-                    ></div>
+                  <div class="track mt-4">
+                    <div class="fill bg-emerald-500" style="width: 60%"></div>
                   </div>
                 </div>
-
                 <div class="mt-4 p-4 sm:p-5 border border-gray-100 rounded-2xl">
                   <h4 class="text-sm font-bold text-gray-800">
                     Hisob jarayonlari
@@ -1095,9 +1332,9 @@
                         <span class="text-gray-500">Buxgalteriya hisobi</span
                         ><strong class="text-gray-700">80%</strong>
                       </div>
-                      <div class="progress-track">
+                      <div class="track">
                         <div
-                          class="progress-fill bg-emerald-500"
+                          class="fill bg-emerald-500"
                           style="width: 80%"
                         ></div>
                       </div>
@@ -1107,11 +1344,8 @@
                         <span class="text-gray-500">Soliq hisobotlari</span
                         ><strong class="text-gray-700">60%</strong>
                       </div>
-                      <div class="progress-track">
-                        <div
-                          class="progress-fill bg-blue-500"
-                          style="width: 60%"
-                        ></div>
+                      <div class="track">
+                        <div class="fill bg-blue-500" style="width: 60%"></div>
                       </div>
                     </div>
                     <div>
@@ -1119,16 +1353,13 @@
                         <span class="text-gray-500">Moliyaviy nazorat</span
                         ><strong class="text-gray-700">85%</strong>
                       </div>
-                      <div class="progress-track">
-                        <div
-                          class="progress-fill bg-teal-500"
-                          style="width: 85%"
-                        ></div>
+                      <div class="track">
+                        <div class="fill bg-teal-500" style="width: 85%"></div>
                       </div>
                     </div>
                   </div>
                 </div>
-                <p class="sample-note mt-3">
+                <p class="text-[10px] text-gray-400 leading-relaxed mt-3">
                   Eslatma: ko‘rsatilgan summalar va foizlar dizaynni
                   tushuntirish uchun keltirilgan namunaviy ma’lumotlar.
                 </p>
@@ -1138,529 +1369,180 @@
         </div>
       </section>
 
-      <section id="xizmatlar">
-        <div class="section-wrap">
-          <div class="max-w-2xl mb-12">
-            <span class="section-label">BIZNING XIZMATLAR</span>
-            <h2 class="text-3xl md:text-4xl font-black text-gray-900 mt-5">
-              Biznesingiz uchun moliyaviy xizmatlar
-            </h2>
-            <p class="text-gray-500 leading-7 mt-5">
-              Korxonangiz faoliyatiga mos xizmatlar orqali hisob-kitoblarni
-              tartibga solish va boshqaruvni yaxshilash.
-            </p>
-          </div>
-          <div class="grid sm:grid-cols-2 lg:grid-cols-3 gap-5">
-            <div class="service-card">
-              <div class="number-box">01</div>
-              <h3 class="text-xl font-extrabold text-gray-900 mt-6">
-                Buxgalteriya hisobi
-              </h3>
-              <p class="text-sm text-gray-500 leading-7 mt-3">
-                Kirim, chiqim, hujjatlar va kundalik hisob-kitoblarni tartibli
-                yuritish.
-              </p>
-            </div>
-            <div class="service-card">
-              <div class="number-box">02</div>
-              <h3 class="text-xl font-extrabold text-gray-900 mt-6">
-                Soliq hisobotlari
-              </h3>
-              <p class="text-sm text-gray-500 leading-7 mt-3">
-                Soliq hujjatlarini tayyorlash, hisoblash va hisobot
-                jarayonlarini kuzatish.
-              </p>
-            </div>
-            <div class="service-card">
-              <div class="number-box">03</div>
-              <h3 class="text-xl font-extrabold text-gray-900 mt-6">
-                Moliyaviy tahlil
-              </h3>
-              <p class="text-sm text-gray-500 leading-7 mt-3">
-                Daromad va xarajatlarni tahlil qilish, moliyaviy holatni
-                baholash.
-              </p>
-            </div>
-            <div class="service-card">
-              <div class="number-box">04</div>
-              <h3 class="text-xl font-extrabold text-gray-900 mt-6">
-                Ish haqi hisobi
-              </h3>
-              <p class="text-sm text-gray-500 leading-7 mt-3">
-                Xodimlar ish haqi va tegishli hisob-kitoblarni yuritish.
-              </p>
-            </div>
-            <div class="service-card">
-              <div class="number-box">05</div>
-              <h3 class="text-xl font-extrabold text-gray-900 mt-6">
-                Hujjatlar bilan ishlash
-              </h3>
-              <p class="text-sm text-gray-500 leading-7 mt-3">
-                Moliyaviy hujjatlarni tayyorlash, tekshirish va tizimlashtirish.
-              </p>
-            </div>
-            <div class="service-card">
-              <div class="number-box">06</div>
-              <h3 class="text-xl font-extrabold text-gray-900 mt-6">
-                Moliyaviy maslahat
-              </h3>
-              <p class="text-sm text-gray-500 leading-7 mt-3">
-                Biznesingizdagi moliyaviy masalalar bo‘yicha maslahat va tahlil.
-              </p>
-            </div>
-          </div>
-        </div>
-      </section>
-
-      <section>
-        <div class="section-wrap">
-          <div class="max-w-2xl mx-auto text-center">
-            <span class="section-label">HAMKORLIK PAKETLARI</span>
-            <h2 class="text-3xl md:text-4xl font-black text-gray-900 mt-5">
-              Biznesingizga mos xizmat paketi
-            </h2>
-            <p class="text-gray-500 leading-7 mt-5">
-              Faoliyat ko‘lami va ehtiyojlaringizga mos hamkorlik yo‘nalishini
-              tanlang.
-            </p>
-          </div>
-
-          <div class="grid md:grid-cols-3 gap-5 mt-12 items-stretch">
-            <div class="package-card">
-              <span
-                class="text-xs font-extrabold text-emerald-700 tracking-widest"
-                >BOSHLANG‘ICH</span
-              >
-              <h3 class="text-2xl font-black text-gray-900 mt-4">Start</h3>
-              <p class="text-sm text-gray-500 mt-3 leading-7">
-                Kichik biznes va yangi faoliyat uchun.
-              </p>
-              <div class="border-t border-gray-100 mt-7 pt-6 space-y-4">
-                <p class="text-sm text-gray-600">
-                  ✓ Asosiy buxgalteriya hisobi
-                </p>
-                <p class="text-sm text-gray-600">✓ Kirim va chiqim nazorati</p>
-                <p class="text-sm text-gray-600">✓ Hujjatlarni yuritish</p>
-                <p class="text-sm text-gray-600">✓ Asosiy hisobotlar</p>
-              </div>
-              <div class="package-action">
-                <button
-                  type="button"
-                  class="uiverse-btn"
-                  data-select-service="Start paketi"
-                >
-                  Paketni tanlash <span>→</span>
-                </button>
-              </div>
-            </div>
-
-            <div class="package-card package-featured">
-              <span
-                class="text-xs font-extrabold text-emerald-700 tracking-widest"
-                >OMMABOP TANLOV</span
-              >
-              <h3 class="text-2xl font-black text-gray-900 mt-4">Business</h3>
-              <p class="text-sm text-gray-500 mt-3 leading-7">
-                Faol biznes jarayonlari uchun.
-              </p>
-              <div class="border-t border-gray-100 mt-7 pt-6 space-y-4">
-                <p class="text-sm text-gray-600">✓ Buxgalteriya hisobi</p>
-                <p class="text-sm text-gray-600">✓ Soliq hisobotlari</p>
-                <p class="text-sm text-gray-600">✓ Moliyaviy tahlil</p>
-                <p class="text-sm text-gray-600">✓ Ish haqi hisob-kitobi</p>
-              </div>
-              <div class="package-action">
-                <button
-                  type="button"
-                  class="uiverse-btn"
-                  data-select-service="Business paketi"
-                >
-                  Paketni tanlash <span>→</span>
-                </button>
-              </div>
-            </div>
-
-            <div class="package-card">
-              <span class="text-xs font-extrabold text-blue-700 tracking-widest"
-                >KENG QAMROVLI</span
-              >
-              <h3 class="text-2xl font-black text-gray-900 mt-4">Enterprise</h3>
-              <p class="text-sm text-gray-500 mt-3 leading-7">
-                Katta va murakkab biznes tuzilmalari uchun.
-              </p>
-              <div class="border-t border-gray-100 mt-7 pt-6 space-y-4">
-                <p class="text-sm text-gray-600">✓ Kompleks buxgalteriya</p>
-                <p class="text-sm text-gray-600">
-                  ✓ Soliq hisobotlarini yuritish
-                </p>
-                <p class="text-sm text-gray-600">✓ Chuqur moliyaviy tahlil</p>
-                <p class="text-sm text-gray-600">✓ Individual yondashuv</p>
-              </div>
-              <div class="package-action">
-                <button
-                  type="button"
-                  class="uiverse-btn"
-                  data-select-service="Enterprise paketi"
-                >
-                  Paketni tanlash <span>→</span>
-                </button>
-              </div>
-            </div>
-          </div>
-        </div>
-      </section>
-
-      <section>
-        <div class="section-wrap">
-          <div class="max-w-2xl">
-            <span class="section-label">ISH JARAYONI</span>
-            <h2 class="text-3xl md:text-4xl font-black text-gray-900 mt-5">
-              Hamkorlik qanday amalga oshiriladi?
-            </h2>
-            <p class="text-gray-500 leading-7 mt-5">
-              Har bir bosqich aniq reja va izchil yondashuv asosida tashkil
-              etiladi.
-            </p>
-          </div>
-          <div
-            class="grid sm:grid-cols-2 lg:grid-cols-3 gap-x-8 gap-y-10 mt-14"
-          >
-            <div class="process-item">
-              <div class="number-box">01</div>
-              <div>
-                <h3 class="font-extrabold text-gray-900 text-lg">Murojaat</h3>
-                <p class="text-sm text-gray-500 leading-7 mt-3">
-                  Siz biznesingiz va ehtiyojlaringiz haqida ma’lumot berasiz.
-                </p>
-              </div>
-            </div>
-            <div class="process-item">
-              <div class="number-box">02</div>
-              <div>
-                <h3 class="font-extrabold text-gray-900 text-lg">Tahlil</h3>
-                <p class="text-sm text-gray-500 leading-7 mt-3">
-                  Mavjud moliyaviy jarayonlar va talablar o‘rganiladi.
-                </p>
-              </div>
-            </div>
-            <div class="process-item">
-              <div class="number-box">03</div>
-              <div>
-                <h3 class="font-extrabold text-gray-900 text-lg">
-                  Rejalashtirish
-                </h3>
-                <p class="text-sm text-gray-500 leading-7 mt-3">
-                  Sizga mos xizmatlar va ish tartibi belgilanadi.
-                </p>
-              </div>
-            </div>
-            <div class="process-item">
-              <div class="number-box">04</div>
-              <div>
-                <h3 class="font-extrabold text-gray-900 text-lg">Hujjatlar</h3>
-                <p class="text-sm text-gray-500 leading-7 mt-3">
-                  Kerakli hujjatlar tayyorlanadi va tartibga keltiriladi.
-                </p>
-              </div>
-            </div>
-            <div class="process-item">
-              <div class="number-box">05</div>
-              <div>
-                <h3 class="font-extrabold text-gray-900 text-lg">
-                  Ishni boshlash
-                </h3>
-                <p class="text-sm text-gray-500 leading-7 mt-3">
-                  Kelishilgan xizmatlar bo‘yicha ish jarayoni boshlanadi.
-                </p>
-              </div>
-            </div>
-            <div class="process-item">
-              <div class="number-box">06</div>
-              <div>
-                <h3 class="font-extrabold text-gray-900 text-lg">Monitoring</h3>
-                <p class="text-sm text-gray-500 leading-7 mt-3">
-                  Hisob-kitoblar va vazifalar kuzatib boriladi.
-                </p>
-              </div>
-            </div>
-          </div>
-        </div>
-      </section>
-
-      <section>
-        <div class="section-wrap">
-          <div class="max-w-2xl mx-auto text-center">
-            <span class="section-label">KIMLAR UCHUN?</span>
-            <h2 class="text-3xl md:text-4xl font-black text-gray-900 mt-5">
-              Turli biznes yo‘nalishlari uchun yechimlar
-            </h2>
-            <p class="text-gray-500 leading-7 mt-5">
-              Har bir biznesning o‘ziga xos moliyaviy ehtiyojlari bor. Xizmatlar
-              faoliyat turiga moslashtiriladi.
-            </p>
-          </div>
-          <div class="grid sm:grid-cols-2 lg:grid-cols-4 gap-5 mt-12">
-            <div class="service-card">
-              <p class="text-xs font-black text-emerald-700">01 / SAVDO</p>
-              <h3 class="text-lg font-extrabold mt-5 text-gray-900">
-                Savdo korxonalari
-              </h3>
-              <p class="text-sm text-gray-500 leading-7 mt-3">
-                Tovar aylanmasi, kirim-chiqim va savdo hisobi.
-              </p>
-            </div>
-            <div class="service-card">
-              <p class="text-xs font-black text-emerald-700">02 / XIZMAT</p>
-              <h3 class="text-lg font-extrabold mt-5 text-gray-900">
-                Xizmat ko‘rsatish
-              </h3>
-              <p class="text-sm text-gray-500 leading-7 mt-3">
-                Xizmat daromadlari, xarajatlar va moliyaviy hujjatlar.
-              </p>
-            </div>
-            <div class="service-card">
-              <p class="text-xs font-black text-emerald-700">
-                03 / ISHLAB CHIQARISH
-              </p>
-              <h3 class="text-lg font-extrabold mt-5 text-gray-900">
-                Ishlab chiqarish
-              </h3>
-              <p class="text-sm text-gray-500 leading-7 mt-3">
-                Mahsulot tannarxi, xarajatlar va hisob-kitoblar.
-              </p>
-            </div>
-            <div class="service-card">
-              <p class="text-xs font-black text-emerald-700">04 / STARTUP</p>
-              <h3 class="text-lg font-extrabold mt-5 text-gray-900">
-                Yangi loyihalar
-              </h3>
-              <p class="text-sm text-gray-500 leading-7 mt-3">
-                Yangi biznes uchun boshlang‘ich hisob va rejalashtirish.
-              </p>
-            </div>
-          </div>
-        </div>
-      </section>
-
-      <section>
-        <div class="section-wrap">
-          <div class="grid lg:grid-cols-2 gap-12 items-center">
+      <!-- 1. XIZMATLAR -->
+      <section id="xizmatlar" style="scroll-margin-top: 84px">
+        <div class="wrap">
+          <div class="sec-head">
             <div>
-              <span class="section-label">BIZNING USTUNLIKLARIMIZ</span>
-              <h2
-                class="text-3xl md:text-4xl font-black text-gray-900 mt-5 leading-tight"
-              >
-                Moliyaviy boshqaruvda tartib va aniqlik
-              </h2>
-              <p class="text-gray-500 leading-8 mt-5">
-                Biznesning barqaror ishlashi uchun moliyaviy ma’lumotlar
-                tushunarli, tartibli va nazorat qilinadigan bo‘lishi muhim.
-              </p>
+              <span class="label">BIZNING XIZMATLAR</span>
+              <h2 class="g-h">Biznesingiz uchun olti yo‘nalishdagi yordam</h2>
             </div>
-            <div class="grid sm:grid-cols-2 gap-4">
-              <div class="bg-emerald-50 rounded-2xl p-6">
-                <h3 class="text-lg font-black text-gray-900">
-                  Tizimli yondashuv
-                </h3>
-                <p class="text-sm text-gray-600 leading-7 mt-3">
-                  Ish jarayonlari aniq tartib va reja asosida olib boriladi.
-                </p>
-              </div>
-              <div class="bg-blue-50 rounded-2xl p-6">
-                <h3 class="text-lg font-black text-gray-900">
-                  Aniq hisob-kitob
-                </h3>
-                <p class="text-sm text-gray-600 leading-7 mt-3">
-                  Moliyaviy ma’lumotlarni tartibli yuritishga e’tibor beriladi.
-                </p>
-              </div>
-              <div class="bg-blue-50 rounded-2xl p-6">
-                <h3 class="text-lg font-black text-gray-900">Ochiq muloqot</h3>
-                <p class="text-sm text-gray-600 leading-7 mt-3">
-                  Vazifalar va kelishuvlar tushunarli bo‘ladi.
-                </p>
-              </div>
-              <div class="bg-emerald-50 rounded-2xl p-6">
-                <h3 class="text-lg font-black text-gray-900">
-                  Moslashuvchanlik
-                </h3>
-                <p class="text-sm text-gray-600 leading-7 mt-3">
-                  Xizmatlar biznes ehtiyojlariga qarab belgilanadi.
-                </p>
-              </div>
-            </div>
+            <p>
+              Chapdan yo‘nalishni tanlang. Nimalar bajarilishi, qanday natija
+              berishi va boshlash uchun nima kerakligi o‘ngda ochiladi.
+            </p>
+          </div>
+          <div class="stage">
+            <div
+              class="idx"
+              id="idx"
+              role="tablist"
+              aria-orientation="vertical"
+              aria-label="Xizmatlar"
+            ></div>
+            <div
+              class="view"
+              id="view"
+              role="tabpanel"
+              aria-live="polite"
+            ></div>
           </div>
         </div>
       </section>
 
-      <section>
-        <div class="section-wrap">
-          <div class="trust-panel p-8 sm:p-10 md:p-14">
-            <div class="max-w-3xl">
-              <span
-                class="inline-flex px-4 py-2 rounded-lg bg-white/10 text-emerald-100 text-xs font-extrabold tracking-widest"
-                >PRO HISOBCHI YONDASHUVI</span
-              >
-              <h2
-                class="text-3xl md:text-5xl font-black text-white mt-7 leading-tight"
-              >
-                Biznesingiz moliyasini tushunarli va tartibli boshqaring
-              </h2>
-              <p class="text-emerald-100/80 leading-8 mt-6 max-w-2xl">
-                Har bir moliyaviy qaror aniq ma’lumot va puxta tahlilga
-                asoslanishi kerak. Biz sizga shu jarayonni tashkil qilishda
-                yordam beramiz.
-              </p>
-              <div
-                class="grid sm:grid-cols-3 gap-6 mt-10 pt-8 border-t border-white/20"
-              >
-                <div>
-                  <h3 class="text-white text-lg font-black">Shaffoflik</h3>
-                  <p class="text-xs text-emerald-100/70 mt-2">
-                    Tushunarli jarayonlar
-                  </p>
-                </div>
-                <div>
-                  <h3 class="text-white text-lg font-black">Mas’uliyat</h3>
-                  <p class="text-xs text-emerald-100/70 mt-2">
-                    Kelishilgan vazifalar
-                  </p>
-                </div>
-                <div>
-                  <h3 class="text-white text-lg font-black">Tartib</h3>
-                  <p class="text-xs text-emerald-100/70 mt-2">
-                    Tizimli hisob yuritish
-                  </p>
-                </div>
-              </div>
+      <!-- 2. ISH JARAYONI -->
+      <section id="jarayon" style="scroll-margin-top: 84px">
+        <div class="wrap">
+          <div class="sec-head">
+            <div>
+              <span class="label">ISH JARAYONI</span>
+              <h2 class="g-h">Hamkorlik olti bosqichda amalga oshadi</h2>
             </div>
+            <p>
+              Har bir bosqichda kim nima qilishi va qanday natija chiqishi
+              oldindan ma’lum bo‘ladi.
+            </p>
+          </div>
+          <ol class="steps2" id="steps"></ol>
+
+          <div class="cta2">
+            <div>
+              <span class="label inv">BEPUL MASLAHAT</span>
+              <h3>Birinchi qadamni bugun qo‘ying</h3>
+              <p>
+                Biznesingiz haqida qisqacha yozing. Qaysi xizmat sizga mos
+                kelishini birga aniqlaymiz.
+              </p>
+              <button type="button" class="btn light mt-8" data-open-modal>
+                So‘rov qoldirish <span>→</span>
+              </button>
+            </div>
+            <ul>
+              <li><b>1</b>Siz qisqa so‘rov qoldirasiz</li>
+              <li><b>2</b>Biz biznesingiz holatini o‘rganamiz</li>
+              <li><b>3</b>Mos xizmat va ish tartibini kelishamiz</li>
+            </ul>
           </div>
         </div>
       </section>
-
     </main>
 
-    <div class="contact-modal" id="contactModal" aria-hidden="true">
-      <div class="modal-overlay" id="modalOverlay"></div>
+    <!-- MODAL -->
+    <div class="modal" id="contactModal" aria-hidden="true">
+      <div class="overlay" id="modalOverlay"></div>
       <div
-        class="modal-box"
+        class="box"
         role="dialog"
         aria-modal="true"
         aria-labelledby="modalTitle"
       >
         <button
           type="button"
-          class="modal-close"
-          id="closeContactModal"
-          aria-label="Modalni yopish"
+          class="x"
+          id="closeModal"
+          aria-label="Oynani yopish"
         >
           &times;
         </button>
-        <div class="modal-kicker">PRO HISOBCHI</div>
-        <h3 class="modal-title" id="modalTitle">Biz bilan bog‘laning</h3>
-        <p class="modal-description">
-          Quyidagi ma’lumotlarni to‘ldiring. Sizga kerakli xizmat bo‘yicha
-          murojaatingiz tayyorlanadi.
+        <p class="text-[10px] font-black tracking-[2px] text-emerald-600">
+          PRO HISOBCHI
         </p>
-
-        <form class="contact-form" id="contactForm">
-          <div class="form-group">
-            <label for="contactName">Ismingiz</label>
-            <input
+        <h3 class="text-2xl font-extrabold text-gray-900 mt-2" id="modalTitle">
+          Biz bilan bog‘laning
+        </h3>
+        <p class="text-sm text-gray-500 leading-relaxed mt-2">
+          Ma’lumotlarni to‘ldiring, sizga kerakli xizmat bo‘yicha murojaatingiz
+          tayyorlanadi.
+        </p>
+        <form class="grid gap-4 mt-6" id="contactForm" novalidate>
+          <div class="field">
+            <label for="cName">Ismingiz</label
+            ><input
               type="text"
-              id="contactName"
+              id="cName"
               name="name"
               placeholder="Ismingizni kiriting"
               minlength="2"
+              autocomplete="name"
               required
             />
           </div>
-
-          <div class="form-group">
-            <label for="contactPhone">Telefon raqamingiz</label>
-            <input
+          <div class="field">
+            <label for="cPhone">Telefon raqamingiz</label
+            ><input
               type="tel"
-              id="contactPhone"
+              id="cPhone"
               name="phone"
               placeholder="+998 90 123 45 67"
+              autocomplete="tel"
               required
             />
           </div>
-
-          <div class="form-group">
-            <label for="contactService">Kerakli xizmat</label>
-            <select id="contactService" name="service" required>
+          <div class="field">
+            <label for="cService">Kerakli xizmat</label
+            ><select id="cService" name="service" required>
               <option value="" selected disabled>Xizmatni tanlang</option>
-              <option>Buxgalteriya hisobi</option>
-              <option>Soliq hisobotlari</option>
-              <option>Moliyaviy tahlil</option>
-              <option>Ish haqi hisobi</option>
-              <option>Hujjatlar bilan ishlash</option>
-              <option>Moliyaviy maslahat</option>
-              <option>Start paketi</option>
-              <option>Business paketi</option>
-              <option>Enterprise paketi</option>
             </select>
           </div>
-
-          <div class="form-group">
-            <label for="contactMessage"
-              >Qo‘shimcha izoh <span>(ixtiyoriy)</span></label
-            >
-            <textarea
-              id="contactMessage"
+          <div class="field">
+            <label for="cMsg"
+              >Qo‘shimcha izoh
+              <span class="text-gray-400 font-normal">(ixtiyoriy)</span></label
+            ><textarea
+              id="cMsg"
               name="message"
               rows="3"
               placeholder="Xabaringizni yozing..."
             ></textarea>
           </div>
-
-          <button type="submit" class="modal-submit">
+          <button
+            type="submit"
+            class="btn w-full justify-between"
+            style="border-radius: 8px"
+          >
             So‘rovni tayyorlash <span>→</span>
           </button>
-          <div class="form-result" id="formResult" aria-live="polite"></div>
-          <div class="modal-privacy">
+          <div class="result" id="formResult" aria-live="polite"></div>
+          <p class="text-[10px] text-gray-400 text-center leading-relaxed">
             Ma’lumotlaringiz faqat murojaatingiz bilan bog‘lanish uchun
             ishlatiladi.
-          </div>
+          </p>
         </form>
       </div>
     </div>
 
-
-     <footer
+    <footer
       class="w-full overflow-hidden border-t border-gray-200 bg-white py-10 sm:py-12 lg:py-[60px]"
     >
       <div class="mx-auto w-full max-w-[1200px] px-4 sm:px-6 lg:px-[30px]">
-        <div class="w-full min-w-0 max-w-[320px] sm:max-w-none">
-          <a
-            href="./index.html"
-            class="mb-4 flex items-center justify-start gap-3"
-          >
-            <img
-              src="./images/image.png"
-              class="h-11 w-11 shrink-0 rounded-xl border border-green-100 object-cover shadow-md sm:h-[45px] sm:w-[45px]"
-              alt="Pro Hisobchi Logo"
-            />
-            <div class="flex min-w-0 flex-col">
-              <span
-                class="w-fit rounded bg-emerald-100 px-1.5 py-0.5 text-[9px] font-extrabold uppercase tracking-widest text-emerald-700"
-              >
-                PRO
-              </span>
-              <h2
-                class="break-words text-base font-black tracking-tight text-gray-900 sm:text-lg lg:text-xl"
-              >
-                Pro Hisobchi
-              </h2>
-            </div>
-          </a>
-        </div>
-
-        <div class="border-t border-gray-200 pt-5 sm:pt-[25px]">
-          <p
-            class="break-words text-left text-xs leading-relaxed text-gray-500 sm:text-sm"
-          >
+        <a href="./index.html" class="mb-6 flex items-center gap-3 w-fit">
+          <img
+            src="./images/image.png"
+            class="h-11 w-11 shrink-0 rounded-xl border border-green-100 object-cover shadow-md"
+            alt="Pro Hisobchi Logo"
+          />
+          <div class="flex flex-col">
+            <span
+              class="w-fit rounded bg-emerald-100 px-1.5 py-0.5 text-[9px] font-extrabold uppercase tracking-widest text-emerald-700"
+              >PRO</span
+            >
+            <h2 class="text-lg font-black tracking-tight text-gray-900">
+              Pro Hisobchi
+            </h2>
+          </div>
+        </a>
+        <div class="border-t border-gray-200 pt-5">
+          <p class="text-xs sm:text-sm text-gray-500">
             © 2026 Pro Hisobchi. Barcha huquqlar himoyalangan.
           </p>
         </div>
@@ -1668,77 +1550,389 @@
     </footer>
 
     <script src="https://cdn.jsdelivr.net/npm/flowbite@2.5.2/dist/flowbite.min.js"></script>
-
     <script>
-      document.querySelectorAll("[data-scroll-to]").forEach((button) => {
-        button.addEventListener("click", () => {
-          const target = document.getElementById(button.dataset.scrollTo);
-          if (target) {
-            target.scrollIntoView({
-              behavior: "smooth",
-              block: "start",
-            });
+      const ICONS = [
+        '<path d="M4 5a2 2 0 0 1 2-2h12v18H6a2 2 0 0 1-2-2V5Z"/><path d="M8 7h6M8 11h6"/>',
+        '<path d="M19 5 5 19"/><circle cx="7" cy="7" r="2.5"/><circle cx="17" cy="17" r="2.5"/>',
+        '<path d="M4 20V4M4 20h16"/><path d="m8 15 4-4 3 3 5-6"/>',
+        '<circle cx="9" cy="8" r="3"/><path d="M3 20c0-3.3 2.7-6 6-6s6 2.7 6 6"/><path d="M17 8h4M17 12h4"/>',
+        '<path d="M7 3h7l5 5v13H7V3Z"/><path d="M14 3v5h5M10 13h6M10 17h6"/>',
+        '<path d="M4 5h16v11H9l-5 4V5Z"/><path d="M8 9h8M8 12h5"/>',
+      ];
+      const ico = (i, s) =>
+        '<svg viewBox="0 0 24 24" width="' +
+        (s || 20) +
+        '" height="' +
+        (s || 20) +
+        '" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">' +
+        ICONS[i] +
+        "</svg>";
+      const mr = (a, b, c) =>
+        '<div class="mrow"><span>' +
+        a +
+        '</span><span class="' +
+        (c || "") +
+        '">' +
+        b +
+        "</span></div>";
+      const mh = (t) =>
+        '<div class="mhead"><b>' + t + "</b><em>Namuna</em></div>";
+
+      const SERVICES = [
+        {
+          n: "Buxgalteriya hisobi",
+          s: "Kirim, chiqim, hujjatlar va kundalik hisob-kitoblarni tartibli yuritish.",
+          inc: [
+            "Kirim va chiqim operatsiyalarini yuritish",
+            "Birlamchi hujjatlarni qayta ishlash",
+            "Bank va kassa operatsiyalarini solishtirish",
+            "Oylik hisob yig‘ma ma’lumotlari",
+          ],
+          res: "Har oy aniq va tekshirilgan hisob ma’lumotlari.",
+          who: "Savdo, xizmat va ishlab chiqarish korxonalari.",
+          need: ["Bank ko‘chirmalari", "Kassa hujjatlari", "Shartnomalar"],
+          vis: () =>
+            mh("Kirim-chiqim jurnali") +
+            mr("Mijozdan tushum", "+12 000 000", "pos") +
+            mr("Ijara to‘lovi", "−3 500 000", "neg") +
+            mr("Tovar xaridi", "−6 200 000", "neg") +
+            mr("Xizmat daromadi", "+8 400 000", "pos") +
+            '<div class="mtot"><span>Davr qoldig‘i</span><b>+10 700 000</b></div>',
+        },
+        {
+          n: "Soliq hisobotlari",
+          s: "Soliq hujjatlarini tayyorlash, hisoblash va hisobot jarayonlarini kuzatish.",
+          inc: [
+            "Soliq majburiyatlarini hisoblash",
+            "Hisobotlarni tayyorlash va topshirishga yo‘naltirish",
+            "Topshirish muddatlarini nazorat qilish",
+            "Soliq organi so‘rovlariga tayyorgarlik",
+          ],
+          res: "Muddat o‘tkazib yuborilmaydi, hisobotlar tartibli bo‘ladi.",
+          who: "Soliq hisobotini o‘zi yuritishga vaqti yetmaydigan tadbirkorlar.",
+          need: [
+            "Oldingi hisobotlar",
+            "Hisob-fakturalar",
+            "Daromad ma’lumotlari",
+          ],
+          vis: () =>
+            mh("Hisobotlar holati") +
+            mr("Oylik soliq hisobi", '<i class="st ok">Tayyor</i>') +
+            mr("Choraklik hisobot", '<i class="st wait">Tekshiruvda</i>') +
+            mr("Yillik hisobot", '<i class="st plan">Rejada</i>') +
+            '<div class="mtot"><span>Muddatlar</span><b>Nazoratda</b></div>',
+        },
+        {
+          n: "Moliyaviy tahlil",
+          s: "Daromad va xarajatlarni tahlil qilish, moliyaviy holatni baholash.",
+          inc: [
+            "Daromad va xarajat tarkibi tahlili",
+            "Foyda ulushi va rentabellikni hisoblash",
+            "Oylar bo‘yicha dinamikani solishtirish",
+            "Tejash mumkin bo‘lgan joylarni aniqlash",
+          ],
+          res: "Biznes qayerda pul topayotgani va qayerda yo‘qotayotgani ko‘rinadi.",
+          who: "Kengaytirish yoki narxni qayta ko‘rib chiqayotgan biznes egalari.",
+          need: [
+            "Oylik kirim-chiqim",
+            "Xarajatlar ro‘yxati",
+            "Mahsulot yoki xizmat narxlari",
+          ],
+          vis: () =>
+            mh("Foyda ulushi") +
+            '<div class="mbig">60%</div><p style="margin:6px 0 0;font-size:12px;color:#6b7280">Daromaddan xarajatlardan keyin qolgan qism</p><div class="mbars">' +
+            [38, 52, 46, 68, 80, 94]
+              .map((h) => '<i style="height:' + h + '%"></i>')
+              .join("") +
+            "</div>",
+        },
+        {
+          n: "Ish haqi hisobi",
+          s: "Xodimlar ish haqi va tegishli hisob-kitoblarni yuritish.",
+          inc: [
+            "Ish haqi va ushlanmalarni hisoblash",
+            "Ish vaqti jadvali asosida hisob-kitob",
+            "To‘lov vedomostlarini tayyorlash",
+            "Xodimlar bo‘yicha hisobotlar",
+          ],
+          res: "Xodimlar bilan hisob-kitobda aniqlik va ishonch.",
+          who: "Xodimlari bor har qanday korxona.",
+          need: [
+            "Xodimlar ro‘yxati",
+            "Mehnat shartnomalari",
+            "Ish vaqti jadvali",
+          ],
+          vis: () =>
+            mh("Ish haqi vedomosti") +
+            mr("Hisoblangan", "4 000 000", "pos") +
+            mr("Ushlanmalar", "−480 000", "neg") +
+            mr("Ish vaqti", "22 / 22 kun") +
+            '<div class="mtot"><span>To‘lanadi</span><b>3 520 000</b></div>',
+        },
+        {
+          n: "Hujjatlar bilan ishlash",
+          s: "Moliyaviy hujjatlarni tayyorlash, tekshirish va tizimlashtirish.",
+          inc: [
+            "Shartnoma va hisob-fakturalarni tekshirish",
+            "Hujjatlarni papkalar bo‘yicha tartiblash",
+            "Yetishmayotgan hujjatlarni aniqlash",
+            "Arxiv va saqlash tartibini yo‘lga qo‘yish",
+          ],
+          res: "Kerakli hujjat bir necha daqiqada topiladi.",
+          who: "Hujjatlari yig‘ilib ketgan yoki tartibsiz biznes.",
+          need: [
+            "Mavjud hujjatlar to‘plami",
+            "Shartnomalar",
+            "Hisob-fakturalar",
+          ],
+          vis: () =>
+            mh("Hujjatlar reestri") +
+            mr("Shartnoma", '<i class="st ok">Tekshirildi</i>') +
+            mr("Hisob-faktura", '<i class="st ok">Tekshirildi</i>') +
+            mr("Bank ko‘chirmasi", '<i class="st wait">So‘ralmoqda</i>') +
+            '<div class="mtot"><span>Tartibga keltirildi</span><b>2 / 3</b></div>',
+        },
+        {
+          n: "Moliyaviy maslahat",
+          s: "Biznesingizdagi moliyaviy masalalar bo‘yicha maslahat va tahlil.",
+          inc: [
+            "Hisob tizimini baholash",
+            "Moliyaviy rejalashtirishda yordam",
+            "Xarajatlarni optimallashtirish bo‘yicha takliflar",
+            "Murakkab holatlar bo‘yicha tushuntirish",
+          ],
+          res: "Qaror qabul qilishdan oldin aniq va asosli fikr.",
+          who: "Yangi loyiha boshlayotgan yoki qiyin tanlov oldidagi tadbirkorlar.",
+          need: [
+            "Savol yoki vaziyat tavsifi",
+            "Joriy moliyaviy holat",
+            "Maqsadlaringiz",
+          ],
+          vis: () =>
+            mh("Maslahat suhbati") +
+            '<div class="bub me">Yangi filial ochsam, xarajatlarim qanchalik o‘sadi?</div><div class="bub us">Avval hozirgi xarajatlaringizni tahlil qilamiz, so‘ng variantlarni solishtirib beramiz.</div><div class="bub me">Yaxshi, qaysi hujjatlar kerak bo‘ladi?</div>',
+        },
+      ];
+      const STEPS = [
+        [
+          "Murojaat",
+          "Siz",
+          "Siz biznesingiz va ehtiyojlaringiz haqida ma’lumot berasiz.",
+          "so‘rov qabul qilinadi",
+        ],
+        [
+          "Tahlil",
+          "Biz",
+          "Mavjud moliyaviy jarayonlar va talablar o‘rganiladi.",
+          "holat bo‘yicha tushuncha",
+        ],
+        [
+          "Rejalashtirish",
+          "Birga",
+          "Sizga mos xizmatlar va ish tartibi belgilanadi.",
+          "kelishilgan ish rejasi",
+        ],
+        [
+          "Hujjatlar",
+          "Birga",
+          "Kerakli hujjatlar tayyorlanadi va tartibga keltiriladi.",
+          "tartibli hujjatlar",
+        ],
+        [
+          "Ishni boshlash",
+          "Biz",
+          "Kelishilgan xizmatlar bo‘yicha ish jarayoni boshlanadi.",
+          "hisob muntazam yuritiladi",
+        ],
+        [
+          "Monitoring",
+          "Biz",
+          "Hisob-kitoblar va vazifalar kuzatib boriladi.",
+          "izchil nazorat va hisobotlar",
+        ],
+      ];
+      const $ = (id) => document.getElementById(id);
+      const modal = $("contactModal"),
+        form = $("contactForm"),
+        result = $("formResult"),
+        select = $("cService");
+      let lastFocus = null,
+        cur = 0;
+
+      /* xizmatlar sahnasi */
+      const idx = $("idx");
+      const ARR =
+        '<svg class="arr" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"/></svg>';
+      SERVICES.forEach((sv, i) => {
+        const b = document.createElement("button");
+        b.type = "button";
+        b.className = "row";
+        b.id = "row" + i;
+        b.setAttribute("role", "tab");
+        b.innerHTML =
+          '<span class="ri">' +
+          ico(i, 20) +
+          '</span><span class="t">' +
+          sv.n +
+          "</span>" +
+          ARR;
+        b.addEventListener("click", () => show(i));
+        b.addEventListener("keydown", (e) => {
+          const k = e.key;
+          let n = null;
+          if (k === "ArrowDown" || k === "ArrowRight")
+            n = (i + 1) % SERVICES.length;
+          else if (k === "ArrowUp" || k === "ArrowLeft")
+            n = (i - 1 + SERVICES.length) % SERVICES.length;
+          else if (k === "Home") n = 0;
+          else if (k === "End") n = SERVICES.length - 1;
+          if (n !== null) {
+            e.preventDefault();
+            show(n);
+            $("row" + n).focus();
           }
         });
+        idx.appendChild(b);
+        select.add(new Option(sv.n, sv.n));
       });
-
-      document.querySelectorAll("[data-select-service]").forEach((button) => {
-        button.addEventListener("click", () => {
-          const serviceSelect = document.getElementById("contactService");
-          serviceSelect.value = button.dataset.selectService;
-          document.getElementById("openContactModal").click();
+      function show(i) {
+        cur = i;
+        const sv = SERVICES[i];
+        idx.querySelectorAll(".row").forEach((r, k) => {
+          r.setAttribute("aria-selected", k === i);
+          r.tabIndex = k === i ? 0 : -1;
         });
+        const v = $("view");
+        v.setAttribute("aria-labelledby", "row" + i);
+        v.innerHTML =
+          '<div class="sw"><div class="vhead"><div class="vico">' +
+          ico(i, 32) +
+          '</div><h3 class="vtitle">' +
+          sv.n +
+          "</h3></div>" +
+          '<p class="vlead">' +
+          sv.s +
+          "</p>" +
+          '<div class="vgrid"><div class="vlist">' +
+          sv.inc.map((x) => '<div class="vi">' + x + "</div>").join("") +
+          '</div><div class="mock">' +
+          sv.vis() +
+          "</div></div>" +
+          '<div class="vfoot"><div class="vbox"><b>NATIJA</b><p>' +
+          sv.res +
+          '</p></div><div class="vbox"><b>KIMGA MOS</b><p>' +
+          sv.who +
+          "</p></div></div>" +
+          '<div class="vneed"><span class="k">Boshlash uchun kerak:</span>' +
+          sv.need.map((x) => '<span class="c">' + x + "</span>").join("") +
+          "</div>" +
+          '<button type="button" class="btn light mt-8" id="orderBtn">Shu xizmatni so‘rash <span>→</span></button></div>';
+        $("orderBtn").addEventListener("click", () => openModal(sv.n));
+      }
+      show(0);
+
+      /* jarayon */
+      $("steps").innerHTML = STEPS.map(
+        (s, i) =>
+          '<li class="st2"><div class="dot"></div><div class="big">' +
+          String(i + 1).padStart(2, "0") +
+          '</div><h3><span class="n">' +
+          s[0] +
+          '</span><span class="who">' +
+          s[1] +
+          "</span></h3><p>" +
+          s[2] +
+          '</p><p class="out">Natija: ' +
+          s[3] +
+          "</p></li>",
+      ).join("");
+
+      /* scroll */
+      document.querySelectorAll("[data-scroll-to]").forEach((b) =>
+        b.addEventListener("click", () => {
+          const t = $(b.dataset.scrollTo);
+          if (t) t.scrollIntoView({ behavior: "smooth", block: "start" });
+        }),
+      );
+      function progress() {
+        const d = document.documentElement,
+          p = d.scrollTop / (d.scrollHeight - d.clientHeight || 1);
+        $("rp").style.transform = "scaleX(" + Math.min(1, Math.max(0, p)) + ")";
+        const mid = window.innerHeight * 0.72;
+        document
+          .querySelectorAll(".st2")
+          .forEach((s) =>
+            s.classList.toggle("done", s.getBoundingClientRect().top < mid),
+          );
+      }
+      window.addEventListener("scroll", progress, { passive: true });
+      window.addEventListener("resize", progress);
+      progress();
+
+      /* modal */
+      function openModal(service, msg) {
+        lastFocus = document.activeElement;
+        select.value = service || "";
+        if (msg) $("cMsg").value = msg;
+        result.className = "result";
+        result.textContent = "";
+        modal.classList.add("open");
+        modal.setAttribute("aria-hidden", "false");
+        document.body.style.overflow = "hidden";
+        setTimeout(() => $("cName").focus(), 100);
+      }
+      function closeModal() {
+        modal.classList.remove("open");
+        modal.setAttribute("aria-hidden", "true");
+        document.body.style.overflow = "";
+        if (lastFocus) lastFocus.focus();
+      }
+      document
+        .querySelectorAll("[data-open-modal]")
+        .forEach((b) => b.addEventListener("click", () => openModal()));
+      $("closeModal").addEventListener("click", closeModal);
+      $("modalOverlay").addEventListener("click", closeModal);
+      document.addEventListener("keydown", (e) => {
+        if (!modal.classList.contains("open")) return;
+        if (e.key === "Escape") closeModal();
+        if (e.key === "Tab") {
+          const f = [
+            ...modal.querySelectorAll("button,input,select,textarea"),
+          ].filter((el) => !el.disabled && el.offsetParent !== null);
+          if (!f.length) return;
+          const a = f[0],
+            z = f[f.length - 1];
+          if (e.shiftKey && document.activeElement === a) {
+            e.preventDefault();
+            z.focus();
+          } else if (!e.shiftKey && document.activeElement === z) {
+            e.preventDefault();
+            a.focus();
+          }
+        }
       });
-
-      (() => {
-        const modal = document.getElementById("contactModal");
-        const openButton = document.getElementById("openContactModal");
-        const closeButton = document.getElementById("closeContactModal");
-        const overlay = document.getElementById("modalOverlay");
-        const form = document.getElementById("contactForm");
-        const result = document.getElementById("formResult");
-        const nameInput = document.getElementById("contactName");
-
-        let lastFocusedElement = null;
-
-        function openModal() {
-          lastFocusedElement = document.activeElement;
-          modal.classList.add("is-open");
-          modal.setAttribute("aria-hidden", "false");
-          document.body.style.overflow = "hidden";
-          window.setTimeout(() => nameInput.focus(), 100);
+      form.addEventListener("submit", (e) => {
+        e.preventDefault();
+        const phone = $("cPhone"),
+          digits = phone.value.replace(/\D/g, "");
+        const nameOk = $("cName").value.trim().length >= 2,
+          phoneOk = digits.length >= 9,
+          svcOk = !!select.value;
+        $("cName").classList.toggle("bad", !nameOk);
+        phone.classList.toggle("bad", !phoneOk);
+        if (!nameOk || !phoneOk || !svcOk) {
+          result.className = "result show err";
+          result.textContent = !nameOk
+            ? "Ismingizni kiriting (kamida 2 ta harf)."
+            : !phoneOk
+              ? "Telefon raqamini to‘liq kiriting, masalan: +998 90 123 45 67."
+              : "Kerakli xizmatni tanlang.";
+          return;
         }
-
-        function closeModal() {
-          modal.classList.remove("is-open");
-          modal.setAttribute("aria-hidden", "true");
-          document.body.style.overflow = "";
-
-          if (lastFocusedElement) {
-            lastFocusedElement.focus();
-          }
-        }
-
-        openButton.addEventListener("click", openModal);
-        closeButton.addEventListener("click", closeModal);
-        overlay.addEventListener("click", closeModal);
-
-        document.addEventListener("keydown", (event) => {
-          if (event.key === "Escape" && modal.classList.contains("is-open")) {
-            closeModal();
-          }
-        });
-
-        form.addEventListener("submit", (event) => {
-          event.preventDefault();
-
-          if (!form.reportValidity()) return;
-
-          result.className = "form-result show success";
-          result.textContent =
-            "Forma to‘ldirildi. Hozircha sayt serverga yoki Telegram botga ulanmagan, shu sababli ma’lumot yuborilmadi.";
-        });
-      })();
+        result.className = "result show ok";
+        result.textContent =
+          "Forma to‘ldirildi. Hozircha sayt serverga yoki Telegram botga ulanmagan, shu sababli ma’lumot yuborilmadi.";
+      });
     </script>
   </body>
 </html>
