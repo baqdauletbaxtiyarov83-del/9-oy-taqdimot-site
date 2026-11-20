@@ -1,1465 +1,795 @@
 <!doctype html>
 <html lang="uz">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Pro Hisobchi - Aloqa</title>
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Pro Hisobchi - Aloqa</title>
 
-    <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
-    <link
-      href="https://cdn.jsdelivr.net/npm/flowbite@2.5.2/dist/flowbite.min.css"
-      rel="stylesheet"
-    />
+<script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
+<link href="https://cdn.jsdelivr.net/npm/flowbite@2.5.2/dist/flowbite.min.css" rel="stylesheet" />
 
-    <!-- Leaflet Xarita -->
-    <link
-      rel="stylesheet"
-      href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"
-    />
-    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+<!-- Leaflet xarita (jsdelivr: unpkg ba'zan sekin yoki bloklangan bo'ladi) -->
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/leaflet@1.9.4/dist/leaflet.css" />
+<script src="https://cdn.jsdelivr.net/npm/leaflet@1.9.4/dist/leaflet.js"></script>
 
-    <!-- Lucide Ikonkalar -->
-    <script src="https://unpkg.com/lucide@latest"></script>
+<!-- Lucide ikonkalar -->
+<script src="https://cdn.jsdelivr.net/npm/lucide@0.263.1/dist/umd/lucide.min.js"></script>
 
-    <style>
-      html,
-      body {
-        max-width: 100%;
-        overflow-x: hidden;
-      }
+<style>
+  html, body { max-width: 100%; overflow-x: hidden; }
+  body {
+    background-color: #f3fbf6;
+    min-height: 100vh;
+    margin: 0;
+    box-shadow: inset 0 0 500px rgba(34, 48, 197, 0.22);
+  }
 
-      body {
-        background-color: #f6fcf8;
-        min-height: 100vh;
-        margin: 0;
-        box-shadow: inset 0 0 500px rgba(34, 48, 197, 0.22);
-      }
+  .gradient-text {
+    background: linear-gradient(135deg, #16a34a, #2563eb);
+    -webkit-background-clip: text; background-clip: text;
+    -webkit-text-fill-color: transparent;
+  }
+  .gradient-bg { background: linear-gradient(135deg, #16a34a, #2563eb); }
+  .nav a:focus { background-color: #c2fad7; padding: 5px; border-radius: 6px; }
 
-      .gradient-text {
-        background: linear-gradient(135deg, #16a34a, #2563eb);
-        -webkit-background-clip: text;
-        background-clip: text;
-        -webkit-text-fill-color: transparent;
-      }
+  /* ---------- KARTALAR (kuchaytirilgan) ---------- */
+  .glass-card {
+    background: rgba(255, 255, 255, 0.95);
+    backdrop-filter: blur(14px); -webkit-backdrop-filter: blur(14px);
+    border: 1.5px solid rgba(16, 185, 129, 0.3);
+    box-shadow: 0 18px 40px -22px rgba(15, 23, 42, 0.38);
+    transition: transform .25s ease, box-shadow .25s ease, border-color .25s ease;
+  }
+  .glass-card.lift:hover {
+    transform: translateY(-5px);
+    border-color: rgba(16, 185, 129, 0.65);
+    box-shadow: 0 28px 52px -24px rgba(37, 99, 235, 0.5);
+  }
 
-      .gradient-bg {
-        background: linear-gradient(135deg, #16a34a, #2563eb);
-      }
+  /* ---------- TUGMALAR (oddiy CSS: Tailwind yuklanmasa ham ko'rinadi) ---------- */
+  .btn {
+    display: inline-flex; align-items: center; justify-content: center; gap: 6px;
+    padding: 10px 16px; font-size: 13px; font-weight: 800; line-height: 1;
+    border-radius: 14px; border: 1.5px solid transparent; cursor: pointer;
+    font-family: inherit; white-space: nowrap;
+    transition: transform .2s ease, box-shadow .2s ease, background .2s ease, border-color .2s ease;
+  }
+  .btn:hover { transform: translateY(-2px); }
+  .btn:active { transform: translateY(0) scale(.98); }
+  .btn-primary { color: #fff; background: linear-gradient(135deg, #16a34a, #2563eb); box-shadow: 0 12px 24px -10px rgba(37, 99, 235, .75); }
+  .btn-primary:hover { box-shadow: 0 16px 30px -10px rgba(22, 163, 74, .75); }
+  .btn-blue { color: #fff; background: #2563eb; box-shadow: 0 10px 22px -10px rgba(37, 99, 235, .8); }
+  .btn-blue:hover { background: #1d4ed8; }
+  .btn-soft { color: #065f46; background: #ecfdf5; border-color: #6ee7b7; }
+  .btn-soft:hover { background: #d1fae5; border-color: #10b981; }
+  .btn-amber { color: #78350f; background: #fef3c7; border-color: #fcd34d; }
+  .btn-amber:hover { background: #fde68a; }
+  .btn-rose { color: #be123c; background: #fff1f2; border-color: #fda4af; padding: 9px; }
+  .btn-rose:hover { background: #ffe4e6; }
+  .btn-white { color: #065f46; background: #fff; box-shadow: 0 12px 24px -12px rgba(0, 0, 0, .45); }
+  .btn-glass { color: #fff; background: rgba(255, 255, 255, .18); border-color: rgba(255, 255, 255, .55); }
+  .btn-glass:hover { background: rgba(255, 255, 255, .3); }
+  .btn-lg { padding: 14px 20px; font-size: 14px; border-radius: 16px; }
 
-      .nav a:focus {
-        background-color: #c2fad7;
-        padding: 5px;
-        border-radius: 6px;
-      }
+  /* Xarita / Sputnik almashtirgich */
+  .seg { display: inline-flex; gap: 4px; padding: 4px; background: #fff; border: 1.5px solid #cbd5e1; border-radius: 14px; flex-shrink: 0; }
+  .seg-btn {
+    display: inline-flex; align-items: center; gap: 6px; padding: 8px 14px;
+    border-radius: 10px; border: 0; background: transparent; cursor: pointer;
+    font-family: inherit; font-size: 13px; font-weight: 800; color: #374151;
+    transition: background .2s ease, color .2s ease, box-shadow .2s ease;
+  }
+  .seg-btn:hover { background: #ecfdf5; color: #047857; }
+  .seg-btn.active { color: #fff; background: linear-gradient(135deg, #16a34a, #2563eb); box-shadow: 0 8px 18px -8px rgba(37, 99, 235, .85); }
 
-      .glass-card {
-        background: rgba(255, 255, 255, 0.92);
-        backdrop-filter: blur(14px);
-        -webkit-backdrop-filter: blur(14px);
-        border: 1px solid rgba(16, 185, 129, 0.22);
-      }
+  /* Maydonlar */
+  .field {
+    width: 100%; padding: 11px 14px; border-radius: 14px; background: #fff;
+    border: 1.5px solid #cbd5e1; font-size: 14px; font-family: inherit; outline: none;
+    transition: border-color .2s ease, box-shadow .2s ease;
+  }
+  .field:focus { border-color: #10b981; box-shadow: 0 0 0 4px rgba(16, 185, 129, .18); }
+  .field-select { font-weight: 800; border-color: #6ee7b7; cursor: pointer; padding: 8px 12px; font-size: 13px; width: auto; }
 
-      /* Xarita konteyneridan tashqari hech narsa chiqmasligi uchun */
-      .map-frame-box {
-        position: relative;
-        overflow: hidden;
-        isolation: isolate;
-      }
+  /* Belgilar (badge) */
+  .badge { font-size: 11px; font-weight: 800; padding: 3px 10px; border-radius: 9999px; }
+  .badge-green { background: #d1fae5; color: #065f46; }
+  .badge-blue { background: #dbeafe; color: #1e40af; }
+  .badge-amber { background: #fef3c7; color: #78350f; }
 
-      .leaflet-container {
-        width: 100% !important;
-        height: 100% !important;
-        z-index: 10;
-        font-family: inherit;
-        background: #9ec5ea;
-      }
+  /* Xarita */
+  .map-frame-box { position: relative; overflow: hidden; isolation: isolate; box-shadow: 0 14px 30px -18px rgba(5, 150, 105, .6); }
+  .leaflet-container { width: 100% !important; height: 100% !important; z-index: 10; font-family: inherit; background: #aad3df; }
+  .leaflet-tile-pane { transition: filter .35s ease, opacity .35s ease; }
 
-      .leaflet-tile-pane {
-        transition:
-          filter 0.35s ease,
-          opacity 0.35s ease;
-      }
-    </style>
-  </head>
-  <body
-    class="font-sans antialiased text-gray-800 flex flex-col justify-between min-w-0"
-  >
-    <!-- HEADER (Siz yuborgan kod asosida) -->
-    <header
-      class="fixed top-0 left-0 w-full z-40 bg-white/80 backdrop-blur-md border-b border-green-200/50 shadow-sm"
-    >
-      <div
-        class="max-w-[1200px] mx-auto w-full px-4 sm:px-6 py-3 flex items-center justify-between"
-      >
-        <a href="./index.html" class="flex items-center gap-3 shrink-0">
-          <img
-            src="./images/image.png"
-            class="w-10 h-10 sm:w-12 sm:h-12 rounded-xl shadow-md border border-green-100 object-cover"
-            alt="Pro Hisobchi Logo"
-          />
-          <div class="flex flex-col">
-            <span
-              class="text-[9px] font-extrabold uppercase tracking-widest text-emerald-700 bg-emerald-100 px-1.5 py-[1px] rounded w-fit"
-            >
-              PRO
-            </span>
-            <h2
-              class="text-lg sm:text-xl font-black tracking-tight gradient-text"
-            >
-              Pro Hisobchi
-            </h2>
-          </div>
+  .step-no { box-shadow: 0 10px 20px -8px rgba(37, 99, 235, .7); }
+</style>
+</head>
+
+<body class="font-sans antialiased text-gray-800 flex flex-col justify-between min-w-0">
+
+<!-- HEADER -->
+<header class="fixed top-0 left-0 w-full z-40 bg-white/90 backdrop-blur-md border-b-2 border-green-200/70 shadow-md">
+  <div class="max-w-[1200px] mx-auto w-full px-4 sm:px-6 py-3 flex items-center justify-between">
+    <a href="./index.html" class="flex items-center gap-3 shrink-0">
+      <img src="./images/image.png" class="w-10 h-10 sm:w-12 sm:h-12 rounded-xl shadow-md border border-green-100 object-cover" alt="Pro Hisobchi Logo" />
+      <div class="flex flex-col">
+        <span class="text-[9px] font-extrabold uppercase tracking-widest text-emerald-700 bg-emerald-100 px-1.5 py-[1px] rounded w-fit">PRO</span>
+        <h2 class="text-lg sm:text-xl font-black tracking-tight gradient-text">Pro Hisobchi</h2>
+      </div>
+    </a>
+
+    <nav class="nav hidden md:flex items-center gap-8">
+      <a href="./index.html" class="text-sm font-bold text-gray-700 hover:text-emerald-600 transition-colors">Bosh sahifa</a>
+      <a href="./xizmatlar.html" class="text-sm font-bold text-gray-700 hover:text-emerald-600 transition-colors">Xizmatlar</a>
+      <a href="./to'lovlar.html" class="text-sm font-bold text-gray-700 hover:text-emerald-600 transition-colors">To'lovlar</a>
+      <a href="./aloqa.html" class="text-sm font-extrabold text-emerald-700 transition-colors">Aloqa</a>
+    </nav>
+
+    <div class="flex items-center gap-3 shrink-0">
+      <a href="./profil.html" class="relative block">
+        <img src="./images/image copy.png" class="w-9 h-9 sm:w-10 sm:h-10 rounded-full ring-2 ring-emerald-500/70 object-cover" alt="Profil" />
+      </a>
+      <button type="button" data-drawer-target="drawer-navigation" data-drawer-show="drawer-navigation" aria-controls="drawer-navigation"
+        class="md:hidden p-2 text-gray-700 bg-emerald-50 border border-emerald-200 hover:bg-emerald-100 rounded-xl transition-all cursor-pointer">
+        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16" /></svg>
+      </button>
+    </div>
+  </div>
+</header>
+
+<!-- MOBILE DRAWER -->
+<div id="drawer-navigation" class="fixed top-0 left-0 z-50 h-screen p-5 overflow-y-auto transition-transform -translate-x-full bg-white w-80 max-w-[85vw] border-e border-emerald-100 shadow-2xl" tabindex="-1" aria-labelledby="drawer-navigation-label">
+  <div class="pb-4 mb-4 border-b border-gray-100 flex items-center justify-between">
+    <a href="./index.html" class="flex items-center space-x-3">
+      <img src="./images/image.png" class="h-10 w-10 rounded-xl shadow-sm border border-emerald-100" alt="Pro Hisobchi Logo" />
+      <div class="flex flex-col">
+        <span class="text-[9px] font-extrabold tracking-widest text-emerald-700 bg-emerald-100 px-1.5 py-0.5 rounded w-fit">PRO</span>
+        <span class="text-base font-bold gradient-text">Pro Hisobchi</span>
+      </div>
+    </a>
+    <button type="button" data-drawer-hide="drawer-navigation" aria-controls="drawer-navigation"
+      class="text-gray-500 bg-gray-50 border border-gray-200 hover:bg-emerald-50 hover:text-emerald-600 rounded-xl w-9 h-9 flex items-center justify-center transition-all cursor-pointer">
+      <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18 17.94 6M18 18 6.06 6" /></svg>
+      <span class="sr-only">Menyuni yopish</span>
+    </button>
+  </div>
+
+  <div class="py-2">
+    <ul class="space-y-2 font-medium">
+      <li>
+        <a href="./index.html" class="flex items-center p-3 text-gray-700 rounded-xl hover:bg-emerald-50 hover:text-emerald-600 transition-all group">
+          <svg class="w-5 h-5 text-gray-400 group-hover:text-emerald-600 transition-colors" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="m4 12 8-8 8 8M6 10.5V19a1 1 0 0 0 1 1h3v-3a1 1 0 0 1 1-1h2a1 1 0 0 1 1 1v3h3a1 1 0 0 0 1-1v-8.5" /></svg>
+          <span class="ms-3 text-sm font-semibold">Bosh sahifa</span>
         </a>
-
-        <nav class="nav hidden md:flex items-center gap-8">
-          <a
-            href="./index.html"
-            class="text-sm font-semibold text-gray-700 hover:text-emerald-600 transition-colors"
-          >
-            Bosh sahifa
-          </a>
-          <a
-            href="./xizmatlar.html"
-            class="text-sm font-semibold text-gray-700 hover:text-emerald-600 transition-colors"
-          >
-            Xizmatlar
-          </a>
-          <a
-            href="./to'lovlar.html"
-            class="text-sm font-semibold text-gray-700 hover:text-emerald-600 transition-colors"
-          >
-            To'lovlar
-          </a>
-          <a
-            href="./aloqa.html"
-            class="text-sm font-semibold text-gray-700 hover:text-emerald-600 transition-colors"
-          >
-            Aloqa
-          </a>
-        </nav>
-
-        <div class="flex items-center gap-3 shrink-0">
-          <a href="./profil.html" class="relative block">
-            <img
-              src="./images/image copy.png"
-              class="w-9 h-9 sm:w-10 sm:h-10 rounded-full ring-2 ring-emerald-500/60 object-cover"
-              alt="Profil"
-            />
-          </a>
-
-          <button
-            type="button"
-            data-drawer-target="drawer-navigation"
-            data-drawer-show="drawer-navigation"
-            aria-controls="drawer-navigation"
-            class="md:hidden p-2 text-gray-600 hover:text-emerald-600 hover:bg-emerald-50 rounded-xl transition-all cursor-pointer"
-          >
-            <svg
-              class="w-6 h-6"
-              fill="none"
-              stroke="currentColor"
-              viewBox="0 0 24 24"
-            >
-              <path
-                stroke-linecap="round"
-                stroke-linejoin="round"
-                stroke-width="2"
-                d="M4 6h16M4 12h16M4 18h16"
-              />
-            </svg>
-          </button>
-        </div>
-      </div>
-    </header>
-
-    <!-- MOBILE DRAWER (Siz yuborgan kod asosida) -->
-    <div
-      id="drawer-navigation"
-      class="fixed top-0 left-0 z-50 h-screen p-5 overflow-y-auto transition-transform -translate-x-full bg-white w-80 max-w-[85vw] border-e border-emerald-100 shadow-2xl"
-      tabindex="-1"
-      aria-labelledby="drawer-navigation-label"
-    >
-      <div
-        class="pb-4 mb-4 border-b border-gray-100 flex items-center justify-between"
-      >
-        <a href="" class="flex items-center space-x-3">
-          <img
-            src="./images/image.png"
-            class="h-10 w-10 rounded-xl shadow-sm border border-emerald-100"
-            alt="Pro Hisobchi Logo"
-          />
-          <div class="flex flex-col">
-            <span
-              class="text-[9px] font-extrabold tracking-widest text-emerald-700 bg-emerald-100 px-1.5 py-0.5 rounded w-fit"
-              >PRO</span
-            >
-            <span class="text-base font-bold gradient-text">Pro Hisobchi</span>
-          </div>
+      </li>
+      <li>
+        <a href="./xizmatlar.html" class="flex items-center p-3 text-gray-700 rounded-xl hover:bg-emerald-50 hover:text-emerald-600 transition-all group">
+          <svg class="w-5 h-5 text-gray-400 group-hover:text-emerald-600 transition-colors" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6.025A7.5 7.5 0 1 0 17.975 14H10V6.025Z" /><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13.5 3c-.169 0-.334.014-.5.025V11h7.975c.011-.166.025-.331.025-.5A7.5 7.5 0 0 0 13.5 3Z" /></svg>
+          <span class="ms-3 text-sm font-semibold">Xizmatlar</span>
         </a>
-        <button
-          type="button"
-          data-drawer-hide="drawer-navigation"
-          aria-controls="drawer-navigation"
-          class="text-gray-400 bg-transparent hover:bg-emerald-50 hover:text-emerald-600 rounded-xl w-9 h-9 flex items-center justify-center transition-all cursor-pointer"
-        >
-          <svg
-            class="w-5 h-5"
-            fill="none"
-            stroke="currentColor"
-            viewBox="0 0 24 24"
-          >
-            <path
-              stroke-linecap="round"
-              stroke-linejoin="round"
-              stroke-width="2"
-              d="M6 18 17.94 6M18 18 6.06 6"
-            />
-          </svg>
-          <span class="sr-only">Menyuni yopish</span>
-        </button>
-      </div>
+      </li>
+      <li>
+        <a href="./to'lovlar.html" class="flex items-center p-3 text-gray-700 rounded-xl hover:bg-emerald-50 hover:text-emerald-600 transition-all group">
+          <svg class="w-5 h-5 text-gray-400 group-hover:text-emerald-600 transition-colors" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 5v14M9 5v14M4 5h16a1 1 0 0 1 1 1v12a1 1 0 0 1-1 1H4a1 1 0 0 1-1-1V6a1 1 0 0 1 1-1Z" /></svg>
+          <span class="ms-3 text-sm font-semibold flex-1">To'lovlar</span>
+          <span class="bg-emerald-100 border border-emerald-200 text-emerald-700 text-[10px] font-bold px-2 py-0.5 rounded-md">Pro</span>
+        </a>
+      </li>
+      <li>
+        <a href="./aloqa.html" class="flex items-center p-3 text-emerald-700 bg-emerald-50 rounded-xl transition-all group">
+          <svg class="w-5 h-5 text-emerald-600 transition-colors" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M18.42 15.61a2.1 2.1 0 0 0-2.97 0l-1 1a1.23 1.23 0 0 1-1.32.3 12.37 12.37 0 0 1-5.18-5.18 1.23 1.23 0 0 1 .3-1.32l1-1a2.1 2.1 0 0 0 0-2.97L7.3 4.5a2.1 2.1 0 0 0-2.97 0L3.1 5.73A3.1 3.1 0 0 0 2.2 8a17.2 17.2 0 0 0 13.8 13.8 3.1 3.1 0 0 0 2.27-.9l1.23-1.23a2.1 2.1 0 0 0 0-2.97l-1.08-1.09Z" /></svg>
+          <span class="ms-3 text-sm font-extrabold">Aloqa</span>
+        </a>
+      </li>
+    </ul>
+  </div>
+</div>
 
-      <div class="py-2">
-        <ul class="space-y-2 font-medium">
-          <li>
-            <a
-              href="./index.html"
-              class="flex items-center p-3 text-gray-700 rounded-xl hover:bg-emerald-50 hover:text-emerald-600 transition-all group"
-            >
-              <svg
-                class="w-5 h-5 text-gray-400 group-hover:text-emerald-600 transition-colors"
-                fill="none"
-                stroke="currentColor"
-                viewBox="0 0 24 24"
-              >
-                <path
-                  stroke-linecap="round"
-                  stroke-linejoin="round"
-                  stroke-width="2"
-                  d="m4 12 8-8 8 8M6 10.5V19a1 1 0 0 0 1 1h3v-3a1 1 0 0 1 1-1h2a1 1 0 0 1 1 1v3h3a1 1 0 0 0 1-1v-8.5"
-                />
-              </svg>
-              <span class="ms-3 text-sm font-semibold">Bosh sahifa</span>
-            </a>
-          </li>
+<!-- ASOSIY KONTENT -->
+<main class="max-w-[1200px] mx-auto w-full px-3 sm:px-6 pt-24 sm:pt-28 pb-16 space-y-12 sm:space-y-16 min-w-0">
 
-          <li>
-            <a
-              href="./xizmatlar.html"
-              class="flex items-center p-3 text-gray-700 rounded-xl hover:bg-emerald-50 hover:text-emerald-600 transition-all group"
-            >
-              <svg
-                class="w-5 h-5 text-gray-400 group-hover:text-emerald-600 transition-colors"
-                fill="none"
-                stroke="currentColor"
-                viewBox="0 0 24 24"
-              >
-                <path
-                  stroke-linecap="round"
-                  stroke-linejoin="round"
-                  stroke-width="2"
-                  d="M10 6.025A7.5 7.5 0 1 0 17.975 14H10V6.025Z"
-                />
-                <path
-                  stroke-linecap="round"
-                  stroke-linejoin="round"
-                  stroke-width="2"
-                  d="M13.5 3c-.169 0-.334.014-.5.025V11h7.975c.011-.166.025-.331.025-.5A7.5 7.5 0 0 0 13.5 3Z"
-                />
-              </svg>
-              <span class="ms-3 text-sm font-semibold">Xizmatlar</span>
-            </a>
-          </li>
+  <!-- SARLAVHA -->
+  <section class="text-center max-w-3xl mx-auto min-w-0">
+    <div class="inline-flex items-center gap-2 text-[10px] sm:text-xs font-extrabold uppercase tracking-wider text-emerald-800 bg-white border-2 border-emerald-200 px-4 py-1.5 rounded-full shadow-md mb-4">
+      <span class="w-2 h-2 rounded-full bg-emerald-500 animate-ping"></span>
+      <span>Aloqa va joylashuv markazi</span>
+    </div>
+    <h1 class="text-3xl sm:text-6xl font-black tracking-tight text-gray-900 leading-tight mb-3">
+      Biz bilan <span class="gradient-text">oson bog‘laning</span>
+    </h1>
+    <p class="text-gray-600 text-sm sm:text-lg leading-relaxed">
+      Buxgalteriya, soliq hisobotlari va <strong>Pro Hisobchi</strong> xizmatlari bo‘yicha savollaringizga tezkor javob beramiz.
+    </p>
+  </section>
 
-          <li>
-            <a
-              href="./to'lovlar.html"
-              class="flex items-center p-3 text-gray-700 rounded-xl hover:bg-emerald-50 hover:text-emerald-600 transition-all group"
-            >
-              <svg
-                class="w-5 h-5 text-gray-400 group-hover:text-emerald-600 transition-colors"
-                fill="none"
-                stroke="currentColor"
-                viewBox="0 0 24 24"
-              >
-                <path
-                  stroke-linecap="round"
-                  stroke-linejoin="round"
-                  stroke-width="2"
-                  d="M15 5v14M9 5v14M4 5h16a1 1 0 0 1 1 1v12a1 1 0 0 1-1 1H4a1 1 0 0 1-1-1V6a1 1 0 0 1 1-1Z"
-                />
-              </svg>
-              <span class="ms-3 text-sm font-semibold flex-1">To'lovlar</span>
-              <span
-                class="bg-emerald-100 border border-emerald-200 text-emerald-700 text-[10px] font-bold px-2 py-0.5 rounded-md"
-                >Pro</span
-              >
-            </a>
-          </li>
-
-          <li>
-            <a
-              href="./aloqa.html"
-              class="flex items-center p-3 text-gray-700 rounded-xl hover:bg-emerald-50 hover:text-emerald-600 transition-all group"
-            >
-              <svg
-                class="w-5 h-5 text-gray-400 group-hover:text-emerald-600 transition-colors"
-                fill="none"
-                stroke="currentColor"
-                viewBox="0 0 24 24"
-              >
-                <path
-                  stroke-linecap="round"
-                  stroke-linejoin="round"
-                  stroke-width="2"
-                  d="M18.42 15.61a2.1 2.1 0 0 0-2.97 0l-1 1a1.23 1.23 0 0 1-1.32.3 12.37 12.37 0 0 1-5.18-5.18 1.23 1.23 0 0 1 .3-1.32l1-1a2.1 2.1 0 0 0 0-2.97L7.3 4.5a2.1 2.1 0 0 0-2.97 0L3.1 5.73A3.1 3.1 0 0 0 2.2 8a17.2 17.2 0 0 0 13.8 13.8 3.1 3.1 0 0 0 2.27-.9l1.23-1.23a2.1 2.1 0 0 0 0-2.97l-1.08-1.09Z"
-                />
-              </svg>
-              <span class="ms-3 text-sm font-semibold">Aloqa</span>
-            </a>
-          </li>
-        </ul>
-      </div>
+  <!-- 3 TA ALOQA KARTASI -->
+  <section class="grid grid-cols-1 md:grid-cols-3 gap-4 sm:gap-6 min-w-0">
+    <div class="glass-card lift rounded-3xl p-5 sm:p-7 min-w-0">
+      <div class="w-12 h-12 rounded-2xl gradient-bg text-white flex items-center justify-center mb-4 shadow-lg"><i data-lucide="phone" class="w-6 h-6"></i></div>
+      <h3 class="text-lg sm:text-xl font-extrabold text-gray-900 mb-1">Telefon</h3>
+      <p class="text-xs text-gray-500 mb-2">Dushanba – Shanba, 09:00 – 18:00</p>
+      <a href="tel:+998901234567" class="text-lg font-black text-emerald-700 hover:text-blue-600 break-all">+998 (90) 123-45-67</a>
     </div>
 
-    <!-- ASOSIY KONTENT -->
-    <main
-      class="max-w-[1200px] mx-auto w-full px-3 sm:px-6 pt-24 sm:pt-28 pb-16 space-y-12 sm:space-y-16 min-w-0"
-    >
-      <!-- SECTION 1: SARLAVHA -->
-      <section class="text-center max-w-3xl mx-auto min-w-0">
-        <div
-          class="inline-flex items-center gap-2 text-[10px] sm:text-xs font-extrabold uppercase tracking-wider text-emerald-800 bg-white border border-emerald-200 px-3.5 py-1.5 rounded-full shadow-sm mb-3"
-        >
-          <span class="w-2 h-2 rounded-full bg-emerald-500 animate-ping"></span>
-          <span>Aloqa va joylashuv markazi</span>
+    <div class="glass-card lift rounded-3xl p-5 sm:p-7 min-w-0">
+      <div class="w-12 h-12 rounded-2xl bg-blue-600 text-white flex items-center justify-center mb-4 shadow-lg"><i data-lucide="send" class="w-6 h-6"></i></div>
+      <h3 class="text-lg sm:text-xl font-extrabold text-gray-900 mb-1">Telegram & Pochta</h3>
+      <p class="text-xs text-gray-500 mb-2">Onlayn murojaat va hujjatlar</p>
+      <a href="https://t.me/" target="_blank" rel="noopener" class="block text-base font-extrabold text-blue-600 hover:text-emerald-600 break-all">@prohisobchi_uz</a>
+      <a href="mailto:info@prohisobchi.uz" class="block text-sm font-bold text-gray-700 hover:text-blue-600 break-all mt-0.5">info@prohisobchi.uz</a>
+    </div>
+
+    <div class="glass-card lift rounded-3xl p-5 sm:p-7 min-w-0">
+      <div class="w-12 h-12 rounded-2xl bg-emerald-600 text-white flex items-center justify-center mb-4 shadow-lg"><i data-lucide="map-pin" class="w-6 h-6"></i></div>
+      <h3 class="text-lg sm:text-xl font-extrabold text-gray-900 mb-1">Ofis manzili</h3>
+      <p class="text-xs text-gray-500 mb-2">Shaxsiy uchrashuvlar uchun</p>
+      <p class="text-base font-extrabold text-gray-900">Toshkent sh., Amir Temur shoh ko‘chasi, 108-uy</p>
+    </div>
+  </section>
+
+  <!-- FORMA + XARITA -->
+  <section class="grid grid-cols-1 lg:grid-cols-12 gap-6 sm:gap-8 items-start min-w-0">
+
+    <!-- Forma -->
+    <div class="lg:col-span-5 glass-card rounded-3xl p-4 sm:p-8 min-w-0">
+      <h2 class="text-2xl sm:text-3xl font-black text-gray-900 mb-1">Xabar qoldirish</h2>
+      <p class="text-xs sm:text-sm text-gray-500 mb-5">Ma’lumotlaringizni yozing — mutaxassisimiz aloqaga chiqadi.</p>
+
+      <form id="contactForm" class="space-y-4">
+        <div class="min-w-0">
+          <label class="block text-xs font-extrabold uppercase tracking-wider text-gray-600 mb-1.5">Ismingiz *</label>
+          <input type="text" required placeholder="Masalan: Azizbek Karimov" class="field" />
+        </div>
+        <div class="min-w-0">
+          <label class="block text-xs font-extrabold uppercase tracking-wider text-gray-600 mb-1.5">Telefon raqam *</label>
+          <input type="tel" required placeholder="+998 90 123 45 67" class="field" />
+        </div>
+        <div class="min-w-0">
+          <label class="block text-xs font-extrabold uppercase tracking-wider text-gray-600 mb-1.5">Murojaat mavzusi</label>
+          <select class="field">
+            <option value="buxgalteriya">Buxgalteriya xizmati</option>
+            <option value="soliq">Soliq hisobotlari</option>
+            <option value="pro">Pro tarif va to‘lovlar</option>
+            <option value="boshqa">Boshqa savol</option>
+          </select>
+        </div>
+        <div class="min-w-0">
+          <label class="block text-xs font-extrabold uppercase tracking-wider text-gray-600 mb-1.5">Xabaringiz *</label>
+          <textarea rows="4" required placeholder="Savolingizni yozing..." class="field resize-none"></textarea>
         </div>
 
-        <h1
-          class="text-2xl sm:text-5xl font-black tracking-tight text-gray-900 leading-tight mb-3"
-        >
-          Biz bilan <span class="gradient-text">oson bog‘laning</span>
-        </h1>
+        <button type="submit" class="btn btn-primary btn-lg w-full"><span>Yuborish</span><i data-lucide="arrow-right" class="w-4 h-4"></i></button>
 
-        <p class="text-gray-600 text-xs sm:text-base leading-relaxed">
-          Buxgalteriya, soliq hisobotlari va
-          <strong>Pro Hisobchi</strong> xizmatlari bo‘yicha savollaringizga
-          tezkor javob beramiz.
-        </p>
-      </section>
-
-      <!-- SECTION 2: 3 TA ALOQA KARTASI -->
-      <section class="grid grid-cols-1 md:grid-cols-3 gap-4 sm:gap-6 min-w-0">
-        <div class="glass-card rounded-3xl p-5 sm:p-6 shadow-md min-w-0">
-          <div
-            class="w-11 h-11 rounded-2xl gradient-bg text-white flex items-center justify-center mb-3.5 shadow"
-          >
-            <i data-lucide="phone" class="w-5 h-5"></i>
-          </div>
-          <h3 class="text-base sm:text-lg font-extrabold text-gray-900 mb-1">
-            Telefon
-          </h3>
-          <p class="text-xs text-gray-500 mb-2">
-            Dushanba – Shanba, 09:00 – 18:00
-          </p>
-          <a
-            href="tel:+998901234567"
-            class="text-base font-black text-emerald-700 hover:text-blue-600 break-all"
-          >
-            +998 (90) 123-45-67
-          </a>
+        <div id="formSuccess" class="hidden p-3.5 rounded-2xl bg-emerald-50 border-2 border-emerald-200 text-emerald-900 text-xs sm:text-sm font-bold items-center gap-2">
+          <i data-lucide="check-circle-2" class="w-5 h-5 text-emerald-600 shrink-0"></i>
+          <span>Xabaringiz muvaffaqiyatli yuborildi!</span>
         </div>
+      </form>
+    </div>
 
-        <div class="glass-card rounded-3xl p-5 sm:p-6 shadow-md min-w-0">
-          <div
-            class="w-11 h-11 rounded-2xl bg-blue-600 text-white flex items-center justify-center mb-3.5 shadow"
-          >
-            <i data-lucide="send" class="w-5 h-5"></i>
-          </div>
-          <h3 class="text-base sm:text-lg font-extrabold text-gray-900 mb-1">
-            Telegram & Pochta
-          </h3>
-          <p class="text-xs text-gray-500 mb-2">Onlayn murojaat va hujjatlar</p>
-          <a
-            href="https://t.me/"
-            target="_blank"
-            class="block text-sm font-extrabold text-blue-600 hover:text-emerald-600 break-all"
-          >
-            @prohisobchi_uz
-          </a>
-          <a
-            href="mailto:info@prohisobchi.uz"
-            class="block text-xs font-bold text-gray-700 hover:text-blue-600 break-all mt-0.5"
-          >
-            info@prohisobchi.uz
-          </a>
-        </div>
+    <!-- Xarita -->
+    <div class="lg:col-span-7 glass-card rounded-3xl p-4 sm:p-6 min-w-0 space-y-4">
 
-        <div class="glass-card rounded-3xl p-5 sm:p-6 shadow-md min-w-0">
-          <div
-            class="w-11 h-11 rounded-2xl bg-emerald-600 text-white flex items-center justify-center mb-3.5 shadow"
-          >
-            <i data-lucide="map-pin" class="w-5 h-5"></i>
-          </div>
-          <h3 class="text-base sm:text-lg font-extrabold text-gray-900 mb-1">
-            Ofis manzili
-          </h3>
-          <p class="text-xs text-gray-500 mb-2">Shaxsiy uchrashuvlar uchun</p>
-          <p class="text-sm font-extrabold text-gray-900">
-            Toshkent sh., Amir Temur shoh ko‘chasi, 108-uy
-          </p>
-        </div>
-      </section>
-
-      <!-- SECTION 3: FORMA + GOOGLE EARTH / MAPS XARITA & OTCHYOT -->
-      <section
-        class="grid grid-cols-1 lg:grid-cols-12 gap-6 sm:gap-8 items-start min-w-0"
-      >
-        <!-- Forma (5 ustun) -->
-        <div
-          class="lg:col-span-5 glass-card rounded-3xl p-4 sm:p-7 shadow-xl min-w-0"
-        >
-          <h2 class="text-xl sm:text-2xl font-black text-gray-900 mb-1">
-            Xabar qoldirish
-          </h2>
-          <p class="text-xs sm:text-sm text-gray-500 mb-5">
-            Ma’lumotlaringizni yozing — mutaxassisimiz aloqaga chiqadi.
-          </p>
-
-          <form id="contactForm" class="space-y-4">
-            <div class="min-w-0">
-              <label
-                class="block text-xs font-bold uppercase tracking-wider text-gray-600 mb-1.5"
-              >
-                Ismingiz *
-              </label>
-              <input
-                type="text"
-                required
-                placeholder="Masalan: Azizbek Karimov"
-                class="w-full px-3.5 py-2.5 rounded-xl bg-white border border-gray-200 text-sm focus:ring-2 focus:ring-emerald-500 outline-none"
-              />
-            </div>
-
-            <div class="min-w-0">
-              <label
-                class="block text-xs font-bold uppercase tracking-wider text-gray-600 mb-1.5"
-              >
-                Telefon raqam *
-              </label>
-              <input
-                type="tel"
-                required
-                placeholder="+998 90 123 45 67"
-                class="w-full px-3.5 py-2.5 rounded-xl bg-white border border-gray-200 text-sm focus:ring-2 focus:ring-emerald-500 outline-none"
-              />
-            </div>
-
-            <div class="min-w-0">
-              <label
-                class="block text-xs font-bold uppercase tracking-wider text-gray-600 mb-1.5"
-              >
-                Murojaat mavzusi
-              </label>
-              <select
-                class="w-full px-3.5 py-2.5 rounded-xl bg-white border border-gray-200 text-sm focus:ring-2 focus:ring-emerald-500 outline-none"
-              >
-                <option value="buxgalteriya">Buxgalteriya xizmati</option>
-                <option value="soliq">Soliq hisobotlari</option>
-                <option value="pro">Pro tarif va to‘lovlar</option>
-                <option value="boshqa">Boshqa savol</option>
-              </select>
-            </div>
-
-            <div class="min-w-0">
-              <label
-                class="block text-xs font-bold uppercase tracking-wider text-gray-600 mb-1.5"
-              >
-                Xabaringiz *
-              </label>
-              <textarea
-                rows="4"
-                required
-                placeholder="Savolingizni yozing..."
-                class="w-full px-3.5 py-2.5 rounded-xl bg-white border border-gray-200 text-sm focus:ring-2 focus:ring-emerald-500 outline-none resize-none"
-              ></textarea>
-            </div>
-
-            <button
-              type="submit"
-              class="w-full py-3.5 px-5 rounded-2xl text-white font-extrabold text-sm gradient-bg hover:opacity-95 transition-all shadow-lg flex items-center justify-center gap-2 cursor-pointer"
-            >
-              <span>Yuborish</span>
-              <i data-lucide="arrow-right" class="w-4 h-4"></i>
-            </button>
-
-            <div
-              id="formSuccess"
-              class="hidden p-3.5 rounded-2xl bg-emerald-50 border border-emerald-200 text-emerald-900 text-xs sm:text-sm font-semibold flex items-center gap-2"
-            >
-              <i
-                data-lucide="check-circle-2"
-                class="w-5 h-5 text-emerald-600 shrink-0"
-              ></i>
-              <span>Xabaringiz muvaffaqiyatli yuborildi!</span>
-            </div>
-          </form>
-        </div>
-
-        <!-- Xarita + Yil Select (2000-2026) + Xarita/Sputnik + Qidiruv + Otchyot (7 ustun) -->
-        <div
-          class="lg:col-span-7 glass-card rounded-3xl p-4 sm:p-6 shadow-xl min-w-0 space-y-4"
-        >
-          <!-- Yuqori boshqaruv -->
-          <div class="flex flex-col gap-2.5">
-            <div class="flex flex-wrap items-center justify-between gap-2">
-              <div class="min-w-0">
-                <div class="flex items-center gap-2 flex-wrap">
-                  <h3 class="text-base sm:text-lg font-black text-gray-900">
-                    Xarita (2000 – 2026)
-                  </h3>
-                  <span
-                    id="mapStatusBadge"
-                    class="text-[11px] font-bold px-2.5 py-0.5 rounded-full bg-emerald-100 text-emerald-800"
-                  >
-                    2026 • Xarita
-                  </span>
-                </div>
-                <p
-                  id="yearEffectHint"
-                  class="text-[11px] sm:text-xs text-gray-500"
-                >
-                  Zamonaviy 2026 xarita ko‘rinishi faol
-                </p>
-              </div>
-
-              <div class="flex items-center gap-1.5 flex-wrap">
-                <button
-                  type="button"
-                  onclick="resetToGlobalView()"
-                  class="inline-flex items-center gap-1 px-2.5 py-1.5 rounded-xl bg-emerald-50 hover:bg-emerald-100 text-emerald-800 border border-emerald-200 text-xs font-extrabold cursor-pointer"
-                >
-                  <i data-lucide="globe" class="w-3.5 h-3.5"></i>
-                  <span>Dunyo</span>
-                </button>
-
-                <button
-                  type="button"
-                  onclick="openFullscreenMap()"
-                  class="inline-flex items-center gap-1 px-3 py-1.5 rounded-xl bg-blue-600 hover:bg-blue-700 text-white text-xs font-extrabold shadow-sm cursor-pointer"
-                >
-                  <i data-lucide="maximize-2" class="w-3.5 h-3.5"></i>
-                  <span>Kattalashtirish</span>
-                </button>
-              </div>
-            </div>
-
-            <!-- Yil select (2000-2026) + 2026 ga qaytish + Xarita / Sputnik -->
-            <div
-              class="flex flex-wrap items-center justify-between gap-2 bg-gray-50 border border-gray-200 rounded-2xl p-2"
-            >
-              <div class="flex items-center gap-2 flex-wrap min-w-0">
-                <label
-                  for="mapYearSelect"
-                  class="text-xs font-extrabold text-gray-700 pl-1"
-                >
-                  Yil:
-                </label>
-                <select
-                  id="mapYearSelect"
-                  onchange="applyYearToMap(this.value)"
-                  class="px-3 py-1.5 rounded-xl bg-white border border-emerald-300 text-xs sm:text-sm font-black text-gray-900 focus:ring-2 focus:ring-emerald-500 outline-none cursor-pointer"
-                ></select>
-
-                <button
-                  type="button"
-                  id="backTo2026Btn"
-                  onclick="applyYearToMap(2026)"
-                  class="hidden inline-flex items-center gap-1 px-2.5 py-1.5 rounded-xl bg-amber-100 hover:bg-amber-200 text-amber-900 border border-amber-300 text-[11px] font-extrabold cursor-pointer"
-                >
-                  <i data-lucide="rotate-ccw" class="w-3.5 h-3.5"></i>
-                  <span>2026 yilgi mapga qaytish</span>
-                </button>
-              </div>
-
-              <!-- Xarita (Sputnik emas) / Sputnik -->
-              <div
-                class="inline-flex rounded-xl bg-white p-1 border border-gray-200 shrink-0"
-              >
-                <button
-                  type="button"
-                  id="btnStandardMap"
-                  onclick="setMapMode('standard')"
-                  class="inline-flex items-center gap-1 px-2.5 sm:px-3 py-1 rounded-lg text-xs font-extrabold bg-emerald-100 text-emerald-800 cursor-pointer"
-                >
-                  <i data-lucide="map" class="w-3.5 h-3.5"></i>
-                  <span>Xarita</span>
-                </button>
-                <button
-                  type="button"
-                  id="btnSatelliteMap"
-                  onclick="setMapMode('satellite')"
-                  class="inline-flex items-center gap-1 px-2.5 sm:px-3 py-1 rounded-lg text-xs font-extrabold text-gray-600 hover:text-blue-700 cursor-pointer"
-                >
-                  <i data-lucide="satellite" class="w-3.5 h-3.5"></i>
-                  <span>Sputnik</span>
-                </button>
-              </div>
-            </div>
-          </div>
-
-          <!-- Xarita konteyneri: rasm kabi keng global ko'rinish, chegaradan chiqmaydi -->
-          <div
-            id="mapHomeSlot"
-            class="map-frame-box rounded-2xl border border-emerald-200 w-full h-60 sm:h-72 bg-[#9ec5ea]"
-          >
-            <div id="leafletMap" class="w-full h-full"></div>
-          </div>
-
-          <!-- Xarita TAGIDAGI qidiruv inputi -->
-          <div class="relative min-w-0">
-            <label
-              for="mapSearchInput"
-              class="block text-xs font-bold text-gray-700 mb-1.5"
-            >
-              Shahar, tuman, ko‘cha yoki davlat yozing (masalan: "chorvoq",
-              "bektemir", "b"):
-            </label>
-            <div class="flex flex-col sm:flex-row gap-2 min-w-0">
-              <div class="relative flex-1 min-w-0">
-                <input
-                  id="mapSearchInput"
-                  type="text"
-                  autocomplete="off"
-                  oninput="handleLiveSuggestions(this.value, 'main')"
-                  onkeydown="
-                    if (event.key === 'Enter') {
-                      event.preventDefault();
-                      searchExactLocation('main');
-                    }
-                  "
-                  placeholder="Masalan: chorvoq, bektemir, b, toshkent..."
-                  class="w-full pl-9 pr-3 py-2.5 rounded-xl bg-white border border-gray-300 text-xs sm:text-sm focus:ring-2 focus:ring-emerald-500 outline-none"
-                />
-                <i
-                  data-lucide="search"
-                  class="w-4 h-4 text-gray-400 absolute left-3 top-1/2 -translate-y-1/2 pointer-events-none"
-                ></i>
-              </div>
-              <button
-                type="button"
-                onclick="searchExactLocation('main')"
-                class="px-4 py-2.5 rounded-xl gradient-bg text-white text-xs sm:text-sm font-extrabold hover:opacity-95 flex items-center justify-center gap-1.5 shrink-0 cursor-pointer"
-              >
-                <i data-lucide="navigation" class="w-4 h-4"></i>
-                <span>Topish</span>
-              </button>
-            </div>
-
-            <!-- Tavsiyalar ro'yxati: har birining tepasida davlat/viloyat kichik badge ko'rinadi -->
-            <div
-              id="mainSuggestionsBox"
-              class="hidden mt-2 rounded-2xl bg-white border border-emerald-200 shadow-xl divide-y divide-gray-100 max-h-60 overflow-y-auto z-30"
-            ></div>
-          </div>
-
-          <!-- XARITA TAGIDAGI OTCHYOT (HISOBOT) -->
-          <div
-            class="rounded-2xl bg-gradient-to-br from-emerald-50/95 via-white to-blue-50/95 border border-emerald-200 p-4 shadow-sm min-w-0"
-          >
-            <div
-              class="flex flex-wrap items-center justify-between gap-2 pb-2.5 mb-2.5 border-b border-emerald-100"
-            >
-              <span
-                class="text-xs font-black uppercase tracking-wider text-gray-900"
-              >
-                Joylashuv Otchyoti
-              </span>
-              <span
-                id="repYearBadge"
-                class="text-[11px] font-extrabold px-2.5 py-0.5 rounded-full bg-emerald-100 text-emerald-800"
-              >
-                2026-yil
-              </span>
-            </div>
-
-            <div
-              class="bg-white/90 rounded-xl p-3 border border-gray-100 mb-2.5 min-w-0"
-            >
-              <span
-                id="repCountryBadge"
-                class="inline-block text-[10px] font-extrabold uppercase tracking-wider px-2 py-0.5 rounded-md bg-blue-50 text-blue-700 border border-blue-100 mb-1"
-              >
-                O‘zbekiston • Toshkent shahri
-              </span>
-              <div
-                id="repPlaceTitle"
-                class="text-sm font-black text-gray-900 break-words"
-              >
-                Pro Hisobchi Bosh Ofisi (Amir Temur shoh ko‘chasi, 108)
-              </div>
-            </div>
-
-            <div class="grid grid-cols-1 sm:grid-cols-3 gap-2 text-xs min-w-0">
-              <div
-                class="bg-white/90 rounded-xl p-2.5 border border-gray-100 min-w-0"
-              >
-                <div class="text-[10px] font-bold text-gray-400 uppercase">
-                  Koordinatalar
-                </div>
-                <div
-                  id="repCoords"
-                  class="font-mono font-bold text-blue-700 mt-0.5 truncate"
-                >
-                  41.311100, 69.279700
-                </div>
-              </div>
-              <div
-                class="bg-white/90 rounded-xl p-2.5 border border-gray-100 min-w-0"
-              >
-                <div class="text-[10px] font-bold text-gray-400 uppercase">
-                  Ofisdan masofa
-                </div>
-                <div
-                  id="repDistance"
-                  class="font-extrabold text-gray-900 mt-0.5 truncate"
-                >
-                  0.0 km (Bosh ofis)
-                </div>
-              </div>
-              <div
-                class="bg-white/90 rounded-xl p-2.5 border border-gray-100 min-w-0"
-              >
-                <div class="text-[10px] font-bold text-gray-400 uppercase">
-                  Holat
-                </div>
-                <div
-                  id="repLayerState"
-                  class="font-extrabold text-emerald-700 mt-0.5 truncate"
-                >
-                  2026 • Xarita
-                </div>
-              </div>
-            </div>
-
-            <div
-              class="mt-2.5 pt-2 border-t border-emerald-100 flex flex-wrap items-center justify-between gap-2 text-[11px] text-gray-600 min-w-0"
-            >
-              <span id="repAddressLine" class="truncate max-w-full">
-                Manzil: Amir Temur shoh ko‘chasi 108, Toshkent, O‘zbekiston
-              </span>
-              <button
-                type="button"
-                onclick="copyOtchyot()"
-                class="font-extrabold text-emerald-700 hover:text-blue-700 underline cursor-pointer shrink-0"
-              >
-                Otchyotni nusxalash
-              </button>
-            </div>
-          </div>
-        </div>
-      </section>
-
-      <!-- SECTION 4: ISHLASH BOSQICHLARI -->
-      <section class="glass-card rounded-3xl p-5 sm:p-8 shadow-md min-w-0">
-        <h2
-          class="text-xl sm:text-3xl font-black text-gray-900 mb-6 text-center"
-        >
-          Biz bilan <span class="gradient-text">ishlash tartibi</span>
-        </h2>
-        <div class="grid grid-cols-1 md:grid-cols-3 gap-4 sm:gap-6">
-          <div
-            class="p-5 rounded-2xl bg-white border border-emerald-100 min-w-0"
-          >
-            <div
-              class="w-9 h-9 rounded-xl gradient-bg text-white font-black flex items-center justify-center mb-3"
-            >
-              1
-            </div>
-            <h3 class="font-extrabold text-gray-900 mb-1">
-              Murojaat qoldiring
-            </h3>
-            <p class="text-xs sm:text-sm text-gray-600">
-              Forma yoki telefon orqali savolingizni yuboring.
-            </p>
-          </div>
-          <div class="p-5 rounded-2xl bg-white border border-blue-100 min-w-0">
-            <div
-              class="w-9 h-9 rounded-xl gradient-bg text-white font-black flex items-center justify-center mb-3"
-            >
-              2
-            </div>
-            <h3 class="font-extrabold text-gray-900 mb-1">Tahlil va yechim</h3>
-            <p class="text-xs sm:text-sm text-gray-600">
-              Mutaxassisimiz holatingizni ko‘rib chiqib aniq reja tuzadi.
-            </p>
-          </div>
-          <div
-            class="p-5 rounded-2xl bg-white border border-emerald-100 min-w-0"
-          >
-            <div
-              class="w-9 h-9 rounded-xl gradient-bg text-white font-black flex items-center justify-center mb-3"
-            >
-              3
-            </div>
-            <h3 class="font-extrabold text-gray-900 mb-1">Doimiy hamkorlik</h3>
-            <p class="text-xs sm:text-sm text-gray-600">
-              Hisobot va hisob-kitoblar o‘z vaqtida, xatosiz yuritiladi.
-            </p>
-          </div>
-        </div>
-      </section>
-
-      <!-- SECTION 5: YO'NALISHLAR -->
-      <section
-        class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 min-w-0"
-      >
-        <div class="glass-card rounded-2xl p-5 min-w-0">
-          <h3 class="font-extrabold text-gray-900 mb-1">Buxgalteriya</h3>
-          <p class="text-xs text-gray-500">
-            MChJ va YaTT buxgalteriya hisobi yuritish.
-          </p>
-        </div>
-        <div class="glass-card rounded-2xl p-5 min-w-0">
-          <h3 class="font-extrabold text-gray-900 mb-1">Soliq hisobotlari</h3>
-          <p class="text-xs text-gray-500">
-            QQS, foyda va aylanma hisobotlarini tayyorlash.
-          </p>
-        </div>
-        <div class="glass-card rounded-2xl p-5 min-w-0">
-          <h3 class="font-extrabold text-gray-900 mb-1">Hisobni tiklash</h3>
-          <p class="text-xs text-gray-500">
-            O‘tgan davr hujjatlarini tekshirish va tiklash.
-          </p>
-        </div>
-        <div class="glass-card rounded-2xl p-5 min-w-0">
-          <h3 class="font-extrabold text-gray-900 mb-1">Pro Tarif</h3>
-          <p class="text-xs text-gray-500">
-            Kengaytirilgan imkoniyatlar va tezkor yordam.
-          </p>
-        </div>
-      </section>
-
-      <!-- SECTION 6: CTA -->
-      <section
-        class="rounded-3xl gradient-bg p-6 sm:p-10 text-white shadow-xl flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 min-w-0"
-      >
-        <div>
-          <h2 class="text-xl sm:text-3xl font-black mb-1">
-            Savolingiz bormi? Hoziroq bog‘laning!
-          </h2>
-          <p class="text-xs sm:text-sm text-white/90">
-            Xizmatlar va tariflar bilan tanishib, biznesingizni tartibga soling.
-          </p>
-        </div>
-        <div class="flex flex-wrap gap-3 shrink-0">
-          <a
-            href="./xizmatlar.html"
-            class="px-5 py-2.5 rounded-xl bg-white text-emerald-800 font-extrabold text-xs sm:text-sm"
-          >
-            Xizmatlar
-          </a>
-          <a
-            href="./to'lovlar.html"
-            class="px-5 py-2.5 rounded-xl bg-white/15 border border-white/30 text-white font-extrabold text-xs sm:text-sm"
-          >
-            To'lovlar
-          </a>
-        </div>
-      </section>
-    </main>
-
-    <!-- KATTALASHTIRILGAN XARITA MODAL -->
-    <div
-      id="mapFullscreenModal"
-      class="fixed inset-0 z-50 hidden bg-slate-950/75 backdrop-blur-sm p-2 sm:p-6 flex items-center justify-center"
-    >
-      <div
-        class="bg-white w-full max-w-5xl rounded-3xl p-3.5 sm:p-6 shadow-2xl border border-emerald-100 flex flex-col gap-3 max-h-[95vh] min-w-0"
-      >
+      <div class="flex flex-col gap-3">
         <div class="flex flex-wrap items-center justify-between gap-2">
           <div class="min-w-0">
-            <h3 class="text-base sm:text-xl font-black text-gray-900">
-              Kattalashtirilgan Xarita
-            </h3>
-            <p id="modalPlaceCaption" class="text-xs text-gray-500 truncate">
-              O‘zbekiston • Toshkent shahri — Pro Hisobchi Ofisi
-            </p>
+            <div class="flex items-center gap-2 flex-wrap">
+              <h3 class="text-lg sm:text-xl font-black text-gray-900">Xarita (2000 – 2026)</h3>
+              <span id="mapStatusBadge" class="badge badge-green">2026 • Xarita</span>
+            </div>
+            <p id="yearEffectHint" class="text-[11px] sm:text-xs text-gray-500">Zamonaviy 2026 xarita ko‘rinishi faol</p>
           </div>
 
           <div class="flex items-center gap-2 flex-wrap">
-            <select
-              id="modalYearSelect"
-              onchange="applyYearToMap(this.value)"
-              class="px-2.5 py-1.5 rounded-xl bg-gray-50 border border-emerald-300 text-xs font-black text-gray-900 outline-none cursor-pointer"
-            ></select>
-
-            <div
-              class="inline-flex rounded-xl bg-gray-100 p-1 border border-gray-200"
-            >
-              <button
-                type="button"
-                id="btnModalStandard"
-                onclick="setMapMode('standard')"
-                class="inline-flex items-center gap-1 px-2.5 py-1 rounded-lg text-xs font-extrabold bg-emerald-100 text-emerald-800 cursor-pointer"
-              >
-                <i data-lucide="map" class="w-3.5 h-3.5"></i>
-                <span>Xarita</span>
-              </button>
-              <button
-                type="button"
-                id="btnModalSatellite"
-                onclick="setMapMode('satellite')"
-                class="inline-flex items-center gap-1 px-2.5 py-1 rounded-lg text-xs font-extrabold text-gray-600 hover:text-blue-700 cursor-pointer"
-              >
-                <i data-lucide="satellite" class="w-3.5 h-3.5"></i>
-                <span>Sputnik</span>
-              </button>
-            </div>
-
-            <button
-              type="button"
-              onclick="closeFullscreenMap()"
-              class="p-2 rounded-xl bg-rose-50 hover:bg-rose-100 text-rose-600 cursor-pointer"
-              aria-label="Yopish"
-            >
-              <i data-lucide="x" class="w-5 h-5"></i>
-            </button>
+            <button type="button" onclick="resetToGlobalView()" class="btn btn-soft"><i data-lucide="globe" class="w-4 h-4"></i><span>Dunyo</span></button>
+            <button type="button" onclick="openFullscreenMap()" class="btn btn-blue"><i data-lucide="maximize-2" class="w-4 h-4"></i><span>Kattalashtirish</span></button>
           </div>
         </div>
 
-        <div
-          id="modalMapSlot"
-          class="map-frame-box w-full h-[50vh] sm:h-[58vh] rounded-2xl border border-emerald-200 bg-[#9ec5ea]"
-        ></div>
-
-        <div class="relative min-w-0">
-          <div class="flex flex-col sm:flex-row gap-2">
-            <div class="relative flex-1 min-w-0">
-              <input
-                id="modalMapSearchInput"
-                type="text"
-                autocomplete="off"
-                oninput="handleLiveSuggestions(this.value, 'modal')"
-                onkeydown="
-                  if (event.key === 'Enter') {
-                    event.preventDefault();
-                    searchExactLocation('modal');
-                  }
-                "
-                placeholder="Shahar, tuman yoki davlat yozing..."
-                class="w-full pl-9 pr-3 py-2.5 rounded-xl bg-gray-50 border border-gray-200 text-xs sm:text-sm focus:ring-2 focus:ring-emerald-500 outline-none"
-              />
-              <i
-                data-lucide="search"
-                class="w-4 h-4 text-gray-400 absolute left-3 top-1/2 -translate-y-1/2 pointer-events-none"
-              ></i>
-            </div>
-            <button
-              type="button"
-              onclick="searchExactLocation('modal')"
-              class="px-4 py-2.5 rounded-xl gradient-bg text-white text-xs sm:text-sm font-extrabold flex items-center justify-center gap-1.5 shrink-0 cursor-pointer"
-            >
-              <i data-lucide="navigation" class="w-4 h-4"></i>
-              <span>Topish</span>
+        <!-- Yil + rejim -->
+        <div class="flex flex-wrap items-center justify-between gap-2 bg-slate-50 border-2 border-slate-200 rounded-2xl p-2.5">
+          <div class="flex items-center gap-2 flex-wrap min-w-0">
+            <label for="mapYearSelect" class="text-xs font-extrabold text-gray-700 pl-1">Yil:</label>
+            <select id="mapYearSelect" onchange="applyYearToMap(this.value)" class="field field-select"></select>
+            <button type="button" id="backTo2026Btn" onclick="applyYearToMap(2026)" class="btn btn-amber hidden">
+              <i data-lucide="rotate-ccw" class="w-4 h-4"></i><span>2026 ga qaytish</span>
             </button>
           </div>
-          <div
-            id="modalSuggestionsBox"
-            class="hidden mt-1.5 rounded-2xl bg-white border border-emerald-200 shadow-xl divide-y divide-gray-100 max-h-44 overflow-y-auto"
-          ></div>
+
+          <div class="seg">
+            <button type="button" data-mode-btn="standard" onclick="setMapMode('standard')" class="seg-btn active"><i data-lucide="map" class="w-4 h-4"></i><span>Xarita</span></button>
+            <button type="button" data-mode-btn="satellite" onclick="setMapMode('satellite')" class="seg-btn"><i data-lucide="satellite" class="w-4 h-4"></i><span>Sputnik</span></button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Xarita konteyneri -->
+      <div id="mapHomeSlot" class="map-frame-box rounded-2xl border-2 border-emerald-300 w-full h-64 sm:h-80 bg-[#aad3df]">
+        <div id="leafletMap" class="w-full h-full"></div>
+      </div>
+
+      <!-- Qidiruv -->
+      <div class="relative min-w-0">
+        <label for="mapSearchInput" class="block text-xs font-extrabold text-gray-700 mb-1.5">
+          Shahar, tuman, ko‘cha yoki davlat yozing (masalan: "chorvoq", "bektemir", "b"):
+        </label>
+        <div class="flex flex-col sm:flex-row gap-2 min-w-0">
+          <div class="relative flex-1 min-w-0">
+            <input id="mapSearchInput" type="text" autocomplete="off"
+              oninput="handleLiveSuggestions(this.value, 'main')"
+              onkeydown="if (event.key === 'Enter') { event.preventDefault(); searchExactLocation('main'); }"
+              placeholder="Masalan: chorvoq, bektemir, b, toshkent..." class="field" style="padding-left: 40px" />
+            <i data-lucide="search" class="w-4 h-4 text-gray-400 absolute left-3.5 top-1/2 -translate-y-1/2 pointer-events-none"></i>
+          </div>
+          <button type="button" onclick="searchExactLocation('main')" class="btn btn-primary btn-lg shrink-0"><i data-lucide="navigation" class="w-4 h-4"></i><span>Topish</span></button>
+        </div>
+        <p id="mainSearchMsg" class="hidden text-xs font-bold text-rose-600 mt-2"></p>
+        <div id="mainSuggestionsBox" class="hidden mt-2 rounded-2xl bg-white border-2 border-emerald-200 shadow-xl divide-y divide-gray-100 max-h-60 overflow-y-auto z-30"></div>
+      </div>
+
+      <!-- Otchyot -->
+      <div class="rounded-2xl bg-gradient-to-br from-emerald-50 via-white to-blue-50 border-2 border-emerald-200 p-4 shadow-md min-w-0">
+        <div class="flex flex-wrap items-center justify-between gap-2 pb-2.5 mb-2.5 border-b-2 border-emerald-100">
+          <span class="text-xs font-black uppercase tracking-wider text-gray-900">Joylashuv Otchyoti</span>
+          <span id="repYearBadge" class="badge badge-green">2026-yil</span>
+        </div>
+
+        <div class="bg-white rounded-xl p-3 border border-gray-200 mb-2.5 min-w-0">
+          <span id="repCountryBadge" class="inline-block text-[10px] font-extrabold uppercase tracking-wider px-2 py-0.5 rounded-md bg-blue-50 text-blue-700 border border-blue-100 mb-1">O‘zbekiston • Toshkent shahri</span>
+          <div id="repPlaceTitle" class="text-sm font-black text-gray-900 break-words">Pro Hisobchi Bosh Ofisi (Amir Temur shoh ko‘chasi, 108)</div>
+        </div>
+
+        <div class="grid grid-cols-1 sm:grid-cols-3 gap-2 text-xs min-w-0">
+          <div class="bg-white rounded-xl p-2.5 border border-gray-200 min-w-0">
+            <div class="text-[10px] font-bold text-gray-400 uppercase">Koordinatalar</div>
+            <div id="repCoords" class="font-mono font-bold text-blue-700 mt-0.5 truncate">41.311100, 69.279700</div>
+          </div>
+          <div class="bg-white rounded-xl p-2.5 border border-gray-200 min-w-0">
+            <div class="text-[10px] font-bold text-gray-400 uppercase">Ofisdan masofa</div>
+            <div id="repDistance" class="font-extrabold text-gray-900 mt-0.5 truncate">0.0 km (Bosh ofis)</div>
+          </div>
+          <div class="bg-white rounded-xl p-2.5 border border-gray-200 min-w-0">
+            <div class="text-[10px] font-bold text-gray-400 uppercase">Holat</div>
+            <div id="repLayerState" class="font-extrabold text-emerald-700 mt-0.5 truncate">2026 • Xarita</div>
+          </div>
+        </div>
+
+        <div class="mt-3 pt-3 border-t-2 border-emerald-100 flex flex-wrap items-center justify-between gap-2 text-[11px] text-gray-600 min-w-0">
+          <span id="repAddressLine" class="truncate max-w-full">Manzil: Amir Temur shoh ko‘chasi 108, Toshkent, O‘zbekiston</span>
+          <button type="button" id="copyBtn" onclick="copyOtchyot()" class="btn btn-soft shrink-0"><i data-lucide="copy" class="w-4 h-4"></i><span>Otchyotni nusxalash</span></button>
         </div>
       </div>
     </div>
+  </section>
 
-    <!-- FOOTER -->
-    <footer
-      class="bg-white/85 backdrop-blur-md border-t border-green-200/50 py-6 mt-auto min-w-0"
-    >
-      <div
-        class="max-w-[1200px] mx-auto px-4 sm:px-6 flex flex-col sm:flex-row items-center justify-between gap-4 text-sm text-gray-500"
-      >
-        <p>
-          © 2026 <span class="font-bold gradient-text">Pro Hisobchi</span>.
-          Barcha huquqlar himoyalangan.
-        </p>
-        <div class="flex gap-6 font-medium">
-          <a
-            href="./index.html"
-            class="hover:text-emerald-600 transition-colors"
-            >Bosh sahifa</a
-          >
-          <a
-            href="./xizmatlar.html"
-            class="hover:text-emerald-600 transition-colors"
-            >Xizmatlar</a
-          >
-          <a
-            href="./to'lovlar.html"
-            class="hover:text-emerald-600 transition-colors"
-            >To'lovlar</a
-          >
-        </div>
+  <!-- ISHLASH BOSQICHLARI -->
+  <section class="glass-card rounded-3xl p-5 sm:p-9 min-w-0">
+    <h2 class="text-2xl sm:text-4xl font-black text-gray-900 mb-7 text-center">Biz bilan <span class="gradient-text">ishlash tartibi</span></h2>
+    <div class="grid grid-cols-1 md:grid-cols-3 gap-4 sm:gap-6">
+      <div class="glass-card lift p-6 rounded-2xl min-w-0">
+        <div class="step-no w-11 h-11 rounded-xl gradient-bg text-white text-lg font-black flex items-center justify-center mb-3">1</div>
+        <h3 class="font-extrabold text-gray-900 mb-1 text-lg">Murojaat qoldiring</h3>
+        <p class="text-xs sm:text-sm text-gray-600">Forma yoki telefon orqali savolingizni yuboring.</p>
       </div>
-    </footer>
+      <div class="glass-card lift p-6 rounded-2xl min-w-0">
+        <div class="step-no w-11 h-11 rounded-xl gradient-bg text-white text-lg font-black flex items-center justify-center mb-3">2</div>
+        <h3 class="font-extrabold text-gray-900 mb-1 text-lg">Tahlil va yechim</h3>
+        <p class="text-xs sm:text-sm text-gray-600">Mutaxassisimiz holatingizni ko‘rib chiqib aniq reja tuzadi.</p>
+      </div>
+      <div class="glass-card lift p-6 rounded-2xl min-w-0">
+        <div class="step-no w-11 h-11 rounded-xl gradient-bg text-white text-lg font-black flex items-center justify-center mb-3">3</div>
+        <h3 class="font-extrabold text-gray-900 mb-1 text-lg">Doimiy hamkorlik</h3>
+        <p class="text-xs sm:text-sm text-gray-600">Hisobot va hisob-kitoblar o‘z vaqtida, xatosiz yuritiladi.</p>
+      </div>
+    </div>
+  </section>
 
-    <script>
-      lucide.createIcons();
+  <!-- YO'NALISHLAR -->
+  <section class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 min-w-0">
+    <div class="glass-card lift rounded-2xl p-5 min-w-0"><h3 class="font-extrabold text-gray-900 mb-1">Buxgalteriya</h3><p class="text-xs text-gray-500">MChJ va YaTT buxgalteriya hisobi yuritish.</p></div>
+    <div class="glass-card lift rounded-2xl p-5 min-w-0"><h3 class="font-extrabold text-gray-900 mb-1">Soliq hisobotlari</h3><p class="text-xs text-gray-500">QQS, foyda va aylanma hisobotlarini tayyorlash.</p></div>
+    <div class="glass-card lift rounded-2xl p-5 min-w-0"><h3 class="font-extrabold text-gray-900 mb-1">Hisobni tiklash</h3><p class="text-xs text-gray-500">O‘tgan davr hujjatlarini tekshirish va tiklash.</p></div>
+    <div class="glass-card lift rounded-2xl p-5 min-w-0"><h3 class="font-extrabold text-gray-900 mb-1">Pro Tarif</h3><p class="text-xs text-gray-500">Kengaytirilgan imkoniyatlar va tezkor yordam.</p></div>
+  </section>
 
-      // 2026 dan 2000 gacha yil selectlarini to'ldirish (boshlang'ich: 2026)
-      const mainYearSelect = document.getElementById("mapYearSelect");
-      const modalYearSelect = document.getElementById("modalYearSelect");
-      let activeYear = 2026;
-      let activeMode = "standard"; // 'standard' (Sputnik emas) | 'satellite'
+  <!-- CTA -->
+  <section class="rounded-3xl gradient-bg p-6 sm:p-10 text-white shadow-2xl flex flex-col sm:flex-row items-start sm:items-center justify-between gap-5 min-w-0">
+    <div>
+      <h2 class="text-2xl sm:text-4xl font-black mb-1">Savolingiz bormi? Hoziroq bog‘laning!</h2>
+      <p class="text-xs sm:text-sm text-white/90">Xizmatlar va tariflar bilan tanishib, biznesingizni tartibga soling.</p>
+    </div>
+    <div class="flex flex-wrap gap-3 shrink-0">
+      <a href="./xizmatlar.html" class="btn btn-white btn-lg">Xizmatlar</a>
+      <a href="./to'lovlar.html" class="btn btn-glass btn-lg">To'lovlar</a>
+    </div>
+  </section>
+</main>
 
-      for (let y = 2026; y >= 2000; y--) {
-        const label = y === 2026 ? "2026 (Joriy)" : `${y}-yil`;
-        const o1 = new Option(label, y, y === 2026, y === 2026);
-        const o2 = new Option(label, y, y === 2026, y === 2026);
-        mainYearSelect.add(o1);
-        modalYearSelect.add(o2);
-      }
+<!-- KATTALASHTIRILGAN XARITA -->
+<div id="mapFullscreenModal" class="hidden fixed inset-0 z-[60] bg-slate-950/75 backdrop-blur-sm p-2 sm:p-6 items-center justify-center">
+  <div class="bg-white w-full max-w-5xl rounded-3xl p-3.5 sm:p-6 shadow-2xl border-2 border-emerald-200 flex flex-col gap-3 max-h-[95vh] min-w-0">
+    <div class="flex flex-wrap items-center justify-between gap-2">
+      <div class="min-w-0">
+        <h3 class="text-lg sm:text-2xl font-black text-gray-900">Kattalashtirilgan Xarita</h3>
+        <p id="modalPlaceCaption" class="text-xs text-gray-500 truncate">O‘zbekiston • Toshkent shahri — Pro Hisobchi Ofisi</p>
+      </div>
 
-      const officeLat = 41.3111;
-      const officeLng = 69.2797;
-      // Yuborilgan rasmdagi kabi butun dunyo ko'rinadigan global markaz va zoom
-      const worldCenter = [22, 18];
-      const worldZoom = 2;
+      <div class="flex items-center gap-2 flex-wrap">
+        <select id="modalYearSelect" onchange="applyYearToMap(this.value)" class="field field-select"></select>
+        <div class="seg">
+          <button type="button" data-mode-btn="standard" onclick="setMapMode('standard')" class="seg-btn active"><i data-lucide="map" class="w-4 h-4"></i><span>Xarita</span></button>
+          <button type="button" data-mode-btn="satellite" onclick="setMapMode('satellite')" class="seg-btn"><i data-lucide="satellite" class="w-4 h-4"></i><span>Sputnik</span></button>
+        </div>
+        <button type="button" onclick="closeFullscreenMap()" class="btn btn-rose" aria-label="Yopish"><i data-lucide="x" class="w-5 h-5"></i></button>
+      </div>
+    </div>
 
-      const map = L.map("leafletMap", {
-        preferCanvas: true,
-        worldCopyJump: false,
-        minZoom: 2,
-        maxZoom: 18,
-      }).setView(worldCenter, worldZoom);
+    <div id="modalMapSlot" class="map-frame-box w-full h-[50vh] sm:h-[58vh] rounded-2xl border-2 border-emerald-300 bg-[#aad3df]"></div>
 
-      // Sputnik bo'lmagan tiniq xarita qatlami (CartoDB Voyager)
-      const standardTiles = L.tileLayer(
-        "https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png",
-        {
-          maxZoom: 19,
-          subdomains: "abcd",
-          detectRetina: true,
-          attribution: "&copy; OpenStreetMap &copy; CARTO",
-        },
-      );
+    <div class="relative min-w-0">
+      <div class="flex flex-col sm:flex-row gap-2">
+        <div class="relative flex-1 min-w-0">
+          <input id="modalMapSearchInput" type="text" autocomplete="off"
+            oninput="handleLiveSuggestions(this.value, 'modal')"
+            onkeydown="if (event.key === 'Enter') { event.preventDefault(); searchExactLocation('modal'); }"
+            placeholder="Shahar, tuman yoki davlat yozing..." class="field" style="padding-left: 40px" />
+          <i data-lucide="search" class="w-4 h-4 text-gray-400 absolute left-3.5 top-1/2 -translate-y-1/2 pointer-events-none"></i>
+        </div>
+        <button type="button" onclick="searchExactLocation('modal')" class="btn btn-primary btn-lg shrink-0"><i data-lucide="navigation" class="w-4 h-4"></i><span>Topish</span></button>
+      </div>
+      <p id="modalSearchMsg" class="hidden text-xs font-bold text-rose-600 mt-2"></p>
+      <div id="modalSuggestionsBox" class="hidden mt-1.5 rounded-2xl bg-white border-2 border-emerald-200 shadow-xl divide-y divide-gray-100 max-h-44 overflow-y-auto"></div>
+    </div>
+  </div>
+</div>
 
-      // Sputnik qatlami (Esri World Imagery + tiniq yozuvlar)
-      const satImagery = L.tileLayer(
-        "https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}",
-        {
-          maxZoom: 19,
-          attribution: "&copy; Esri Sputnik",
-        },
-      );
+<footer class="w-full overflow-hidden border-t border-gray-200 bg-white py-10 sm:py-12 lg:py-[60px]">
+  <div class="mx-auto w-full max-w-[1200px] px-4 sm:px-6 lg:px-[30px]">
+    <div class="w-full min-w-0 max-w-[320px] sm:max-w-none">
+      <a href="./index.html" class="mb-4 flex items-center justify-start gap-3">
+        <img src="./images/image.png" class="h-11 w-11 shrink-0 rounded-xl border border-green-100 object-cover shadow-md sm:h-[45px] sm:w-[45px]" alt="Pro Hisobchi Logo" />
+        <div class="flex min-w-0 flex-col">
+          <span class="w-fit rounded bg-emerald-100 px-1.5 py-0.5 text-[9px] font-extrabold uppercase tracking-widest text-emerald-700">PRO</span>
+          <h2 class="break-words text-base font-black tracking-tight text-gray-900 sm:text-lg lg:text-xl">Pro Hisobchi</h2>
+        </div>
+      </a>
+    </div>
+    <div class="border-t border-gray-200 pt-5 sm:pt-[25px]">
+      <p class="break-words text-left text-xs leading-relaxed text-gray-500 sm:text-sm">© 2026 Pro Hisobchi. Barcha huquqlar himoyalangan.</p>
+    </div>
+  </div>
+</footer>
 
-      const satLabels = L.tileLayer(
-        "https://{s}.basemaps.cartocdn.com/rastertiles/voyager_only_labels/{z}/{x}/{y}{r}.png",
-        {
-          maxZoom: 19,
-          subdomains: "abcd",
-          detectRetina: true,
-        },
-      );
+<script>
+  function icons() { if (window.lucide) { try { lucide.createIcons(); } catch (e) {} } }
+  icons();
 
-      const satelliteGroup = L.layerGroup([satImagery, satLabels]);
-      standardTiles.addTo(map);
+  // HTML belgilarini xavfsiz qilish (OSM dan kelgan matn uchun)
+  function esc(s) {
+    return String(s == null ? "" : s).replace(/[&<>"']/g, function (c) {
+      return { "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c];
+    });
+  }
 
-      // Yil o'zgarganda xarita ko'rinishini real o'zgartiruvchi funksiya (Google Earth uslubida)
-      function applyYearToMap(yearValue) {
-        activeYear = parseInt(yearValue, 10) || 2026;
-        mainYearSelect.value = String(activeYear);
-        modalYearSelect.value = String(activeYear);
+  const mainYearSelect = document.getElementById("mapYearSelect");
+  const modalYearSelect = document.getElementById("modalYearSelect");
+  let activeYear = 2026;
+  let activeMode = "standard";
 
-        const backBtn = document.getElementById("backTo2026Btn");
-        const statusBadge = document.getElementById("mapStatusBadge");
-        const hintEl = document.getElementById("yearEffectHint");
-        const repYearBadge = document.getElementById("repYearBadge");
-        const repLayerState = document.getElementById("repLayerState");
-        const tilePane = map.getPane("tilePane");
+  for (let y = 2026; y >= 2000; y--) {
+    const label = y === 2026 ? "2026 (Joriy)" : y + "-yil";
+    mainYearSelect.add(new Option(label, y, y === 2026, y === 2026));
+    modalYearSelect.add(new Option(label, y, y === 2026, y === 2026));
+  }
 
-        const modeText = activeMode === "satellite" ? "Sputnik" : "Xarita";
+  const officeLat = 41.3111;
+  const officeLng = 69.2797;
+  const worldCenter = [22, 18];
+  const worldZoom = 2;
 
-        if (activeYear < 2026) {
-          backBtn.classList.remove("hidden");
-          const ageDiff = 2026 - activeYear;
-          // Yil qanchalik oldinga qaytsa, arxiv ko'rinishi shunchalik yaqqol o'zgaradi
-          const sepiaAmt = Math.min(0.65, 0.18 + ageDiff * 0.02);
-          const contrastAmt = (1.05 + Math.min(0.25, ageDiff * 0.01)).toFixed(
-            2,
-          );
-          const satAmt = Math.max(0.55, 1 - ageDiff * 0.015).toFixed(2);
+  const map = L.map("leafletMap", { worldCopyJump: true, minZoom: 2, maxZoom: 18 }).setView(worldCenter, worldZoom);
 
-          if (tilePane) {
-            tilePane.style.filter = `sepia(${sepiaAmt.toFixed(2)}) contrast(${contrastAmt}) saturate(${satAmt})`;
-          }
+  // ---------- XARITA REJIMI: zaxira tizimi bilan ----------
+  // Birinchisi ishlamasa (bloklangan / sekin), keyingisiga o'zi o'tadi.
+  const baseSources = [
+    { url: "https://server.arcgisonline.com/ArcGIS/rest/services/World_Street_Map/MapServer/tile/{z}/{y}/{x}",
+      opts: { maxZoom: 19, attribution: "&copy; Esri" } },
+    { url: "https://tile.openstreetmap.org/{z}/{x}/{y}.png",
+      opts: { maxZoom: 19, attribution: "&copy; OpenStreetMap" } },
+    { url: "https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}.png",
+      opts: { maxZoom: 19, subdomains: "abcd", attribution: "&copy; OpenStreetMap &copy; CARTO" } },
+  ];
+  let standardTiles = null;
 
-          statusBadge.textContent = `${activeYear}-yil • ${modeText}`;
-          statusBadge.className =
-            "text-[11px] font-bold px-2.5 py-0.5 rounded-full bg-amber-100 text-amber-900";
-          hintEl.textContent = `${activeYear}-yilgi arxiv qatlami faol (${ageDiff} yil oldingi ko‘rinish). 2026 ga qaytish mumkin.`;
-          repYearBadge.textContent = `${activeYear}-yil (Arxiv)`;
-          repLayerState.textContent = `${activeYear} • ${modeText}`;
+  function loadStandard(i) {
+    if (standardTiles && map.hasLayer(standardTiles)) map.removeLayer(standardTiles);
+    const src = baseSources[i];
+    let loaded = 0, errors = 0;
+    standardTiles = L.tileLayer(src.url, src.opts);
+    standardTiles.on("tileload", function () { loaded++; });
+    standardTiles.on("tileerror", function () {
+      errors++;
+      if (!loaded && errors >= 4 && i + 1 < baseSources.length) loadStandard(i + 1);
+    });
+    if (activeMode === "standard") standardTiles.addTo(map);
+  }
+  loadStandard(0);
 
-          // Google Earth uslubida yil o'zgarganda silliq ko'rinishni yangilash
-          map.panBy([0, 0], { animate: true });
-        } else {
-          backBtn.classList.add("hidden");
-          if (tilePane) {
-            tilePane.style.filter = "contrast(1.05) saturate(1.06)";
-          }
-          statusBadge.textContent = `2026 • ${modeText}`;
-          statusBadge.className =
-            activeMode === "satellite"
-              ? "text-[11px] font-bold px-2.5 py-0.5 rounded-full bg-blue-100 text-blue-800"
-              : "text-[11px] font-bold px-2.5 py-0.5 rounded-full bg-emerald-100 text-emerald-800";
-          hintEl.textContent = "Zamonaviy 2026 xarita ko‘rinishi faol";
-          repYearBadge.textContent = "2026-yil (Joriy)";
-          repLayerState.textContent = `2026 • ${modeText}`;
-        }
-      }
+  // Sputnik: Esri rasmi + Esri yozuvlari (bir xil server, ishlaydi)
+  const satImagery = L.tileLayer(
+    "https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}",
+    { maxZoom: 19, attribution: "&copy; Esri Sputnik" });
+  const satLabels = L.tileLayer(
+    "https://server.arcgisonline.com/ArcGIS/rest/services/Reference/World_Boundaries_and_Places/MapServer/tile/{z}/{y}/{x}",
+    { maxZoom: 19 });
+  const satelliteGroup = L.layerGroup([satImagery, satLabels]);
 
-      // Sputnik bo'lmagan Xarita va Sputnik rejimlarini silliq almashtirish
-      function setMapMode(mode) {
-        activeMode = mode;
-        const btnStd = document.getElementById("btnStandardMap");
-        const btnSat = document.getElementById("btnSatelliteMap");
-        const btnModStd = document.getElementById("btnModalStandard");
-        const btnModSat = document.getElementById("btnModalSatellite");
+  // Yil effekti (faqat ko'rinish filtri: haqiqiy arxiv rasm emas)
+  function applyYearToMap(yearValue) {
+    activeYear = parseInt(yearValue, 10) || 2026;
+    mainYearSelect.value = String(activeYear);
+    modalYearSelect.value = String(activeYear);
 
-        if (mode === "satellite") {
-          if (map.hasLayer(standardTiles)) map.removeLayer(standardTiles);
-          if (!map.hasLayer(satelliteGroup)) satelliteGroup.addTo(map);
+    const backBtn = document.getElementById("backTo2026Btn");
+    const statusBadge = document.getElementById("mapStatusBadge");
+    const hintEl = document.getElementById("yearEffectHint");
+    const repYearBadge = document.getElementById("repYearBadge");
+    const repLayerState = document.getElementById("repLayerState");
+    const tilePane = map.getPane("tilePane");
+    const modeText = activeMode === "satellite" ? "Sputnik" : "Xarita";
 
-          btnSat.className =
-            "inline-flex items-center gap-1 px-2.5 sm:px-3 py-1 rounded-lg text-xs font-extrabold bg-blue-100 text-blue-800 cursor-pointer";
-          btnStd.className =
-            "inline-flex items-center gap-1 px-2.5 sm:px-3 py-1 rounded-lg text-xs font-extrabold text-gray-600 hover:text-emerald-700 cursor-pointer";
+    if (activeYear < 2026) {
+      backBtn.classList.remove("hidden");
+      const ageDiff = 2026 - activeYear;
+      const sepiaAmt = Math.min(0.65, 0.18 + ageDiff * 0.02);
+      const contrastAmt = (1.05 + Math.min(0.25, ageDiff * 0.01)).toFixed(2);
+      const satAmt = Math.max(0.55, 1 - ageDiff * 0.015).toFixed(2);
+      if (tilePane) tilePane.style.filter = "sepia(" + sepiaAmt.toFixed(2) + ") contrast(" + contrastAmt + ") saturate(" + satAmt + ")";
 
-          if (btnModSat && btnModStd) {
-            btnModSat.className =
-              "inline-flex items-center gap-1 px-2.5 py-1 rounded-lg text-xs font-extrabold bg-blue-100 text-blue-800 cursor-pointer";
-            btnModStd.className =
-              "inline-flex items-center gap-1 px-2.5 py-1 rounded-lg text-xs font-extrabold text-gray-600 hover:text-emerald-700 cursor-pointer";
-          }
-        } else {
-          if (map.hasLayer(satelliteGroup)) map.removeLayer(satelliteGroup);
-          if (!map.hasLayer(standardTiles)) standardTiles.addTo(map);
+      statusBadge.textContent = activeYear + "-yil • " + modeText;
+      statusBadge.className = "badge badge-amber";
+      hintEl.textContent = activeYear + "-yilgi arxiv ko‘rinishi faol (" + ageDiff + " yil oldingi uslub). 2026 ga qaytish mumkin.";
+      repYearBadge.textContent = activeYear + "-yil (Arxiv)";
+      repLayerState.textContent = activeYear + " • " + modeText;
+    } else {
+      backBtn.classList.add("hidden");
+      if (tilePane) tilePane.style.filter = "";
+      statusBadge.textContent = "2026 • " + modeText;
+      statusBadge.className = activeMode === "satellite" ? "badge badge-blue" : "badge badge-green";
+      hintEl.textContent = "Zamonaviy 2026 xarita ko‘rinishi faol";
+      repYearBadge.textContent = "2026-yil (Joriy)";
+      repLayerState.textContent = "2026 • " + modeText;
+    }
+  }
 
-          btnStd.className =
-            "inline-flex items-center gap-1 px-2.5 sm:px-3 py-1 rounded-lg text-xs font-extrabold bg-emerald-100 text-emerald-800 cursor-pointer";
-          btnSat.className =
-            "inline-flex items-center gap-1 px-2.5 sm:px-3 py-1 rounded-lg text-xs font-extrabold text-gray-600 hover:text-blue-700 cursor-pointer";
+  // Xarita / Sputnik almashtirish
+  function setMapMode(mode) {
+    activeMode = mode;
+    if (mode === "satellite") {
+      if (standardTiles && map.hasLayer(standardTiles)) map.removeLayer(standardTiles);
+      if (!map.hasLayer(satelliteGroup)) satelliteGroup.addTo(map);
+    } else {
+      if (map.hasLayer(satelliteGroup)) map.removeLayer(satelliteGroup);
+      if (standardTiles && !map.hasLayer(standardTiles)) standardTiles.addTo(map);
+    }
+    document.querySelectorAll("[data-mode-btn]").forEach(function (b) {
+      b.classList.toggle("active", b.getAttribute("data-mode-btn") === mode);
+    });
+    applyYearToMap(activeYear);
+  }
 
-          if (btnModSat && btnModStd) {
-            btnModStd.className =
-              "inline-flex items-center gap-1 px-2.5 py-1 rounded-lg text-xs font-extrabold bg-emerald-100 text-emerald-800 cursor-pointer";
-            btnModSat.className =
-              "inline-flex items-center gap-1 px-2.5 py-1 rounded-lg text-xs font-extrabold text-gray-600 hover:text-blue-700 cursor-pointer";
-          }
-        }
+  const marker = L.marker([officeLat, officeLng]).addTo(map)
+    .bindPopup("<div style='font-size:11px;font-weight:700;color:#1d4ed8'>O‘zbekiston • Toshkent shahri</div><b>Pro Hisobchi Ofisi</b>");
 
-        applyYearToMap(activeYear);
-      }
+  function resetToGlobalView() { map.flyTo(worldCenter, worldZoom, { duration: 0.7 }); }
 
-      // Rasmdagidek ko'k marker
-      const marker = L.marker([officeLat, officeLng])
-        .addTo(map)
-        .bindPopup(
-          "<div style='font-size:11px;font-weight:700;color:#1d4ed8'>O‘zbekiston • Toshkent shahri</div><b>Pro Hisobchi Ofisi</b>",
-        );
+  function calcDistanceKm(lat1, lon1, lat2, lon2) {
+    const R = 6371;
+    const dLat = ((lat2 - lat1) * Math.PI) / 180;
+    const dLon = ((lon2 - lon1) * Math.PI) / 180;
+    const a = Math.sin(dLat / 2) ** 2 +
+      Math.cos((lat1 * Math.PI) / 180) * Math.cos((lat2 * Math.PI) / 180) * Math.sin(dLon / 2) ** 2;
+    return R * 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+  }
 
-      function resetToGlobalView() {
-        map.flyTo(worldCenter, worldZoom, { duration: 0.7 });
-      }
+  function updateOtchyot(place) {
+    const dist = calcDistanceKm(officeLat, officeLng, place.lat, place.lon);
+    document.getElementById("repCountryBadge").textContent = place.countryBadge;
+    document.getElementById("repPlaceTitle").textContent = place.name;
+    document.getElementById("repCoords").textContent = Number(place.lat).toFixed(6) + ", " + Number(place.lon).toFixed(6);
+    document.getElementById("repDistance").textContent = dist < 0.05 ? "0.0 km (Bosh ofis)" : dist.toFixed(1) + " km (Ofisdan)";
+    document.getElementById("repAddressLine").textContent = "Manzil: " + place.fullAddress;
+    document.getElementById("modalPlaceCaption").textContent = place.countryBadge + " — " + place.name;
+  }
 
-      function calcDistanceKm(lat1, lon1, lat2, lon2) {
-        const R = 6371;
-        const dLat = ((lat2 - lat1) * Math.PI) / 180;
-        const dLon = ((lon2 - lon1) * Math.PI) / 180;
-        const a =
-          Math.sin(dLat / 2) ** 2 +
-          Math.cos((lat1 * Math.PI) / 180) *
-            Math.cos((lat2 * Math.PI) / 180) *
-            Math.sin(dLon / 2) ** 2;
-        return R * 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
-      }
+  const quickPlaces = [
+    { name: "Chorvoq", countryBadge: "O‘zbekiston • Toshkent viloyati", fullAddress: "Chorvoq, Bo‘stonliq tumani, Toshkent viloyati, O‘zbekiston", lat: 41.6289, lon: 69.9744, type: "Hudud" },
+    { name: "Bektemir tumani", countryBadge: "O‘zbekiston • Toshkent shahri", fullAddress: "Bektemir tumani, Toshkent shahri, O‘zbekiston", lat: 41.2116, lon: 69.3344, type: "Tuman" },
+    { name: "Buxoro shahri", countryBadge: "O‘zbekiston • Buxoro viloyati", fullAddress: "Buxoro shahri, Buxoro viloyati, O‘zbekiston", lat: 39.7681, lon: 64.4556, type: "Shahar" },
+    { name: "Berlin", countryBadge: "Germaniya", fullAddress: "Berlin, Germaniya", lat: 52.52, lon: 13.405, type: "Davlat poytaxti" },
+    { name: "Braziliya", countryBadge: "Braziliya • Janubiy Amerika", fullAddress: "Braziliya", lat: -14.235, lon: -51.9253, type: "Davlat" },
+    { name: "Toshkent shahri", countryBadge: "O‘zbekiston • Toshkent shahri", fullAddress: "Toshkent shahri, O‘zbekiston", lat: 41.2995, lon: 69.2401, type: "Shahar" },
+    { name: "Samarqand shahri", countryBadge: "O‘zbekiston • Samarqand viloyati", fullAddress: "Samarqand shahri, Samarqand viloyati, O‘zbekiston", lat: 39.6542, lon: 66.9597, type: "Shahar" },
+  ];
 
-      function updateOtchyot(place) {
-        const dist = calcDistanceKm(officeLat, officeLng, place.lat, place.lon);
-        document.getElementById("repCountryBadge").textContent =
-          place.countryBadge;
-        document.getElementById("repPlaceTitle").textContent = place.name;
-        document.getElementById("repCoords").textContent =
-          `${Number(place.lat).toFixed(6)}, ${Number(place.lon).toFixed(6)}`;
-        document.getElementById("repDistance").textContent =
-          dist < 0.05
-            ? "0.0 km (Bosh ofis)"
-            : `${dist.toFixed(1)} km (Ofisdan)`;
-        document.getElementById("repAddressLine").textContent =
-          `Manzil: ${place.fullAddress}`;
-        document.getElementById("modalPlaceCaption").textContent =
-          `${place.countryBadge} — ${place.name}`;
-      }
+  let searchTimer = null;
+  let reqId = 0;
 
-      const quickPlaces = [
-        {
-          name: "Chorvoq",
-          countryBadge: "O‘zbekiston • Toshkent viloyati",
-          fullAddress:
-            "Chorvoq, Bo‘stonliq tumani, Toshkent viloyati, O‘zbekiston",
-          lat: 41.6289,
-          lon: 69.9744,
-          type: "Hudud",
-        },
-        {
-          name: "Bektemir tumani",
-          countryBadge: "O‘zbekiston • Toshkent shahri",
-          fullAddress: "Bektemir tumani, Toshkent shahri, O‘zbekiston",
-          lat: 41.2116,
-          lon: 69.3344,
-          type: "Tuman",
-        },
-        {
-          name: "Buxoro shahri",
-          countryBadge: "O‘zbekiston • Buxoro viloyati",
-          fullAddress: "Buxoro shahri, Buxoro viloyati, O‘zbekiston",
-          lat: 39.7681,
-          lon: 64.4556,
-          type: "Shahar",
-        },
-        {
-          name: "Berlin",
-          countryBadge: "Germaniya",
-          fullAddress: "Berlin, Germaniya",
-          lat: 52.52,
-          lon: 13.405,
-          type: "Davlat poytaxti",
-        },
-        {
-          name: "Braziliya",
-          countryBadge: "Braziliya • Janubiy Amerika",
-          fullAddress: "Braziliya",
-          lat: -14.235,
-          lon: -51.9253,
-          type: "Davlat",
-        },
-        {
-          name: "Toshkent shahri",
-          countryBadge: "O‘zbekiston • Toshkent shahri",
-          fullAddress: "Toshkent shahri, O‘zbekiston",
-          lat: 41.2995,
-          lon: 69.2401,
-          type: "Shahar",
-        },
-        {
-          name: "Samarqand shahri",
-          countryBadge: "O‘zbekiston • Samarqand viloyati",
-          fullAddress: "Samarqand shahri, Samarqand viloyati, O‘zbekiston",
-          lat: 39.6542,
-          lon: 66.9597,
-          type: "Shahar",
-        },
-      ];
+  function hideSuggestions() {
+    document.getElementById("mainSuggestionsBox").classList.add("hidden");
+    document.getElementById("modalSuggestionsBox").classList.add("hidden");
+  }
 
-      let searchTimer = null;
+  function goToPlace(place) {
+    const targetZoom = place.type === "Davlat" ? 4 : 13;
+    map.flyTo([place.lat, place.lon], targetZoom, { duration: 0.75 });
+    marker.setLatLng([place.lat, place.lon])
+      .bindPopup("<div style='font-size:11px;font-weight:700;color:#1d4ed8'>" + esc(place.countryBadge) + "</div><b>" + esc(place.name) + "</b>")
+      .openPopup();
+    updateOtchyot(place);
+    hideSuggestions();
+    document.getElementById("mainSearchMsg").classList.add("hidden");
+    document.getElementById("modalSearchMsg").classList.add("hidden");
+  }
 
-      function goToPlace(place) {
-        const targetZoom = place.type === "Davlat" ? 4 : 13;
-        map.flyTo([place.lat, place.lon], targetZoom, { duration: 0.75 });
-        marker
-          .setLatLng([place.lat, place.lon])
-          .bindPopup(
-            `<div style='font-size:11px;font-weight:700;color:#1d4ed8'>${place.countryBadge}</div><b>${place.name}</b>`,
-          )
-          .openPopup();
+  function buildBadge(addr) {
+    const country = addr.country || "";
+    const region = addr.state || addr.region || addr.county || addr.city || "";
+    if (country && region && country.toLowerCase() !== region.toLowerCase()) return country + " • " + region;
+    return country || region || "Dunyo";
+  }
 
-        updateOtchyot(place);
-        document.getElementById("mainSuggestionsBox").classList.add("hidden");
-        document.getElementById("modalSuggestionsBox").classList.add("hidden");
-      }
+  function renderSuggestionList(items, box) {
+    if (!items || items.length === 0) { box.classList.add("hidden"); return; }
 
-      function buildBadge(addr) {
-        const country = addr.country || "";
-        const region =
-          addr.state || addr.region || addr.county || addr.city || "";
-        if (
-          country &&
-          region &&
-          country.toLowerCase() !== region.toLowerCase()
-        ) {
-          return `${country} • ${region}`;
-        }
-        return country || region || "Dunyo";
-      }
+    box.innerHTML = items.map(function (item, i) {
+      return '<button type="button" data-i="' + i + '" class="w-full text-left px-3.5 py-2.5 hover:bg-emerald-50 transition-colors flex flex-col gap-1 cursor-pointer min-w-0">' +
+        '<div class="flex items-center justify-between gap-2">' +
+        '<span class="inline-block text-[10px] font-extrabold uppercase tracking-wider px-2 py-0.5 rounded-md bg-blue-50 text-blue-700 border border-blue-100 truncate">' + esc(item.countryBadge) + '</span>' +
+        '<span class="text-[10px] font-bold text-gray-400 shrink-0">' + esc(item.type) + '</span></div>' +
+        '<div class="text-xs sm:text-sm font-black text-gray-900 truncate">' + esc(item.name) + '</div>' +
+        '<div class="text-[11px] text-gray-500 truncate">' + esc(item.fullAddress) + '</div></button>';
+    }).join("");
 
-      function renderSuggestionList(items, box) {
-        if (!items || items.length === 0) {
-          box.classList.add("hidden");
-          return;
-        }
+    box.querySelectorAll("button").forEach(function (btn, idx) {
+      btn.addEventListener("click", function () {
+        const chosen = items[idx];
+        document.getElementById("mapSearchInput").value = chosen.name;
+        document.getElementById("modalMapSearchInput").value = chosen.name;
+        goToPlace(chosen);
+      });
+    });
+    box.classList.remove("hidden");
+  }
 
-        box.innerHTML = items
-          .map(
-            (item, i) => `
-          <button
-            type="button"
-            data-i="${i}"
-            class="w-full text-left px-3.5 py-2.5 hover:bg-emerald-50 transition-colors flex flex-col gap-1 cursor-pointer min-w-0"
-          >
-            <div class="flex items-center justify-between gap-2">
-              <span class="inline-block text-[10px] font-extrabold uppercase tracking-wider px-2 py-0.5 rounded-md bg-blue-50 text-blue-700 border border-blue-100 truncate">
-                ${item.countryBadge}
-              </span>
-              <span class="text-[10px] font-bold text-gray-400 shrink-0">${item.type}</span>
-            </div>
-            <div class="text-xs sm:text-sm font-black text-gray-900 truncate">${item.name}</div>
-            <div class="text-[11px] text-gray-500 truncate">${item.fullAddress}</div>
-          </button>
-        `,
-          )
-          .join("");
+  async function nominatim(q, limit) {
+    const url = "https://nominatim.openstreetmap.org/search?format=json&addressdetails=1&accept-language=uz,en&limit=" + limit + "&q=" + encodeURIComponent(q);
+    const res = await fetch(url, { headers: { Accept: "application/json" } });
+    return res.json();
+  }
 
-        box.querySelectorAll("button").forEach((btn, idx) => {
-          btn.addEventListener("click", () => {
-            const chosen = items[idx];
-            const mInp = document.getElementById("mapSearchInput");
-            const modInp = document.getElementById("modalMapSearchInput");
-            if (mInp) mInp.value = chosen.name;
-            if (modInp) modInp.value = chosen.name;
-            goToPlace(chosen);
-          });
+  function handleLiveSuggestions(raw, source) {
+    const q = raw.trim().toLowerCase();
+    const box = document.getElementById(source === "modal" ? "modalSuggestionsBox" : "mainSuggestionsBox");
+
+    if (!q) { box.classList.add("hidden"); return; }
+
+    const local = quickPlaces.filter(function (p) {
+      return p.name.toLowerCase().includes(q) || p.countryBadge.toLowerCase().includes(q) || p.fullAddress.toLowerCase().includes(q);
+    });
+    renderSuggestionList(local, box);
+
+    clearTimeout(searchTimer);
+    const my = ++reqId;
+    searchTimer = setTimeout(async function () {
+      try {
+        const data = await nominatim(raw.trim(), 6);
+        if (my !== reqId) return; // eski javob yangisini bosib ketmasin
+        const remote = (data || []).map(function (d) {
+          return {
+            name: d.display_name.split(",")[0],
+            countryBadge: buildBadge(d.address || {}),
+            fullAddress: d.display_name,
+            lat: parseFloat(d.lat), lon: parseFloat(d.lon),
+            type: d.type ? d.type.replace("_", " ") : "Manzil",
+          };
         });
+        renderSuggestionList(local.concat(remote).slice(0, 8), box);
+      } catch (_) {}
+    }, 300);
+  }
 
-        box.classList.remove("hidden");
+  async function searchExactLocation(source) {
+    const inp = document.getElementById(source === "modal" ? "modalMapSearchInput" : "mapSearchInput");
+    const msg = document.getElementById(source === "modal" ? "modalSearchMsg" : "mainSearchMsg");
+    const q = inp.value.trim();
+    msg.classList.add("hidden");
+    if (!q) return;
+
+    const localMatch = quickPlaces.find(function (p) { return p.name.toLowerCase().includes(q.toLowerCase()); });
+    if (localMatch) { goToPlace(localMatch); return; }
+
+    try {
+      const results = await nominatim(q, 1);
+      if (!results || !results.length) {
+        msg.textContent = "“" + q + "” topilmadi. Boshqacha yozib ko‘ring.";
+        msg.classList.remove("hidden");
+        return;
       }
+      const p = results[0];
+      goToPlace({
+        name: p.display_name.split(",")[0],
+        countryBadge: buildBadge(p.address || {}),
+        fullAddress: p.display_name,
+        lat: parseFloat(p.lat), lon: parseFloat(p.lon),
+        type: p.type ? p.type.replace("_", " ") : "Manzil",
+      });
+    } catch (_) {
+      msg.textContent = "Qidiruvda xatolik. Internetni tekshirib, qayta urinib ko‘ring.";
+      msg.classList.remove("hidden");
+    }
+  }
 
-      function handleLiveSuggestions(raw, source) {
-        const q = raw.trim().toLowerCase();
-        const box =
-          source === "modal"
-            ? document.getElementById("modalSuggestionsBox")
-            : document.getElementById("mainSuggestionsBox");
+  function copyOtchyot() {
+    const text = [
+      document.getElementById("repCountryBadge").textContent,
+      document.getElementById("repPlaceTitle").textContent,
+      document.getElementById("repYearBadge").textContent,
+      "Koordinatalar: " + document.getElementById("repCoords").textContent,
+      document.getElementById("repAddressLine").textContent,
+    ].join("\n");
+    const btn = document.getElementById("copyBtn");
+    const label = btn.querySelector("span");
+    const done = function () {
+      label.textContent = "Nusxalandi ✓";
+      setTimeout(function () { label.textContent = "Otchyotni nusxalash"; }, 1800);
+    };
+    if (navigator.clipboard && navigator.clipboard.writeText) {
+      navigator.clipboard.writeText(text).then(done, done);
+    } else { done(); }
+  }
 
-        if (!q) {
-          box.classList.add("hidden");
-          return;
-        }
+  // ---------- Kattalashtirilgan oyna ----------
+  const fsModal = document.getElementById("mapFullscreenModal");
 
-        const local = quickPlaces.filter(
-          (p) =>
-            p.name.toLowerCase().includes(q) ||
-            p.countryBadge.toLowerCase().includes(q) ||
-            p.fullAddress.toLowerCase().includes(q),
-        );
+  function openFullscreenMap() {
+    document.getElementById("modalMapSlot").appendChild(document.getElementById("leafletMap"));
+    fsModal.classList.remove("hidden");
+    fsModal.classList.add("flex");
+    document.body.style.overflow = "hidden";
+    setTimeout(function () { map.invalidateSize(); }, 120);
+  }
+  function closeFullscreenMap() {
+    document.getElementById("mapHomeSlot").appendChild(document.getElementById("leafletMap"));
+    fsModal.classList.add("hidden");
+    fsModal.classList.remove("flex");
+    document.body.style.overflow = "";
+    hideSuggestions();
+    setTimeout(function () { map.invalidateSize(); }, 120);
+  }
+  fsModal.addEventListener("click", function (e) { if (e.target === fsModal) closeFullscreenMap(); });
+  document.addEventListener("keydown", function (e) {
+    if (e.key === "Escape" && !fsModal.classList.contains("hidden")) closeFullscreenMap();
+  });
+  document.addEventListener("click", function (e) {
+    if (!e.target.closest("#mainSuggestionsBox, #mapSearchInput, #modalSuggestionsBox, #modalMapSearchInput")) hideSuggestions();
+  });
 
-        renderSuggestionList(local, box);
+  // ---------- Forma ----------
+  document.getElementById("contactForm").addEventListener("submit", function (e) {
+    e.preventDefault();
+    const box = document.getElementById("formSuccess");
+    box.classList.remove("hidden");
+    box.classList.add("flex");
+    this.reset();
+    setTimeout(function () { box.classList.add("hidden"); box.classList.remove("flex"); }, 5000);
+  });
 
-        clearTimeout(searchTimer);
-        searchTimer = setTimeout(async () => {
-          try {
-            const url = `https://nominatim.openstreetmap.org/search?format=json&addressdetails=1&limit=6&q=${encodeURIComponent(
-              raw.trim(),
-            )}`;
-            const res = await fetch(url, {
-              headers: { Accept: "application/json" },
-            });
-            const data = await res.json();
+  applyYearToMap(2026);
+</script>
 
-            const remote = (data || []).map((d) => ({
-              name: d.display_name.split(",")[0],
-              countryBadge: buildBadge(d.address || {}),
-              fullAddress: d.display_name,
-              lat: parseFloat(d.lat),
-              lon: parseFloat(d.lon),
-              type: d.type ? d.type.replace("_", " ") : "Manzil",
-            }));
-
-            renderSuggestionList([...local, ...remote].slice(0, 8), box);
-          } catch (_) {}
-        }, 250);
-      }
-
-      async function searchExactLocation(source) {
-        const inp =
-          source === "modal"
-            ? document.getElementById("modalMapSearchInput")
-            : document.getElementById("mapSearchInput");
-        const q = inp.value.trim();
-        if (!q) return;
-
-        const localMatch = quickPlaces.find((p) =>
-          p.name.toLowerCase().includes(q.toLowerCase()),
-        );
-        if (localMatch) {
-          goToPlace(localMatch);
-          return;
-        }
-
-        try {
-          const url = `https://nominatim.openstreetmap.org/search?format=json&addressdetails=1&limit=1&q=${encodeURIComponent(
-            q,
-          )}`;
-          const res = await fetch(url, {
-            headers: { Accept: "application/json" },
-          });
-          const results = await res.json();
-          if (!results || !results.length) return;
-
-          const p = results[0];
-          goToPlace({
-            name: p.display_name.split(",")[0],
-            countryBadge: buildBadge(p.address || {}),
-            fullAddress: p.display_name,
-            lat: parseFloat(p.lat),
-            lon: parseFloat(p.lon),
-            type: p.type ? p.type.replace("_", " ") : "Manzil",
-          });
-        } catch (_) {}
-      }
-
-      function copyOtchyot() {
-        const text = [
-          document.getElementById("repCountryBadge").textContent,
-          document.getElementById("repPlaceTitle").textContent,
-          document.getElementById("repYearBadge").textContent,
-          "Koordinatalar: " + document.getElementById("repCoords").textContent,
-          document.getElementById("repAddressLine").textContent,
-        ].join("\n");
-        navigator.clipboard?.writeText(text);
-        alert("Otchyot nusxalandi!");
-      }
-
-      function openFullscreenMap() {
-        const modal = document.getElementById("mapFullscreenModal");
-        const slot = document.getElementById("modalMapSlot");
-        const mapEl = document.getElementById("leafletMap");
-        slot.appendChild(mapEl);
-        modal.classList.remove("hidden");
-        setTimeout(() => map.invalidateSize(), 120);
-      }
-
-      function closeFullscreenMap() {
-        const modal = document.getElementById("mapFullscreenModal");
-        const homeSlot = document.getElementById("mapHomeSlot");
-        const mapEl = document.getElementById("leafletMap");
-        homeSlot.appendChild(mapEl);
-        modal.classList.add("hidden");
-        setTimeout(() => map.invalidateSize(), 120);
-      }
-
-      document
-        .getElementById("contactForm")
-        .addEventListener("submit", function (e) {
-          e.preventDefault();
-          const alertBox = document.getElementById("formSuccess");
-          alertBox.classList.remove("hidden");
-          this.reset();
-          setTimeout(() => alertBox.classList.add("hidden"), 5000);
-        });
-    </script>
-
-    <script src="https://cdn.jsdelivr.net/npm/flowbite@2.5.2/dist/flowbite.min.js"></script>
-    <script src="https://cdn.jotfor.ms/agent/embedjs/01a17e2530e870008568395045f834f7cf64/embed.js"></script>
-  </body>
+<script src="https://cdn.jsdelivr.net/npm/flowbite@2.5.2/dist/flowbite.min.js"></script>
+<script src="https://cdn.jotfor.ms/agent/embedjs/01a17e2530e870008568395045f834f7cf64/embed.js"></script>
+</body>
 </html>
