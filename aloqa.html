@@ -1,795 +1,2140 @@
 <!doctype html>
 <html lang="uz">
-<head>
-<meta charset="UTF-8" />
-<meta name="viewport" content="width=device-width, initial-scale=1.0" />
-<title>Pro Hisobchi - Aloqa</title>
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Pro Hisobchi - Aloqa</title>
 
-<script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
-<link href="https://cdn.jsdelivr.net/npm/flowbite@2.5.2/dist/flowbite.min.css" rel="stylesheet" />
+    <link rel="preconnect" href="https://cdn.jsdelivr.net" crossorigin />
+    <link rel="preconnect" href="https://server.arcgisonline.com" crossorigin />
+    <link rel="preconnect" href="https://tile.openstreetmap.org" crossorigin />
+    <link rel="preconnect" href="https://tile.googleapis.com" crossorigin />
+    <link rel="dns-prefetch" href="https://photon.komoot.io" />
+    <link rel="dns-prefetch" href="https://nominatim.openstreetmap.org" />
+    <link rel="preload" as="image" href="./images/image.png" />
 
-<!-- Leaflet xarita (jsdelivr: unpkg ba'zan sekin yoki bloklangan bo'ladi) -->
-<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/leaflet@1.9.4/dist/leaflet.css" />
-<script src="https://cdn.jsdelivr.net/npm/leaflet@1.9.4/dist/leaflet.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
+    <link
+      rel="stylesheet"
+      href="https://cdn.jsdelivr.net/npm/leaflet@1.9.4/dist/leaflet.css"
+    />
+    <script
+      src="https://cdn.jsdelivr.net/npm/leaflet@1.9.4/dist/leaflet.js"
+      defer
+    ></script>
 
-<!-- Lucide ikonkalar -->
-<script src="https://cdn.jsdelivr.net/npm/lucide@0.263.1/dist/umd/lucide.min.js"></script>
+    <style>
+      html,
+      body {
+        max-width: 100%;
+        overflow-x: hidden;
+      }
+      body {
+        margin: 0;
+        min-height: 100vh;
+        background: radial-gradient(
+            ellipse at 50% 0%,
+            #e6f7ee 0%,
+            #f3fbf6 45%,
+            #e3e8fb 100%
+          )
+          fixed;
+      }
+      .ic {
+        width: 1em;
+        height: 1em;
+        fill: none;
+        stroke: currentColor;
+        stroke-width: 2;
+        stroke-linecap: round;
+        stroke-linejoin: round;
+        flex-shrink: 0;
+      }
+      .gradient-text {
+        background: linear-gradient(135deg, #16a34a, #2563eb);
+        -webkit-background-clip: text;
+        background-clip: text;
+        -webkit-text-fill-color: transparent;
+      }
+      .gradient-bg {
+        background: linear-gradient(135deg, #16a34a, #2563eb);
+      }
 
-<style>
-  html, body { max-width: 100%; overflow-x: hidden; }
-  body {
-    background-color: #f3fbf6;
-    min-height: 100vh;
-    margin: 0;
-    box-shadow: inset 0 0 500px rgba(34, 48, 197, 0.22);
-  }
+      .glass-card {
+        background: #fff;
+        border: 1.5px solid rgba(16, 185, 129, 0.3);
+        box-shadow: 0 14px 32px -22px rgba(15, 23, 42, 0.38);
+        transition:
+          transform 0.25s ease,
+          box-shadow 0.25s ease,
+          border-color 0.25s ease;
+      }
+      .glass-card.lift:hover {
+        transform: translateY(-5px);
+        border-color: rgba(16, 185, 129, 0.65);
+        box-shadow: 0 24px 44px -24px rgba(37, 99, 235, 0.5);
+      }
 
-  .gradient-text {
-    background: linear-gradient(135deg, #16a34a, #2563eb);
-    -webkit-background-clip: text; background-clip: text;
-    -webkit-text-fill-color: transparent;
-  }
-  .gradient-bg { background: linear-gradient(135deg, #16a34a, #2563eb); }
-  .nav a:focus { background-color: #c2fad7; padding: 5px; border-radius: 6px; }
+      .btn {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        gap: 6px;
+        padding: 10px 16px;
+        font-size: 13px;
+        font-weight: 800;
+        line-height: 1;
+        border-radius: 14px;
+        border: 1.5px solid transparent;
+        cursor: pointer;
+        font-family: inherit;
+        white-space: nowrap;
+        transition:
+          transform 0.2s ease,
+          box-shadow 0.2s ease,
+          background 0.2s ease;
+      }
+      .btn:hover {
+        transform: translateY(-2px);
+      }
+      .btn:active {
+        transform: scale(0.98);
+      }
+      .btn-primary {
+        color: #fff;
+        background: linear-gradient(135deg, #16a34a, #2563eb);
+        box-shadow: 0 12px 24px -10px rgba(37, 99, 235, 0.75);
+      }
+      .btn-blue {
+        color: #fff;
+        background: #2563eb;
+      }
+      .btn-blue:hover {
+        background: #1d4ed8;
+      }
+      .btn-soft {
+        color: #065f46;
+        background: #ecfdf5;
+        border-color: #6ee7b7;
+      }
+      .btn-soft:hover {
+        background: #d1fae5;
+      }
+      .btn-rose {
+        color: #be123c;
+        background: #fff1f2;
+        border-color: #fda4af;
+        padding: 9px;
+      }
+      .btn-white {
+        color: #065f46;
+        background: #fff;
+      }
+      .btn-glass {
+        color: #fff;
+        background: rgba(255, 255, 255, 0.18);
+        border-color: rgba(255, 255, 255, 0.55);
+      }
+      .btn-lg {
+        padding: 14px 20px;
+        font-size: 14px;
+        border-radius: 16px;
+      }
 
-  /* ---------- KARTALAR (kuchaytirilgan) ---------- */
-  .glass-card {
-    background: rgba(255, 255, 255, 0.95);
-    backdrop-filter: blur(14px); -webkit-backdrop-filter: blur(14px);
-    border: 1.5px solid rgba(16, 185, 129, 0.3);
-    box-shadow: 0 18px 40px -22px rgba(15, 23, 42, 0.38);
-    transition: transform .25s ease, box-shadow .25s ease, border-color .25s ease;
-  }
-  .glass-card.lift:hover {
-    transform: translateY(-5px);
-    border-color: rgba(16, 185, 129, 0.65);
-    box-shadow: 0 28px 52px -24px rgba(37, 99, 235, 0.5);
-  }
+      .seg {
+        display: inline-flex;
+        gap: 4px;
+        padding: 4px;
+        background: #fff;
+        border: 1.5px solid #cbd5e1;
+        border-radius: 14px;
+      }
+      .seg-btn {
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
+        padding: 8px 14px;
+        border-radius: 10px;
+        border: 0;
+        background: transparent;
+        cursor: pointer;
+        font-family: inherit;
+        font-size: 13px;
+        font-weight: 800;
+        color: #374151;
+        transition:
+          background 0.2s ease,
+          color 0.2s ease;
+      }
+      .seg-btn:hover {
+        background: #ecfdf5;
+        color: #047857;
+      }
+      .seg-btn.active {
+        color: #fff;
+        background: linear-gradient(135deg, #16a34a, #2563eb);
+      }
 
-  /* ---------- TUGMALAR (oddiy CSS: Tailwind yuklanmasa ham ko'rinadi) ---------- */
-  .btn {
-    display: inline-flex; align-items: center; justify-content: center; gap: 6px;
-    padding: 10px 16px; font-size: 13px; font-weight: 800; line-height: 1;
-    border-radius: 14px; border: 1.5px solid transparent; cursor: pointer;
-    font-family: inherit; white-space: nowrap;
-    transition: transform .2s ease, box-shadow .2s ease, background .2s ease, border-color .2s ease;
-  }
-  .btn:hover { transform: translateY(-2px); }
-  .btn:active { transform: translateY(0) scale(.98); }
-  .btn-primary { color: #fff; background: linear-gradient(135deg, #16a34a, #2563eb); box-shadow: 0 12px 24px -10px rgba(37, 99, 235, .75); }
-  .btn-primary:hover { box-shadow: 0 16px 30px -10px rgba(22, 163, 74, .75); }
-  .btn-blue { color: #fff; background: #2563eb; box-shadow: 0 10px 22px -10px rgba(37, 99, 235, .8); }
-  .btn-blue:hover { background: #1d4ed8; }
-  .btn-soft { color: #065f46; background: #ecfdf5; border-color: #6ee7b7; }
-  .btn-soft:hover { background: #d1fae5; border-color: #10b981; }
-  .btn-amber { color: #78350f; background: #fef3c7; border-color: #fcd34d; }
-  .btn-amber:hover { background: #fde68a; }
-  .btn-rose { color: #be123c; background: #fff1f2; border-color: #fda4af; padding: 9px; }
-  .btn-rose:hover { background: #ffe4e6; }
-  .btn-white { color: #065f46; background: #fff; box-shadow: 0 12px 24px -12px rgba(0, 0, 0, .45); }
-  .btn-glass { color: #fff; background: rgba(255, 255, 255, .18); border-color: rgba(255, 255, 255, .55); }
-  .btn-glass:hover { background: rgba(255, 255, 255, .3); }
-  .btn-lg { padding: 14px 20px; font-size: 14px; border-radius: 16px; }
+      .field {
+        width: 100%;
+        padding: 11px 14px;
+        border-radius: 14px;
+        background: #fff;
+        border: 1.5px solid #cbd5e1;
+        font-size: 14px;
+        font-family: inherit;
+        outline: none;
+        transition:
+          border-color 0.2s ease,
+          box-shadow 0.2s ease;
+      }
+      .field:focus {
+        border-color: #10b981;
+        box-shadow: 0 0 0 4px rgba(16, 185, 129, 0.18);
+      }
 
-  /* Xarita / Sputnik almashtirgich */
-  .seg { display: inline-flex; gap: 4px; padding: 4px; background: #fff; border: 1.5px solid #cbd5e1; border-radius: 14px; flex-shrink: 0; }
-  .seg-btn {
-    display: inline-flex; align-items: center; gap: 6px; padding: 8px 14px;
-    border-radius: 10px; border: 0; background: transparent; cursor: pointer;
-    font-family: inherit; font-size: 13px; font-weight: 800; color: #374151;
-    transition: background .2s ease, color .2s ease, box-shadow .2s ease;
-  }
-  .seg-btn:hover { background: #ecfdf5; color: #047857; }
-  .seg-btn.active { color: #fff; background: linear-gradient(135deg, #16a34a, #2563eb); box-shadow: 0 8px 18px -8px rgba(37, 99, 235, .85); }
+      .badge {
+        font-size: 11px;
+        font-weight: 800;
+        padding: 3px 10px;
+        border-radius: 9999px;
+      }
+      .badge-green {
+        background: #d1fae5;
+        color: #065f46;
+      }
+      .badge-blue {
+        background: #dbeafe;
+        color: #1e40af;
+      }
 
-  /* Maydonlar */
-  .field {
-    width: 100%; padding: 11px 14px; border-radius: 14px; background: #fff;
-    border: 1.5px solid #cbd5e1; font-size: 14px; font-family: inherit; outline: none;
-    transition: border-color .2s ease, box-shadow .2s ease;
-  }
-  .field:focus { border-color: #10b981; box-shadow: 0 0 0 4px rgba(16, 185, 129, .18); }
-  .field-select { font-weight: 800; border-color: #6ee7b7; cursor: pointer; padding: 8px 12px; font-size: 13px; width: auto; }
+      /* ---------- Xarita (Google Maps uslubi) ---------- */
+      .map-frame-box {
+        position: relative;
+        overflow: hidden;
+        isolation: isolate;
+      }
+      .leaflet-tile {
+        image-rendering: auto;
+        backface-visibility: hidden;
+      }
+      .leaflet-fade-anim .leaflet-tile {
+        transition: opacity 0.12s linear;
+      }
+      .leaflet-container {
+        width: 100% !important;
+        height: 100% !important;
+        z-index: 10;
+        font-family: Roboto, Arial, system-ui, sans-serif;
+        background: #e5e3df;
+      }
+      .leaflet-bar {
+        border: 0 !important;
+        border-radius: 8px !important;
+        box-shadow: 0 2px 6px rgba(0, 0, 0, 0.3) !important;
+        overflow: hidden;
+      }
+      .leaflet-container .leaflet-bar a,
+      .leaflet-container .leaflet-bar a:hover,
+      .leaflet-container .leaflet-bar a:focus,
+      .leaflet-container .leaflet-bar a:active {
+        box-sizing: border-box !important;
+        width: 44px !important;
+        height: 44px !important;
+        line-height: 44px !important;
+        font-size: 24px !important;
+        text-indent: 0 !important;
+        transform: none !important;
+        transition: background 0.15s ease, color 0.15s ease;
+        color: #666;
+        background: #fff;
+        border-bottom: 1px solid #e6e6e6;
+      }
+      .leaflet-container .leaflet-bar a:hover {
+        background: #f1f1f1;
+        color: #000;
+      }
+      .leaflet-bar a:last-child {
+        border-bottom: 0;
+      }
+      .leaflet-control-scale-line {
+        background: rgba(255, 255, 255, 0.8);
+        border-color: #777;
+        color: #333;
+        font-size: 10px;
+      }
+      .leaflet-control-attribution {
+        font-size: 10px;
+        background: rgba(255, 255, 255, 0.75) !important;
+      }
+      .leaflet-popup-content-wrapper {
+        border-radius: 8px;
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
+      }
+      .gm-pin {
+        background: none;
+        border: 0;
+        filter: drop-shadow(0 3px 2px rgba(0, 0, 0, 0.35));
+      }
+      .gm-locate {
+        width: 44px;
+        height: 44px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        background: #fff;
+        color: #666;
+        border-radius: 8px;
+        box-shadow: 0 2px 6px rgba(0, 0, 0, 0.3);
+        cursor: pointer;
+        border: 0;
+      }
+      .gm-locate:hover {
+        background: #f1f1f1;
+        color: #1a73e8;
+      }
+      .gm-me {
+        width: 16px;
+        height: 16px;
+        background: #4285f4;
+        border: 3px solid #fff;
+        border-radius: 50%;
+        box-shadow: 0 0 0 2px rgba(66, 133, 244, 0.35);
+      }
 
-  /* Belgilar (badge) */
-  .badge { font-size: 11px; font-weight: 800; padding: 3px 10px; border-radius: 9999px; }
-  .badge-green { background: #d1fae5; color: #065f46; }
-  .badge-blue { background: #dbeafe; color: #1e40af; }
-  .badge-amber { background: #fef3c7; color: #78350f; }
+      /* Mobil menyu */
+      #drawer-navigation {
+        transform: translateX(-100%);
+        transition: transform 0.25s ease;
+      }
+      #drawer-navigation.open {
+        transform: none;
+      }
+      #drawer-backdrop {
+        display: none;
+      }
+      #drawer-backdrop.open {
+        display: block;
+      }
+    </style>
+  </head>
 
-  /* Xarita */
-  .map-frame-box { position: relative; overflow: hidden; isolation: isolate; box-shadow: 0 14px 30px -18px rgba(5, 150, 105, .6); }
-  .leaflet-container { width: 100% !important; height: 100% !important; z-index: 10; font-family: inherit; background: #aad3df; }
-  .leaflet-tile-pane { transition: filter .35s ease, opacity .35s ease; }
+  <body
+    class="font-sans antialiased text-gray-800 flex flex-col justify-between min-w-0"
+  >
+    <!-- IKONKALAR -->
+    <svg width="0" height="0" style="position: absolute" aria-hidden="true">
+      <symbol id="i-phone" viewBox="0 0 24 24">
+        <path
+          d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72c.127.96.361 1.903.7 2.81a2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0 1 22 16.92z"
+        />
+      </symbol>
+      <symbol id="i-send" viewBox="0 0 24 24">
+        <path d="m22 2-7 20-4-9-9-4Z" />
+        <path d="M22 2 11 13" />
+      </symbol>
+      <symbol id="i-pin" viewBox="0 0 24 24">
+        <path d="M20 10c0 6-8 12-8 12s-8-6-8-12a8 8 0 0 1 16 0Z" />
+        <circle cx="12" cy="10" r="3" />
+      </symbol>
+      <symbol id="i-arrow" viewBox="0 0 24 24">
+        <path d="M5 12h14" />
+        <path d="m12 5 7 7-7 7" />
+      </symbol>
+      <symbol id="i-check" viewBox="0 0 24 24">
+        <circle cx="12" cy="12" r="10" />
+        <path d="m9 12 2 2 4-4" />
+      </symbol>
+      <symbol id="i-globe" viewBox="0 0 24 24">
+        <circle cx="12" cy="12" r="10" />
+        <path d="M12 2a14.5 14.5 0 0 0 0 20 14.5 14.5 0 0 0 0-20" />
+        <path d="M2 12h20" />
+      </symbol>
+      <symbol id="i-max" viewBox="0 0 24 24">
+        <path d="M15 3h6v6" />
+        <path d="m21 3-7 7" />
+        <path d="m3 21 7-7" />
+        <path d="M9 21H3v-6" />
+      </symbol>
+      <symbol id="i-map" viewBox="0 0 24 24">
+        <path d="M9 3 3 5.5v15L9 18l6 2.5 6-2.5v-15L15 6 9 3Z" />
+        <path d="M9 3v15" />
+        <path d="M15 6v14.5" />
+      </symbol>
+      <symbol id="i-layers" viewBox="0 0 24 24">
+        <path d="m12 2 10 5-10 5L2 7z" />
+        <path d="m2 17 10 5 10-5" />
+        <path d="m2 12 10 5 10-5" />
+      </symbol>
+      <symbol id="i-search" viewBox="0 0 24 24">
+        <circle cx="11" cy="11" r="8" />
+        <path d="m21 21-4.3-4.3" />
+      </symbol>
+      <symbol id="i-nav" viewBox="0 0 24 24">
+        <polygon points="3 11 22 2 13 21 11 13 3 11" />
+      </symbol>
+      <symbol id="i-copy" viewBox="0 0 24 24">
+        <rect width="14" height="14" x="8" y="8" rx="2" />
+        <path d="M4 16c-1.1 0-2-.9-2-2V4c0-1.1.9-2 2-2h10c1.1 0 2 .9 2 2" />
+      </symbol>
+      <symbol id="i-x" viewBox="0 0 24 24">
+        <path d="M18 6 6 18" />
+        <path d="m6 6 12 12" />
+      </symbol>
+      <symbol id="i-menu" viewBox="0 0 24 24">
+        <path d="M4 6h16M4 12h16M4 18h16" />
+      </symbol>
+      <symbol id="i-locate" viewBox="0 0 24 24">
+        <circle cx="12" cy="12" r="3" />
+        <circle cx="12" cy="12" r="8" />
+        <path d="M12 2v3M12 19v3M2 12h3M19 12h3" />
+      </symbol>
+    </svg>
 
-  .step-no { box-shadow: 0 10px 20px -8px rgba(37, 99, 235, .7); }
-</style>
-</head>
+    <!-- HEADER -->
+    <header
+      class="fixed top-0 left-0 w-full z-40 bg-white border-b-2 border-green-200/70 shadow-md"
+    >
+      <div
+        class="max-w-[1200px] mx-auto w-full px-4 sm:px-6 py-3 flex items-center justify-between"
+      >
+        <a href="./index.html" class="flex items-center gap-3 shrink-0">
+          <img
+            src="./images/image.png"
+            width="48"
+            height="48"
+            fetchpriority="high"
+            decoding="async"
+            class="w-10 h-10 sm:w-12 sm:h-12 rounded-xl shadow-md border border-green-100 object-cover"
+            alt="Pro Hisobchi Logo"
+          />
+          <div class="flex flex-col">
+            <span
+              class="text-[9px] font-extrabold uppercase tracking-widest text-emerald-700 bg-emerald-100 px-1.5 py-[1px] rounded w-fit"
+              >PRO</span
+            >
+            <h2
+              class="text-lg sm:text-xl font-black tracking-tight gradient-text"
+            >
+              Pro Hisobchi
+            </h2>
+          </div>
+        </a>
 
-<body class="font-sans antialiased text-gray-800 flex flex-col justify-between min-w-0">
+        <nav class="hidden md:flex items-center gap-8">
+          <a
+            href="./index.html"
+            class="text-sm font-bold text-gray-700 hover:text-emerald-600 transition-colors"
+            >Bosh sahifa</a
+          >
+          <a
+            href="./xizmatlar.html"
+            class="text-sm font-bold text-gray-700 hover:text-emerald-600 transition-colors"
+            >Xizmatlar</a
+          >
+          <a
+            href="./to'lovlar.html"
+            class="text-sm font-bold text-gray-700 hover:text-emerald-600 transition-colors"
+            >To'lovlar</a
+          >
+          <a href="./aloqa.html" class="text-sm font-extrabold text-emerald-700"
+            >Aloqa</a
+          >
+        </nav>
 
-<!-- HEADER -->
-<header class="fixed top-0 left-0 w-full z-40 bg-white/90 backdrop-blur-md border-b-2 border-green-200/70 shadow-md">
-  <div class="max-w-[1200px] mx-auto w-full px-4 sm:px-6 py-3 flex items-center justify-between">
-    <a href="./index.html" class="flex items-center gap-3 shrink-0">
-      <img src="./images/image.png" class="w-10 h-10 sm:w-12 sm:h-12 rounded-xl shadow-md border border-green-100 object-cover" alt="Pro Hisobchi Logo" />
-      <div class="flex flex-col">
-        <span class="text-[9px] font-extrabold uppercase tracking-widest text-emerald-700 bg-emerald-100 px-1.5 py-[1px] rounded w-fit">PRO</span>
-        <h2 class="text-lg sm:text-xl font-black tracking-tight gradient-text">Pro Hisobchi</h2>
+        <div class="flex items-center gap-3 shrink-0">
+          <a href="./profil.html" class="relative block">
+            <img
+              src="./images/image copy.png"
+              width="40"
+              height="40"
+              decoding="async"
+              class="w-9 h-9 sm:w-10 sm:h-10 rounded-full ring-2 ring-emerald-500/70 object-cover"
+              alt="Profil"
+            />
+          </a>
+          <button
+            type="button"
+            id="drawerOpen"
+            aria-label="Menyu"
+            class="md:hidden p-2 text-gray-700 bg-emerald-50 border border-emerald-200 hover:bg-emerald-100 rounded-xl cursor-pointer"
+          >
+            <svg class="ic w-6 h-6"><use href="#i-menu" /></svg>
+          </button>
+        </div>
       </div>
-    </a>
+    </header>
 
-    <nav class="nav hidden md:flex items-center gap-8">
-      <a href="./index.html" class="text-sm font-bold text-gray-700 hover:text-emerald-600 transition-colors">Bosh sahifa</a>
-      <a href="./xizmatlar.html" class="text-sm font-bold text-gray-700 hover:text-emerald-600 transition-colors">Xizmatlar</a>
-      <a href="./to'lovlar.html" class="text-sm font-bold text-gray-700 hover:text-emerald-600 transition-colors">To'lovlar</a>
-      <a href="./aloqa.html" class="text-sm font-extrabold text-emerald-700 transition-colors">Aloqa</a>
-    </nav>
-
-    <div class="flex items-center gap-3 shrink-0">
-      <a href="./profil.html" class="relative block">
-        <img src="./images/image copy.png" class="w-9 h-9 sm:w-10 sm:h-10 rounded-full ring-2 ring-emerald-500/70 object-cover" alt="Profil" />
-      </a>
-      <button type="button" data-drawer-target="drawer-navigation" data-drawer-show="drawer-navigation" aria-controls="drawer-navigation"
-        class="md:hidden p-2 text-gray-700 bg-emerald-50 border border-emerald-200 hover:bg-emerald-100 rounded-xl transition-all cursor-pointer">
-        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16" /></svg>
-      </button>
-    </div>
-  </div>
-</header>
-
-<!-- MOBILE DRAWER -->
-<div id="drawer-navigation" class="fixed top-0 left-0 z-50 h-screen p-5 overflow-y-auto transition-transform -translate-x-full bg-white w-80 max-w-[85vw] border-e border-emerald-100 shadow-2xl" tabindex="-1" aria-labelledby="drawer-navigation-label">
-  <div class="pb-4 mb-4 border-b border-gray-100 flex items-center justify-between">
-    <a href="./index.html" class="flex items-center space-x-3">
-      <img src="./images/image.png" class="h-10 w-10 rounded-xl shadow-sm border border-emerald-100" alt="Pro Hisobchi Logo" />
-      <div class="flex flex-col">
-        <span class="text-[9px] font-extrabold tracking-widest text-emerald-700 bg-emerald-100 px-1.5 py-0.5 rounded w-fit">PRO</span>
-        <span class="text-base font-bold gradient-text">Pro Hisobchi</span>
+    <!-- MOBIL MENYU -->
+    <div id="drawer-backdrop" class="fixed inset-0 z-40 bg-black/40"></div>
+    <div
+      id="drawer-navigation"
+      class="fixed top-0 left-0 z-50 h-screen p-5 overflow-y-auto bg-white w-80 max-w-[85vw] border-e border-emerald-100 shadow-2xl"
+      tabindex="-1"
+    >
+      <div
+        class="pb-4 mb-4 border-b border-gray-100 flex items-center justify-between"
+      >
+        <a href="./index.html" class="flex items-center space-x-3">
+          <img
+            src="./images/image.png"
+            width="40"
+            height="40"
+            decoding="async"
+            class="h-10 w-10 rounded-xl border border-emerald-100"
+            alt="Pro Hisobchi Logo"
+          />
+          <div class="flex flex-col">
+            <span
+              class="text-[9px] font-extrabold tracking-widest text-emerald-700 bg-emerald-100 px-1.5 py-0.5 rounded w-fit"
+              >PRO</span
+            >
+            <span class="text-base font-bold gradient-text">Pro Hisobchi</span>
+          </div>
+        </a>
+        <button
+          type="button"
+          id="drawerClose"
+          aria-label="Menyuni yopish"
+          class="text-gray-500 bg-gray-50 border border-gray-200 hover:bg-emerald-50 hover:text-emerald-600 rounded-xl w-9 h-9 flex items-center justify-center cursor-pointer"
+        >
+          <svg class="ic w-5 h-5"><use href="#i-x" /></svg>
+        </button>
       </div>
-    </a>
-    <button type="button" data-drawer-hide="drawer-navigation" aria-controls="drawer-navigation"
-      class="text-gray-500 bg-gray-50 border border-gray-200 hover:bg-emerald-50 hover:text-emerald-600 rounded-xl w-9 h-9 flex items-center justify-center transition-all cursor-pointer">
-      <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18 17.94 6M18 18 6.06 6" /></svg>
-      <span class="sr-only">Menyuni yopish</span>
-    </button>
-  </div>
-
-  <div class="py-2">
-    <ul class="space-y-2 font-medium">
-      <li>
-        <a href="./index.html" class="flex items-center p-3 text-gray-700 rounded-xl hover:bg-emerald-50 hover:text-emerald-600 transition-all group">
-          <svg class="w-5 h-5 text-gray-400 group-hover:text-emerald-600 transition-colors" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="m4 12 8-8 8 8M6 10.5V19a1 1 0 0 0 1 1h3v-3a1 1 0 0 1 1-1h2a1 1 0 0 1 1 1v3h3a1 1 0 0 0 1-1v-8.5" /></svg>
-          <span class="ms-3 text-sm font-semibold">Bosh sahifa</span>
-        </a>
-      </li>
-      <li>
-        <a href="./xizmatlar.html" class="flex items-center p-3 text-gray-700 rounded-xl hover:bg-emerald-50 hover:text-emerald-600 transition-all group">
-          <svg class="w-5 h-5 text-gray-400 group-hover:text-emerald-600 transition-colors" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6.025A7.5 7.5 0 1 0 17.975 14H10V6.025Z" /><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13.5 3c-.169 0-.334.014-.5.025V11h7.975c.011-.166.025-.331.025-.5A7.5 7.5 0 0 0 13.5 3Z" /></svg>
-          <span class="ms-3 text-sm font-semibold">Xizmatlar</span>
-        </a>
-      </li>
-      <li>
-        <a href="./to'lovlar.html" class="flex items-center p-3 text-gray-700 rounded-xl hover:bg-emerald-50 hover:text-emerald-600 transition-all group">
-          <svg class="w-5 h-5 text-gray-400 group-hover:text-emerald-600 transition-colors" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 5v14M9 5v14M4 5h16a1 1 0 0 1 1 1v12a1 1 0 0 1-1 1H4a1 1 0 0 1-1-1V6a1 1 0 0 1 1-1Z" /></svg>
-          <span class="ms-3 text-sm font-semibold flex-1">To'lovlar</span>
-          <span class="bg-emerald-100 border border-emerald-200 text-emerald-700 text-[10px] font-bold px-2 py-0.5 rounded-md">Pro</span>
-        </a>
-      </li>
-      <li>
-        <a href="./aloqa.html" class="flex items-center p-3 text-emerald-700 bg-emerald-50 rounded-xl transition-all group">
-          <svg class="w-5 h-5 text-emerald-600 transition-colors" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M18.42 15.61a2.1 2.1 0 0 0-2.97 0l-1 1a1.23 1.23 0 0 1-1.32.3 12.37 12.37 0 0 1-5.18-5.18 1.23 1.23 0 0 1 .3-1.32l1-1a2.1 2.1 0 0 0 0-2.97L7.3 4.5a2.1 2.1 0 0 0-2.97 0L3.1 5.73A3.1 3.1 0 0 0 2.2 8a17.2 17.2 0 0 0 13.8 13.8 3.1 3.1 0 0 0 2.27-.9l1.23-1.23a2.1 2.1 0 0 0 0-2.97l-1.08-1.09Z" /></svg>
-          <span class="ms-3 text-sm font-extrabold">Aloqa</span>
-        </a>
-      </li>
-    </ul>
-  </div>
-</div>
-
-<!-- ASOSIY KONTENT -->
-<main class="max-w-[1200px] mx-auto w-full px-3 sm:px-6 pt-24 sm:pt-28 pb-16 space-y-12 sm:space-y-16 min-w-0">
-
-  <!-- SARLAVHA -->
-  <section class="text-center max-w-3xl mx-auto min-w-0">
-    <div class="inline-flex items-center gap-2 text-[10px] sm:text-xs font-extrabold uppercase tracking-wider text-emerald-800 bg-white border-2 border-emerald-200 px-4 py-1.5 rounded-full shadow-md mb-4">
-      <span class="w-2 h-2 rounded-full bg-emerald-500 animate-ping"></span>
-      <span>Aloqa va joylashuv markazi</span>
-    </div>
-    <h1 class="text-3xl sm:text-6xl font-black tracking-tight text-gray-900 leading-tight mb-3">
-      Biz bilan <span class="gradient-text">oson bog‘laning</span>
-    </h1>
-    <p class="text-gray-600 text-sm sm:text-lg leading-relaxed">
-      Buxgalteriya, soliq hisobotlari va <strong>Pro Hisobchi</strong> xizmatlari bo‘yicha savollaringizga tezkor javob beramiz.
-    </p>
-  </section>
-
-  <!-- 3 TA ALOQA KARTASI -->
-  <section class="grid grid-cols-1 md:grid-cols-3 gap-4 sm:gap-6 min-w-0">
-    <div class="glass-card lift rounded-3xl p-5 sm:p-7 min-w-0">
-      <div class="w-12 h-12 rounded-2xl gradient-bg text-white flex items-center justify-center mb-4 shadow-lg"><i data-lucide="phone" class="w-6 h-6"></i></div>
-      <h3 class="text-lg sm:text-xl font-extrabold text-gray-900 mb-1">Telefon</h3>
-      <p class="text-xs text-gray-500 mb-2">Dushanba – Shanba, 09:00 – 18:00</p>
-      <a href="tel:+998901234567" class="text-lg font-black text-emerald-700 hover:text-blue-600 break-all">+998 (90) 123-45-67</a>
+      <ul class="space-y-2 font-medium">
+        <li>
+          <a
+            href="./index.html"
+            class="flex items-center p-3 text-gray-700 rounded-xl hover:bg-emerald-50 hover:text-emerald-600 text-sm font-semibold"
+            >Bosh sahifa</a
+          >
+        </li>
+        <li>
+          <a
+            href="./xizmatlar.html"
+            class="flex items-center p-3 text-gray-700 rounded-xl hover:bg-emerald-50 hover:text-emerald-600 text-sm font-semibold"
+            >Xizmatlar</a
+          >
+        </li>
+        <li>
+          <a
+            href="./to'lovlar.html"
+            class="flex items-center p-3 text-gray-700 rounded-xl hover:bg-emerald-50 hover:text-emerald-600 text-sm font-semibold"
+            ><span class="flex-1">To'lovlar</span
+            ><span
+              class="bg-emerald-100 border border-emerald-200 text-emerald-700 text-[10px] font-bold px-2 py-0.5 rounded-md"
+              >Pro</span
+            ></a
+          >
+        </li>
+        <li>
+          <a
+            href="./aloqa.html"
+            class="flex items-center p-3 text-emerald-700 bg-emerald-50 rounded-xl text-sm font-extrabold"
+            >Aloqa</a
+          >
+        </li>
+      </ul>
     </div>
 
-    <div class="glass-card lift rounded-3xl p-5 sm:p-7 min-w-0">
-      <div class="w-12 h-12 rounded-2xl bg-blue-600 text-white flex items-center justify-center mb-4 shadow-lg"><i data-lucide="send" class="w-6 h-6"></i></div>
-      <h3 class="text-lg sm:text-xl font-extrabold text-gray-900 mb-1">Telegram & Pochta</h3>
-      <p class="text-xs text-gray-500 mb-2">Onlayn murojaat va hujjatlar</p>
-      <a href="https://t.me/" target="_blank" rel="noopener" class="block text-base font-extrabold text-blue-600 hover:text-emerald-600 break-all">@prohisobchi_uz</a>
-      <a href="mailto:info@prohisobchi.uz" class="block text-sm font-bold text-gray-700 hover:text-blue-600 break-all mt-0.5">info@prohisobchi.uz</a>
-    </div>
-
-    <div class="glass-card lift rounded-3xl p-5 sm:p-7 min-w-0">
-      <div class="w-12 h-12 rounded-2xl bg-emerald-600 text-white flex items-center justify-center mb-4 shadow-lg"><i data-lucide="map-pin" class="w-6 h-6"></i></div>
-      <h3 class="text-lg sm:text-xl font-extrabold text-gray-900 mb-1">Ofis manzili</h3>
-      <p class="text-xs text-gray-500 mb-2">Shaxsiy uchrashuvlar uchun</p>
-      <p class="text-base font-extrabold text-gray-900">Toshkent sh., Amir Temur shoh ko‘chasi, 108-uy</p>
-    </div>
-  </section>
-
-  <!-- FORMA + XARITA -->
-  <section class="grid grid-cols-1 lg:grid-cols-12 gap-6 sm:gap-8 items-start min-w-0">
-
-    <!-- Forma -->
-    <div class="lg:col-span-5 glass-card rounded-3xl p-4 sm:p-8 min-w-0">
-      <h2 class="text-2xl sm:text-3xl font-black text-gray-900 mb-1">Xabar qoldirish</h2>
-      <p class="text-xs sm:text-sm text-gray-500 mb-5">Ma’lumotlaringizni yozing — mutaxassisimiz aloqaga chiqadi.</p>
-
-      <form id="contactForm" class="space-y-4">
-        <div class="min-w-0">
-          <label class="block text-xs font-extrabold uppercase tracking-wider text-gray-600 mb-1.5">Ismingiz *</label>
-          <input type="text" required placeholder="Masalan: Azizbek Karimov" class="field" />
+    <!-- ASOSIY KONTENT -->
+    <main
+      class="max-w-[1200px] mx-auto w-full px-3 sm:px-6 pt-24 sm:pt-28 pb-16 space-y-12 sm:space-y-16 min-w-0"
+    >
+      <section class="text-center max-w-3xl mx-auto min-w-0">
+        <div
+          class="inline-flex items-center gap-2 text-[10px] sm:text-xs font-extrabold uppercase tracking-wider text-emerald-800 bg-white border-2 border-emerald-200 px-4 py-1.5 rounded-full shadow-md mb-4"
+        >
+          <span class="w-2 h-2 rounded-full bg-emerald-500 animate-ping"></span>
+          <span>Aloqa va joylashuv markazi</span>
         </div>
-        <div class="min-w-0">
-          <label class="block text-xs font-extrabold uppercase tracking-wider text-gray-600 mb-1.5">Telefon raqam *</label>
-          <input type="tel" required placeholder="+998 90 123 45 67" class="field" />
+        <h1
+          class="text-3xl sm:text-6xl font-black tracking-tight text-gray-900 leading-tight mb-3"
+        >
+          Biz bilan <span class="gradient-text">oson bog‘laning</span>
+        </h1>
+        <p class="text-gray-600 text-sm sm:text-lg leading-relaxed">
+          Buxgalteriya, soliq hisobotlari va
+          <strong>Pro Hisobchi</strong> xizmatlari bo‘yicha savollaringizga
+          tezkor javob beramiz.
+        </p>
+      </section>
+
+      <section class="grid grid-cols-1 md:grid-cols-3 gap-4 sm:gap-6 min-w-0">
+        <div class="glass-card lift rounded-3xl p-5 sm:p-7 min-w-0">
+          <div
+            class="w-12 h-12 rounded-2xl gradient-bg text-white flex items-center justify-center mb-4 shadow-lg"
+          >
+            <svg class="ic w-6 h-6"><use href="#i-phone" /></svg>
+          </div>
+          <h3 class="text-lg sm:text-xl font-extrabold text-gray-900 mb-1">
+            Telefon
+          </h3>
+          <p class="text-xs text-gray-500 mb-2">
+            Dushanba – Shanba, 09:00 – 18:00
+          </p>
+          <a
+            href="tel:+998901234567"
+            class="text-lg font-black text-emerald-700 hover:text-blue-600 break-all"
+            >+998 (90) 123-45-67</a
+          >
         </div>
-        <div class="min-w-0">
-          <label class="block text-xs font-extrabold uppercase tracking-wider text-gray-600 mb-1.5">Murojaat mavzusi</label>
-          <select class="field">
-            <option value="buxgalteriya">Buxgalteriya xizmati</option>
-            <option value="soliq">Soliq hisobotlari</option>
-            <option value="pro">Pro tarif va to‘lovlar</option>
-            <option value="boshqa">Boshqa savol</option>
-          </select>
+        <div class="glass-card lift rounded-3xl p-5 sm:p-7 min-w-0">
+          <div
+            class="w-12 h-12 rounded-2xl bg-blue-600 text-white flex items-center justify-center mb-4 shadow-lg"
+          >
+            <svg class="ic w-6 h-6"><use href="#i-send" /></svg>
+          </div>
+          <h3 class="text-lg sm:text-xl font-extrabold text-gray-900 mb-1">
+            Telegram & Pochta
+          </h3>
+          <p class="text-xs text-gray-500 mb-2">Onlayn murojaat va hujjatlar</p>
+          <a
+            href="https://t.me/"
+            target="_blank"
+            rel="noopener"
+            class="block text-base font-extrabold text-blue-600 hover:text-emerald-600 break-all"
+            >@prohisobchi_uz</a
+          >
+          <a
+            href="mailto:info@prohisobchi.uz"
+            class="block text-sm font-bold text-gray-700 hover:text-blue-600 break-all mt-0.5"
+            >info@prohisobchi.uz</a
+          >
         </div>
-        <div class="min-w-0">
-          <label class="block text-xs font-extrabold uppercase tracking-wider text-gray-600 mb-1.5">Xabaringiz *</label>
-          <textarea rows="4" required placeholder="Savolingizni yozing..." class="field resize-none"></textarea>
+        <div class="glass-card lift rounded-3xl p-5 sm:p-7 min-w-0">
+          <div
+            class="w-12 h-12 rounded-2xl bg-emerald-600 text-white flex items-center justify-center mb-4 shadow-lg"
+          >
+            <svg class="ic w-6 h-6"><use href="#i-pin" /></svg>
+          </div>
+          <h3 class="text-lg sm:text-xl font-extrabold text-gray-900 mb-1">
+            Ofis manzili
+          </h3>
+          <p class="text-xs text-gray-500 mb-2">Shaxsiy uchrashuvlar uchun</p>
+          <p class="text-base font-extrabold text-gray-900">
+            Toshkent sh., Amir Temur shoh ko‘chasi, 108-uy
+          </p>
+        </div>
+      </section>
+
+      <section
+        class="grid grid-cols-1 lg:grid-cols-12 gap-6 sm:gap-8 items-start min-w-0"
+      >
+        <!-- Forma -->
+        <div class="lg:col-span-5 glass-card rounded-3xl p-4 sm:p-8 min-w-0">
+          <h2 class="text-2xl sm:text-3xl font-black text-gray-900 mb-1">
+            Xabar qoldirish
+          </h2>
+          <p class="text-xs sm:text-sm text-gray-500 mb-5">
+            Ma’lumotlaringizni yozing — mutaxassisimiz aloqaga chiqadi.
+          </p>
+          <form id="contactForm" class="space-y-4">
+            <div class="min-w-0">
+              <label
+                class="block text-xs font-extrabold uppercase tracking-wider text-gray-600 mb-1.5"
+                >Ismingiz *</label
+              >
+              <input
+                type="text"
+                required
+                placeholder="Masalan: Azizbek Karimov"
+                class="field"
+              />
+            </div>
+            <div class="min-w-0">
+              <label
+                class="block text-xs font-extrabold uppercase tracking-wider text-gray-600 mb-1.5"
+                >Telefon raqam *</label
+              >
+              <input
+                type="tel"
+                required
+                placeholder="+998 90 123 45 67"
+                class="field"
+              />
+            </div>
+            <div class="min-w-0">
+              <label
+                class="block text-xs font-extrabold uppercase tracking-wider text-gray-600 mb-1.5"
+                >Murojaat mavzusi</label
+              >
+              <select class="field">
+                <option value="buxgalteriya">Buxgalteriya xizmati</option>
+                <option value="soliq">Soliq hisobotlari</option>
+                <option value="pro">Pro tarif va to‘lovlar</option>
+                <option value="boshqa">Boshqa savol</option>
+              </select>
+            </div>
+            <div class="min-w-0">
+              <label
+                class="block text-xs font-extrabold uppercase tracking-wider text-gray-600 mb-1.5"
+                >Xabaringiz *</label
+              >
+              <textarea
+                rows="4"
+                required
+                placeholder="Savolingizni yozing..."
+                class="field resize-none"
+              ></textarea>
+            </div>
+            <button type="submit" class="btn btn-primary btn-lg w-full">
+              <span>Yuborish</span
+              ><svg class="ic w-4 h-4"><use href="#i-arrow" /></svg>
+            </button>
+            <div
+              id="formSuccess"
+              class="hidden p-3.5 rounded-2xl bg-emerald-50 border-2 border-emerald-200 text-emerald-900 text-xs sm:text-sm font-bold items-center gap-2"
+            >
+              <svg class="ic w-5 h-5 text-emerald-600">
+                <use href="#i-check" /></svg
+              ><span>Xabaringiz muvaffaqiyatli yuborildi!</span>
+            </div>
+          </form>
         </div>
 
-        <button type="submit" class="btn btn-primary btn-lg w-full"><span>Yuborish</span><i data-lucide="arrow-right" class="w-4 h-4"></i></button>
+        <!-- Xarita -->
+        <div
+          class="lg:col-span-7 glass-card rounded-3xl p-4 sm:p-6 min-w-0 space-y-4"
+        >
+          <div class="flex flex-col gap-3">
+            <div class="flex flex-wrap items-center justify-between gap-2">
+              <div class="min-w-0">
+                <div class="flex items-center gap-2 flex-wrap">
+                  <h3 class="text-lg sm:text-xl font-black text-gray-900">
+                    Xarita
+                  </h3>
+                  <span id="mapStatusBadge" class="badge badge-green"
+                    >Xarita</span
+                  >
+                </div>
+                <p class="text-[11px] sm:text-xs text-gray-500">
+                  Dunyodagi istalgan joyni qidiring yoki sputnik ko‘rinishiga
+                  o‘ting
+                </p>
+              </div>
+              <div class="flex items-center gap-2 flex-wrap">
+                <button
+                  type="button"
+                  onclick="resetToGlobalView()"
+                  class="btn btn-soft"
+                >
+                  <svg class="ic w-4 h-4"><use href="#i-globe" /></svg
+                  ><span>Dunyo</span>
+                </button>
+                <button
+                  type="button"
+                  onclick="openFullscreenMap()"
+                  class="btn btn-blue"
+                >
+                  <svg class="ic w-4 h-4"><use href="#i-max" /></svg
+                  ><span>Kattalashtirish</span>
+                </button>
+              </div>
+            </div>
 
-        <div id="formSuccess" class="hidden p-3.5 rounded-2xl bg-emerald-50 border-2 border-emerald-200 text-emerald-900 text-xs sm:text-sm font-bold items-center gap-2">
-          <i data-lucide="check-circle-2" class="w-5 h-5 text-emerald-600 shrink-0"></i>
-          <span>Xabaringiz muvaffaqiyatli yuborildi!</span>
+            <div class="flex justify-end">
+              <div class="seg">
+                <button
+                  type="button"
+                  data-mode-btn="standard"
+                  onclick="setMapMode('standard')"
+                  class="seg-btn active"
+                >
+                  <svg class="ic w-4 h-4"><use href="#i-map" /></svg
+                  ><span>Xarita</span>
+                </button>
+                <button
+                  type="button"
+                  data-mode-btn="satellite"
+                  onclick="setMapMode('satellite')"
+                  class="seg-btn"
+                >
+                  <svg class="ic w-4 h-4"><use href="#i-layers" /></svg
+                  ><span>Sputnik</span>
+                </button>
+              </div>
+            </div>
+          </div>
+
+          <div
+            id="mapHomeSlot"
+            class="map-frame-box rounded-2xl border-2 border-emerald-300 w-full h-72 sm:h-96 bg-[#e5e3df]"
+          >
+            <div id="leafletMap" class="w-full h-full"></div>
+          </div>
+
+          <div class="relative min-w-0">
+            <label
+              for="mapSearchInput"
+              class="block text-xs font-extrabold text-gray-700 mb-1.5"
+              >Shahar, tuman, ko‘cha, joy yoki davlat nomini yozing:</label
+            >
+            <div class="flex flex-col sm:flex-row gap-2 min-w-0">
+              <div class="relative flex-1 min-w-0">
+                <input
+                  id="mapSearchInput"
+                  type="text"
+                  autocomplete="off"
+                  oninput="handleLiveSuggestions(this.value, 'main')"
+                  onkeydown="
+                    if (event.key === 'Enter') {
+                      event.preventDefault();
+                      searchExactLocation('main');
+                    }
+                  "
+                  placeholder="Masalan: Chorvoq, Istanbul, Eiffel tower, Amir Temur..."
+                  class="field"
+                  style="padding-left: 40px"
+                />
+                <svg
+                  class="ic w-4 h-4 text-gray-400 absolute left-3.5 top-1/2 -translate-y-1/2 pointer-events-none"
+                >
+                  <use href="#i-search" />
+                </svg>
+              </div>
+              <button
+                type="button"
+                onclick="searchExactLocation('main')"
+                class="btn btn-primary btn-lg shrink-0"
+              >
+                <svg class="ic w-4 h-4"><use href="#i-nav" /></svg
+                ><span>Topish</span>
+              </button>
+            </div>
+            <p
+              id="mainSearchMsg"
+              class="hidden text-xs font-bold text-rose-600 mt-2"
+            ></p>
+            <div
+              id="mainSuggestionsBox"
+              class="hidden absolute left-0 right-0 top-full mt-1.5 rounded-2xl bg-white border-2 border-emerald-200 shadow-xl divide-y divide-gray-100 max-h-72 overflow-y-auto z-[1000]"
+            ></div>
+          </div>
+
+          <div
+            class="rounded-2xl bg-gradient-to-br from-emerald-50 via-white to-blue-50 border-2 border-emerald-200 p-4 shadow-md min-w-0"
+          >
+            <div
+              class="flex flex-wrap items-center justify-between gap-2 pb-2.5 mb-2.5 border-b-2 border-emerald-100"
+            >
+              <span
+                class="text-xs font-black uppercase tracking-wider text-gray-900"
+                >Joylashuv Otchyoti</span
+              >
+            </div>
+            <div
+              class="bg-white rounded-xl p-3 border border-gray-200 mb-2.5 min-w-0"
+            >
+              <span
+                id="repCountryBadge"
+                class="inline-block text-[10px] font-extrabold uppercase tracking-wider px-2 py-0.5 rounded-md bg-blue-50 text-blue-700 border border-blue-100 mb-1"
+                >O‘zbekiston • Toshkent shahri</span
+              >
+              <div
+                id="repPlaceTitle"
+                class="text-sm font-black text-gray-900 break-words"
+              >
+                Pro Hisobchi Bosh Ofisi (Amir Temur shoh ko‘chasi, 108)
+              </div>
+            </div>
+            <div class="grid grid-cols-1 sm:grid-cols-3 gap-2 text-xs min-w-0">
+              <div
+                class="bg-white rounded-xl p-2.5 border border-gray-200 min-w-0"
+              >
+                <div class="text-[10px] font-bold text-gray-400 uppercase">
+                  Koordinatalar
+                </div>
+                <div
+                  id="repCoords"
+                  class="font-mono font-bold text-blue-700 mt-0.5 truncate"
+                >
+                  41.311100, 69.279700
+                </div>
+              </div>
+              <div
+                class="bg-white rounded-xl p-2.5 border border-gray-200 min-w-0"
+              >
+                <div class="text-[10px] font-bold text-gray-400 uppercase">
+                  Ofisdan masofa
+                </div>
+                <div
+                  id="repDistance"
+                  class="font-extrabold text-gray-900 mt-0.5 truncate"
+                >
+                  0.0 km (Bosh ofis)
+                </div>
+              </div>
+              <div
+                class="bg-white rounded-xl p-2.5 border border-gray-200 min-w-0"
+              >
+                <div class="text-[10px] font-bold text-gray-400 uppercase">
+                  Holat
+                </div>
+                <div
+                  id="repLayerState"
+                  class="font-extrabold text-emerald-700 mt-0.5 truncate"
+                >
+                  Xarita
+                </div>
+              </div>
+            </div>
+            <div
+              class="mt-3 pt-3 border-t-2 border-emerald-100 flex flex-wrap items-center justify-between gap-2 text-[11px] text-gray-600 min-w-0"
+            >
+              <span id="repAddressLine" class="truncate max-w-full"
+                >Manzil: Amir Temur shoh ko‘chasi 108, Toshkent,
+                O‘zbekiston</span
+              >
+              <button
+                type="button"
+                id="copyBtn"
+                onclick="copyOtchyot()"
+                class="btn btn-soft shrink-0"
+              >
+                <svg class="ic w-4 h-4"><use href="#i-copy" /></svg
+                ><span>Otchyotni nusxalash</span>
+              </button>
+            </div>
+          </div>
         </div>
-      </form>
-    </div>
+      </section>
 
-    <!-- Xarita -->
-    <div class="lg:col-span-7 glass-card rounded-3xl p-4 sm:p-6 min-w-0 space-y-4">
+      <section class="glass-card rounded-3xl p-5 sm:p-9 min-w-0">
+        <h2
+          class="text-2xl sm:text-4xl font-black text-gray-900 mb-7 text-center"
+        >
+          Biz bilan <span class="gradient-text">ishlash tartibi</span>
+        </h2>
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-4 sm:gap-6">
+          <div class="glass-card lift p-6 rounded-2xl min-w-0">
+            <div
+              class="w-11 h-11 rounded-xl gradient-bg text-white text-lg font-black flex items-center justify-center mb-3"
+            >
+              1
+            </div>
+            <h3 class="font-extrabold text-gray-900 mb-1 text-lg">
+              Murojaat qoldiring
+            </h3>
+            <p class="text-xs sm:text-sm text-gray-600">
+              Forma yoki telefon orqali savolingizni yuboring.
+            </p>
+          </div>
+          <div class="glass-card lift p-6 rounded-2xl min-w-0">
+            <div
+              class="w-11 h-11 rounded-xl gradient-bg text-white text-lg font-black flex items-center justify-center mb-3"
+            >
+              2
+            </div>
+            <h3 class="font-extrabold text-gray-900 mb-1 text-lg">
+              Tahlil va yechim
+            </h3>
+            <p class="text-xs sm:text-sm text-gray-600">
+              Mutaxassisimiz holatingizni ko‘rib chiqib aniq reja tuzadi.
+            </p>
+          </div>
+          <div class="glass-card lift p-6 rounded-2xl min-w-0">
+            <div
+              class="w-11 h-11 rounded-xl gradient-bg text-white text-lg font-black flex items-center justify-center mb-3"
+            >
+              3
+            </div>
+            <h3 class="font-extrabold text-gray-900 mb-1 text-lg">
+              Doimiy hamkorlik
+            </h3>
+            <p class="text-xs sm:text-sm text-gray-600">
+              Hisobot va hisob-kitoblar o‘z vaqtida, xatosiz yuritiladi.
+            </p>
+          </div>
+        </div>
+      </section>
 
-      <div class="flex flex-col gap-3">
+      <section
+        class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 min-w-0"
+      >
+        <div class="glass-card lift rounded-2xl p-5 min-w-0">
+          <h3 class="font-extrabold text-gray-900 mb-1">Buxgalteriya</h3>
+          <p class="text-xs text-gray-500">
+            MChJ va YaTT buxgalteriya hisobi yuritish.
+          </p>
+        </div>
+        <div class="glass-card lift rounded-2xl p-5 min-w-0">
+          <h3 class="font-extrabold text-gray-900 mb-1">Soliq hisobotlari</h3>
+          <p class="text-xs text-gray-500">
+            QQS, foyda va aylanma hisobotlarini tayyorlash.
+          </p>
+        </div>
+        <div class="glass-card lift rounded-2xl p-5 min-w-0">
+          <h3 class="font-extrabold text-gray-900 mb-1">Hisobni tiklash</h3>
+          <p class="text-xs text-gray-500">
+            O‘tgan davr hujjatlarini tekshirish va tiklash.
+          </p>
+        </div>
+        <div class="glass-card lift rounded-2xl p-5 min-w-0">
+          <h3 class="font-extrabold text-gray-900 mb-1">Pro Tarif</h3>
+          <p class="text-xs text-gray-500">
+            Kengaytirilgan imkoniyatlar va tezkor yordam.
+          </p>
+        </div>
+      </section>
+
+      <section
+        class="rounded-3xl gradient-bg p-6 sm:p-10 text-white shadow-2xl flex flex-col sm:flex-row items-start sm:items-center justify-between gap-5 min-w-0"
+      >
+        <div>
+          <h2 class="text-2xl sm:text-4xl font-black mb-1">
+            Savolingiz bormi? Hoziroq bog‘laning!
+          </h2>
+          <p class="text-xs sm:text-sm text-white/90">
+            Xizmatlar va tariflar bilan tanishib, biznesingizni tartibga soling.
+          </p>
+        </div>
+        <div class="flex flex-wrap gap-3 shrink-0">
+          <a href="./xizmatlar.html" class="btn btn-white btn-lg">Xizmatlar</a>
+          <a href="./to'lovlar.html" class="btn btn-glass btn-lg">To'lovlar</a>
+        </div>
+      </section>
+    </main>
+
+    <!-- KATTALASHTIRILGAN XARITA -->
+    <div
+      id="mapFullscreenModal"
+      class="hidden fixed inset-0 z-[60] bg-slate-950/75 p-2 sm:p-6 items-center justify-center"
+    >
+      <div
+        class="bg-white w-full max-w-5xl rounded-3xl p-3.5 sm:p-6 shadow-2xl border-2 border-emerald-200 flex flex-col gap-3 max-h-[95vh] min-w-0"
+      >
         <div class="flex flex-wrap items-center justify-between gap-2">
           <div class="min-w-0">
-            <div class="flex items-center gap-2 flex-wrap">
-              <h3 class="text-lg sm:text-xl font-black text-gray-900">Xarita (2000 – 2026)</h3>
-              <span id="mapStatusBadge" class="badge badge-green">2026 • Xarita</span>
-            </div>
-            <p id="yearEffectHint" class="text-[11px] sm:text-xs text-gray-500">Zamonaviy 2026 xarita ko‘rinishi faol</p>
+            <h3 class="text-lg sm:text-2xl font-black text-gray-900">
+              Kattalashtirilgan Xarita
+            </h3>
+            <p id="modalPlaceCaption" class="text-xs text-gray-500 truncate">
+              O‘zbekiston • Toshkent shahri — Pro Hisobchi Ofisi
+            </p>
           </div>
-
           <div class="flex items-center gap-2 flex-wrap">
-            <button type="button" onclick="resetToGlobalView()" class="btn btn-soft"><i data-lucide="globe" class="w-4 h-4"></i><span>Dunyo</span></button>
-            <button type="button" onclick="openFullscreenMap()" class="btn btn-blue"><i data-lucide="maximize-2" class="w-4 h-4"></i><span>Kattalashtirish</span></button>
-          </div>
-        </div>
-
-        <!-- Yil + rejim -->
-        <div class="flex flex-wrap items-center justify-between gap-2 bg-slate-50 border-2 border-slate-200 rounded-2xl p-2.5">
-          <div class="flex items-center gap-2 flex-wrap min-w-0">
-            <label for="mapYearSelect" class="text-xs font-extrabold text-gray-700 pl-1">Yil:</label>
-            <select id="mapYearSelect" onchange="applyYearToMap(this.value)" class="field field-select"></select>
-            <button type="button" id="backTo2026Btn" onclick="applyYearToMap(2026)" class="btn btn-amber hidden">
-              <i data-lucide="rotate-ccw" class="w-4 h-4"></i><span>2026 ga qaytish</span>
+            <div class="seg">
+              <button
+                type="button"
+                data-mode-btn="standard"
+                onclick="setMapMode('standard')"
+                class="seg-btn active"
+              >
+                <svg class="ic w-4 h-4"><use href="#i-map" /></svg
+                ><span>Xarita</span>
+              </button>
+              <button
+                type="button"
+                data-mode-btn="satellite"
+                onclick="setMapMode('satellite')"
+                class="seg-btn"
+              >
+                <svg class="ic w-4 h-4"><use href="#i-layers" /></svg
+                ><span>Sputnik</span>
+              </button>
+            </div>
+            <button
+              type="button"
+              onclick="closeFullscreenMap()"
+              class="btn btn-rose"
+              aria-label="Yopish"
+            >
+              <svg class="ic w-5 h-5"><use href="#i-x" /></svg>
             </button>
           </div>
-
-          <div class="seg">
-            <button type="button" data-mode-btn="standard" onclick="setMapMode('standard')" class="seg-btn active"><i data-lucide="map" class="w-4 h-4"></i><span>Xarita</span></button>
-            <button type="button" data-mode-btn="satellite" onclick="setMapMode('satellite')" class="seg-btn"><i data-lucide="satellite" class="w-4 h-4"></i><span>Sputnik</span></button>
+        </div>
+        <div
+          id="modalMapSlot"
+          class="map-frame-box w-full h-[50vh] sm:h-[58vh] rounded-2xl border-2 border-emerald-300 bg-[#e5e3df]"
+        ></div>
+        <div class="relative min-w-0">
+          <div class="flex flex-col sm:flex-row gap-2">
+            <div class="relative flex-1 min-w-0">
+              <input
+                id="modalMapSearchInput"
+                type="text"
+                autocomplete="off"
+                oninput="handleLiveSuggestions(this.value, 'modal')"
+                onkeydown="
+                  if (event.key === 'Enter') {
+                    event.preventDefault();
+                    searchExactLocation('modal');
+                  }
+                "
+                placeholder="Shahar, tuman, joy yoki davlat yozing..."
+                class="field"
+                style="padding-left: 40px"
+              />
+              <svg
+                class="ic w-4 h-4 text-gray-400 absolute left-3.5 top-1/2 -translate-y-1/2 pointer-events-none"
+              >
+                <use href="#i-search" />
+              </svg>
+            </div>
+            <button
+              type="button"
+              onclick="searchExactLocation('modal')"
+              class="btn btn-primary btn-lg shrink-0"
+            >
+              <svg class="ic w-4 h-4"><use href="#i-nav" /></svg
+              ><span>Topish</span>
+            </button>
           </div>
+          <p
+            id="modalSearchMsg"
+            class="hidden text-xs font-bold text-rose-600 mt-2"
+          ></p>
+          <div
+            id="modalSuggestionsBox"
+            class="hidden absolute left-0 right-0 bottom-full mb-1.5 rounded-2xl bg-white border-2 border-emerald-200 shadow-xl divide-y divide-gray-100 max-h-44 overflow-y-auto z-[1000]"
+          ></div>
         </div>
       </div>
+    </div>
 
-      <!-- Xarita konteyneri -->
-      <div id="mapHomeSlot" class="map-frame-box rounded-2xl border-2 border-emerald-300 w-full h-64 sm:h-80 bg-[#aad3df]">
-        <div id="leafletMap" class="w-full h-full"></div>
-      </div>
-
-      <!-- Qidiruv -->
-      <div class="relative min-w-0">
-        <label for="mapSearchInput" class="block text-xs font-extrabold text-gray-700 mb-1.5">
-          Shahar, tuman, ko‘cha yoki davlat yozing (masalan: "chorvoq", "bektemir", "b"):
-        </label>
-        <div class="flex flex-col sm:flex-row gap-2 min-w-0">
-          <div class="relative flex-1 min-w-0">
-            <input id="mapSearchInput" type="text" autocomplete="off"
-              oninput="handleLiveSuggestions(this.value, 'main')"
-              onkeydown="if (event.key === 'Enter') { event.preventDefault(); searchExactLocation('main'); }"
-              placeholder="Masalan: chorvoq, bektemir, b, toshkent..." class="field" style="padding-left: 40px" />
-            <i data-lucide="search" class="w-4 h-4 text-gray-400 absolute left-3.5 top-1/2 -translate-y-1/2 pointer-events-none"></i>
+    <footer
+      class="w-full overflow-hidden border-t border-gray-200 bg-white py-10 sm:py-12 lg:py-[60px]"
+    >
+      <div class="mx-auto w-full max-w-[1200px] px-4 sm:px-6 lg:px-[30px]">
+        <a
+          href="./index.html"
+          class="mb-4 flex items-center justify-start gap-3"
+        >
+          <img
+            src="./images/image.png"
+            width="45"
+            height="45"
+            loading="lazy"
+            decoding="async"
+            class="h-11 w-11 shrink-0 rounded-xl border border-green-100 object-cover shadow-md"
+            alt="Pro Hisobchi Logo"
+          />
+          <div class="flex min-w-0 flex-col">
+            <span
+              class="w-fit rounded bg-emerald-100 px-1.5 py-0.5 text-[9px] font-extrabold uppercase tracking-widest text-emerald-700"
+              >PRO</span
+            >
+            <h2
+              class="text-base font-black tracking-tight text-gray-900 sm:text-lg lg:text-xl"
+            >
+              Pro Hisobchi
+            </h2>
           </div>
-          <button type="button" onclick="searchExactLocation('main')" class="btn btn-primary btn-lg shrink-0"><i data-lucide="navigation" class="w-4 h-4"></i><span>Topish</span></button>
-        </div>
-        <p id="mainSearchMsg" class="hidden text-xs font-bold text-rose-600 mt-2"></p>
-        <div id="mainSuggestionsBox" class="hidden mt-2 rounded-2xl bg-white border-2 border-emerald-200 shadow-xl divide-y divide-gray-100 max-h-60 overflow-y-auto z-30"></div>
-      </div>
-
-      <!-- Otchyot -->
-      <div class="rounded-2xl bg-gradient-to-br from-emerald-50 via-white to-blue-50 border-2 border-emerald-200 p-4 shadow-md min-w-0">
-        <div class="flex flex-wrap items-center justify-between gap-2 pb-2.5 mb-2.5 border-b-2 border-emerald-100">
-          <span class="text-xs font-black uppercase tracking-wider text-gray-900">Joylashuv Otchyoti</span>
-          <span id="repYearBadge" class="badge badge-green">2026-yil</span>
-        </div>
-
-        <div class="bg-white rounded-xl p-3 border border-gray-200 mb-2.5 min-w-0">
-          <span id="repCountryBadge" class="inline-block text-[10px] font-extrabold uppercase tracking-wider px-2 py-0.5 rounded-md bg-blue-50 text-blue-700 border border-blue-100 mb-1">O‘zbekiston • Toshkent shahri</span>
-          <div id="repPlaceTitle" class="text-sm font-black text-gray-900 break-words">Pro Hisobchi Bosh Ofisi (Amir Temur shoh ko‘chasi, 108)</div>
-        </div>
-
-        <div class="grid grid-cols-1 sm:grid-cols-3 gap-2 text-xs min-w-0">
-          <div class="bg-white rounded-xl p-2.5 border border-gray-200 min-w-0">
-            <div class="text-[10px] font-bold text-gray-400 uppercase">Koordinatalar</div>
-            <div id="repCoords" class="font-mono font-bold text-blue-700 mt-0.5 truncate">41.311100, 69.279700</div>
-          </div>
-          <div class="bg-white rounded-xl p-2.5 border border-gray-200 min-w-0">
-            <div class="text-[10px] font-bold text-gray-400 uppercase">Ofisdan masofa</div>
-            <div id="repDistance" class="font-extrabold text-gray-900 mt-0.5 truncate">0.0 km (Bosh ofis)</div>
-          </div>
-          <div class="bg-white rounded-xl p-2.5 border border-gray-200 min-w-0">
-            <div class="text-[10px] font-bold text-gray-400 uppercase">Holat</div>
-            <div id="repLayerState" class="font-extrabold text-emerald-700 mt-0.5 truncate">2026 • Xarita</div>
-          </div>
-        </div>
-
-        <div class="mt-3 pt-3 border-t-2 border-emerald-100 flex flex-wrap items-center justify-between gap-2 text-[11px] text-gray-600 min-w-0">
-          <span id="repAddressLine" class="truncate max-w-full">Manzil: Amir Temur shoh ko‘chasi 108, Toshkent, O‘zbekiston</span>
-          <button type="button" id="copyBtn" onclick="copyOtchyot()" class="btn btn-soft shrink-0"><i data-lucide="copy" class="w-4 h-4"></i><span>Otchyotni nusxalash</span></button>
+        </a>
+        <div class="border-t border-gray-200 pt-5 sm:pt-[25px]">
+          <p class="text-left text-xs leading-relaxed text-gray-500 sm:text-sm">
+            © 2026 Pro Hisobchi. Barcha huquqlar himoyalangan.
+          </p>
         </div>
       </div>
-    </div>
-  </section>
+    </footer>
 
-  <!-- ISHLASH BOSQICHLARI -->
-  <section class="glass-card rounded-3xl p-5 sm:p-9 min-w-0">
-    <h2 class="text-2xl sm:text-4xl font-black text-gray-900 mb-7 text-center">Biz bilan <span class="gradient-text">ishlash tartibi</span></h2>
-    <div class="grid grid-cols-1 md:grid-cols-3 gap-4 sm:gap-6">
-      <div class="glass-card lift p-6 rounded-2xl min-w-0">
-        <div class="step-no w-11 h-11 rounded-xl gradient-bg text-white text-lg font-black flex items-center justify-center mb-3">1</div>
-        <h3 class="font-extrabold text-gray-900 mb-1 text-lg">Murojaat qoldiring</h3>
-        <p class="text-xs sm:text-sm text-gray-600">Forma yoki telefon orqali savolingizni yuboring.</p>
-      </div>
-      <div class="glass-card lift p-6 rounded-2xl min-w-0">
-        <div class="step-no w-11 h-11 rounded-xl gradient-bg text-white text-lg font-black flex items-center justify-center mb-3">2</div>
-        <h3 class="font-extrabold text-gray-900 mb-1 text-lg">Tahlil va yechim</h3>
-        <p class="text-xs sm:text-sm text-gray-600">Mutaxassisimiz holatingizni ko‘rib chiqib aniq reja tuzadi.</p>
-      </div>
-      <div class="glass-card lift p-6 rounded-2xl min-w-0">
-        <div class="step-no w-11 h-11 rounded-xl gradient-bg text-white text-lg font-black flex items-center justify-center mb-3">3</div>
-        <h3 class="font-extrabold text-gray-900 mb-1 text-lg">Doimiy hamkorlik</h3>
-        <p class="text-xs sm:text-sm text-gray-600">Hisobot va hisob-kitoblar o‘z vaqtida, xatosiz yuritiladi.</p>
-      </div>
-    </div>
-  </section>
-
-  <!-- YO'NALISHLAR -->
-  <section class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 min-w-0">
-    <div class="glass-card lift rounded-2xl p-5 min-w-0"><h3 class="font-extrabold text-gray-900 mb-1">Buxgalteriya</h3><p class="text-xs text-gray-500">MChJ va YaTT buxgalteriya hisobi yuritish.</p></div>
-    <div class="glass-card lift rounded-2xl p-5 min-w-0"><h3 class="font-extrabold text-gray-900 mb-1">Soliq hisobotlari</h3><p class="text-xs text-gray-500">QQS, foyda va aylanma hisobotlarini tayyorlash.</p></div>
-    <div class="glass-card lift rounded-2xl p-5 min-w-0"><h3 class="font-extrabold text-gray-900 mb-1">Hisobni tiklash</h3><p class="text-xs text-gray-500">O‘tgan davr hujjatlarini tekshirish va tiklash.</p></div>
-    <div class="glass-card lift rounded-2xl p-5 min-w-0"><h3 class="font-extrabold text-gray-900 mb-1">Pro Tarif</h3><p class="text-xs text-gray-500">Kengaytirilgan imkoniyatlar va tezkor yordam.</p></div>
-  </section>
-
-  <!-- CTA -->
-  <section class="rounded-3xl gradient-bg p-6 sm:p-10 text-white shadow-2xl flex flex-col sm:flex-row items-start sm:items-center justify-between gap-5 min-w-0">
-    <div>
-      <h2 class="text-2xl sm:text-4xl font-black mb-1">Savolingiz bormi? Hoziroq bog‘laning!</h2>
-      <p class="text-xs sm:text-sm text-white/90">Xizmatlar va tariflar bilan tanishib, biznesingizni tartibga soling.</p>
-    </div>
-    <div class="flex flex-wrap gap-3 shrink-0">
-      <a href="./xizmatlar.html" class="btn btn-white btn-lg">Xizmatlar</a>
-      <a href="./to'lovlar.html" class="btn btn-glass btn-lg">To'lovlar</a>
-    </div>
-  </section>
-</main>
-
-<!-- KATTALASHTIRILGAN XARITA -->
-<div id="mapFullscreenModal" class="hidden fixed inset-0 z-[60] bg-slate-950/75 backdrop-blur-sm p-2 sm:p-6 items-center justify-center">
-  <div class="bg-white w-full max-w-5xl rounded-3xl p-3.5 sm:p-6 shadow-2xl border-2 border-emerald-200 flex flex-col gap-3 max-h-[95vh] min-w-0">
-    <div class="flex flex-wrap items-center justify-between gap-2">
-      <div class="min-w-0">
-        <h3 class="text-lg sm:text-2xl font-black text-gray-900">Kattalashtirilgan Xarita</h3>
-        <p id="modalPlaceCaption" class="text-xs text-gray-500 truncate">O‘zbekiston • Toshkent shahri — Pro Hisobchi Ofisi</p>
-      </div>
-
-      <div class="flex items-center gap-2 flex-wrap">
-        <select id="modalYearSelect" onchange="applyYearToMap(this.value)" class="field field-select"></select>
-        <div class="seg">
-          <button type="button" data-mode-btn="standard" onclick="setMapMode('standard')" class="seg-btn active"><i data-lucide="map" class="w-4 h-4"></i><span>Xarita</span></button>
-          <button type="button" data-mode-btn="satellite" onclick="setMapMode('satellite')" class="seg-btn"><i data-lucide="satellite" class="w-4 h-4"></i><span>Sputnik</span></button>
-        </div>
-        <button type="button" onclick="closeFullscreenMap()" class="btn btn-rose" aria-label="Yopish"><i data-lucide="x" class="w-5 h-5"></i></button>
-      </div>
-    </div>
-
-    <div id="modalMapSlot" class="map-frame-box w-full h-[50vh] sm:h-[58vh] rounded-2xl border-2 border-emerald-300 bg-[#aad3df]"></div>
-
-    <div class="relative min-w-0">
-      <div class="flex flex-col sm:flex-row gap-2">
-        <div class="relative flex-1 min-w-0">
-          <input id="modalMapSearchInput" type="text" autocomplete="off"
-            oninput="handleLiveSuggestions(this.value, 'modal')"
-            onkeydown="if (event.key === 'Enter') { event.preventDefault(); searchExactLocation('modal'); }"
-            placeholder="Shahar, tuman yoki davlat yozing..." class="field" style="padding-left: 40px" />
-          <i data-lucide="search" class="w-4 h-4 text-gray-400 absolute left-3.5 top-1/2 -translate-y-1/2 pointer-events-none"></i>
-        </div>
-        <button type="button" onclick="searchExactLocation('modal')" class="btn btn-primary btn-lg shrink-0"><i data-lucide="navigation" class="w-4 h-4"></i><span>Topish</span></button>
-      </div>
-      <p id="modalSearchMsg" class="hidden text-xs font-bold text-rose-600 mt-2"></p>
-      <div id="modalSuggestionsBox" class="hidden mt-1.5 rounded-2xl bg-white border-2 border-emerald-200 shadow-xl divide-y divide-gray-100 max-h-44 overflow-y-auto"></div>
-    </div>
-  </div>
-</div>
-
-<footer class="w-full overflow-hidden border-t border-gray-200 bg-white py-10 sm:py-12 lg:py-[60px]">
-  <div class="mx-auto w-full max-w-[1200px] px-4 sm:px-6 lg:px-[30px]">
-    <div class="w-full min-w-0 max-w-[320px] sm:max-w-none">
-      <a href="./index.html" class="mb-4 flex items-center justify-start gap-3">
-        <img src="./images/image.png" class="h-11 w-11 shrink-0 rounded-xl border border-green-100 object-cover shadow-md sm:h-[45px] sm:w-[45px]" alt="Pro Hisobchi Logo" />
-        <div class="flex min-w-0 flex-col">
-          <span class="w-fit rounded bg-emerald-100 px-1.5 py-0.5 text-[9px] font-extrabold uppercase tracking-widest text-emerald-700">PRO</span>
-          <h2 class="break-words text-base font-black tracking-tight text-gray-900 sm:text-lg lg:text-xl">Pro Hisobchi</h2>
-        </div>
-      </a>
-    </div>
-    <div class="border-t border-gray-200 pt-5 sm:pt-[25px]">
-      <p class="break-words text-left text-xs leading-relaxed text-gray-500 sm:text-sm">© 2026 Pro Hisobchi. Barcha huquqlar himoyalangan.</p>
-    </div>
-  </div>
-</footer>
-
-<script>
-  function icons() { if (window.lucide) { try { lucide.createIcons(); } catch (e) {} } }
-  icons();
-
-  // HTML belgilarini xavfsiz qilish (OSM dan kelgan matn uchun)
-  function esc(s) {
-    return String(s == null ? "" : s).replace(/[&<>"']/g, function (c) {
-      return { "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c];
-    });
-  }
-
-  const mainYearSelect = document.getElementById("mapYearSelect");
-  const modalYearSelect = document.getElementById("modalYearSelect");
-  let activeYear = 2026;
-  let activeMode = "standard";
-
-  for (let y = 2026; y >= 2000; y--) {
-    const label = y === 2026 ? "2026 (Joriy)" : y + "-yil";
-    mainYearSelect.add(new Option(label, y, y === 2026, y === 2026));
-    modalYearSelect.add(new Option(label, y, y === 2026, y === 2026));
-  }
-
-  const officeLat = 41.3111;
-  const officeLng = 69.2797;
-  const worldCenter = [22, 18];
-  const worldZoom = 2;
-
-  const map = L.map("leafletMap", { worldCopyJump: true, minZoom: 2, maxZoom: 18 }).setView(worldCenter, worldZoom);
-
-  // ---------- XARITA REJIMI: zaxira tizimi bilan ----------
-  // Birinchisi ishlamasa (bloklangan / sekin), keyingisiga o'zi o'tadi.
-  const baseSources = [
-    { url: "https://server.arcgisonline.com/ArcGIS/rest/services/World_Street_Map/MapServer/tile/{z}/{y}/{x}",
-      opts: { maxZoom: 19, attribution: "&copy; Esri" } },
-    { url: "https://tile.openstreetmap.org/{z}/{x}/{y}.png",
-      opts: { maxZoom: 19, attribution: "&copy; OpenStreetMap" } },
-    { url: "https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}.png",
-      opts: { maxZoom: 19, subdomains: "abcd", attribution: "&copy; OpenStreetMap &copy; CARTO" } },
-  ];
-  let standardTiles = null;
-
-  function loadStandard(i) {
-    if (standardTiles && map.hasLayer(standardTiles)) map.removeLayer(standardTiles);
-    const src = baseSources[i];
-    let loaded = 0, errors = 0;
-    standardTiles = L.tileLayer(src.url, src.opts);
-    standardTiles.on("tileload", function () { loaded++; });
-    standardTiles.on("tileerror", function () {
-      errors++;
-      if (!loaded && errors >= 4 && i + 1 < baseSources.length) loadStandard(i + 1);
-    });
-    if (activeMode === "standard") standardTiles.addTo(map);
-  }
-  loadStandard(0);
-
-  // Sputnik: Esri rasmi + Esri yozuvlari (bir xil server, ishlaydi)
-  const satImagery = L.tileLayer(
-    "https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}",
-    { maxZoom: 19, attribution: "&copy; Esri Sputnik" });
-  const satLabels = L.tileLayer(
-    "https://server.arcgisonline.com/ArcGIS/rest/services/Reference/World_Boundaries_and_Places/MapServer/tile/{z}/{y}/{x}",
-    { maxZoom: 19 });
-  const satelliteGroup = L.layerGroup([satImagery, satLabels]);
-
-  // Yil effekti (faqat ko'rinish filtri: haqiqiy arxiv rasm emas)
-  function applyYearToMap(yearValue) {
-    activeYear = parseInt(yearValue, 10) || 2026;
-    mainYearSelect.value = String(activeYear);
-    modalYearSelect.value = String(activeYear);
-
-    const backBtn = document.getElementById("backTo2026Btn");
-    const statusBadge = document.getElementById("mapStatusBadge");
-    const hintEl = document.getElementById("yearEffectHint");
-    const repYearBadge = document.getElementById("repYearBadge");
-    const repLayerState = document.getElementById("repLayerState");
-    const tilePane = map.getPane("tilePane");
-    const modeText = activeMode === "satellite" ? "Sputnik" : "Xarita";
-
-    if (activeYear < 2026) {
-      backBtn.classList.remove("hidden");
-      const ageDiff = 2026 - activeYear;
-      const sepiaAmt = Math.min(0.65, 0.18 + ageDiff * 0.02);
-      const contrastAmt = (1.05 + Math.min(0.25, ageDiff * 0.01)).toFixed(2);
-      const satAmt = Math.max(0.55, 1 - ageDiff * 0.015).toFixed(2);
-      if (tilePane) tilePane.style.filter = "sepia(" + sepiaAmt.toFixed(2) + ") contrast(" + contrastAmt + ") saturate(" + satAmt + ")";
-
-      statusBadge.textContent = activeYear + "-yil • " + modeText;
-      statusBadge.className = "badge badge-amber";
-      hintEl.textContent = activeYear + "-yilgi arxiv ko‘rinishi faol (" + ageDiff + " yil oldingi uslub). 2026 ga qaytish mumkin.";
-      repYearBadge.textContent = activeYear + "-yil (Arxiv)";
-      repLayerState.textContent = activeYear + " • " + modeText;
-    } else {
-      backBtn.classList.add("hidden");
-      if (tilePane) tilePane.style.filter = "";
-      statusBadge.textContent = "2026 • " + modeText;
-      statusBadge.className = activeMode === "satellite" ? "badge badge-blue" : "badge badge-green";
-      hintEl.textContent = "Zamonaviy 2026 xarita ko‘rinishi faol";
-      repYearBadge.textContent = "2026-yil (Joriy)";
-      repLayerState.textContent = "2026 • " + modeText;
-    }
-  }
-
-  // Xarita / Sputnik almashtirish
-  function setMapMode(mode) {
-    activeMode = mode;
-    if (mode === "satellite") {
-      if (standardTiles && map.hasLayer(standardTiles)) map.removeLayer(standardTiles);
-      if (!map.hasLayer(satelliteGroup)) satelliteGroup.addTo(map);
-    } else {
-      if (map.hasLayer(satelliteGroup)) map.removeLayer(satelliteGroup);
-      if (standardTiles && !map.hasLayer(standardTiles)) standardTiles.addTo(map);
-    }
-    document.querySelectorAll("[data-mode-btn]").forEach(function (b) {
-      b.classList.toggle("active", b.getAttribute("data-mode-btn") === mode);
-    });
-    applyYearToMap(activeYear);
-  }
-
-  const marker = L.marker([officeLat, officeLng]).addTo(map)
-    .bindPopup("<div style='font-size:11px;font-weight:700;color:#1d4ed8'>O‘zbekiston • Toshkent shahri</div><b>Pro Hisobchi Ofisi</b>");
-
-  function resetToGlobalView() { map.flyTo(worldCenter, worldZoom, { duration: 0.7 }); }
-
-  function calcDistanceKm(lat1, lon1, lat2, lon2) {
-    const R = 6371;
-    const dLat = ((lat2 - lat1) * Math.PI) / 180;
-    const dLon = ((lon2 - lon1) * Math.PI) / 180;
-    const a = Math.sin(dLat / 2) ** 2 +
-      Math.cos((lat1 * Math.PI) / 180) * Math.cos((lat2 * Math.PI) / 180) * Math.sin(dLon / 2) ** 2;
-    return R * 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
-  }
-
-  function updateOtchyot(place) {
-    const dist = calcDistanceKm(officeLat, officeLng, place.lat, place.lon);
-    document.getElementById("repCountryBadge").textContent = place.countryBadge;
-    document.getElementById("repPlaceTitle").textContent = place.name;
-    document.getElementById("repCoords").textContent = Number(place.lat).toFixed(6) + ", " + Number(place.lon).toFixed(6);
-    document.getElementById("repDistance").textContent = dist < 0.05 ? "0.0 km (Bosh ofis)" : dist.toFixed(1) + " km (Ofisdan)";
-    document.getElementById("repAddressLine").textContent = "Manzil: " + place.fullAddress;
-    document.getElementById("modalPlaceCaption").textContent = place.countryBadge + " — " + place.name;
-  }
-
-  const quickPlaces = [
-    { name: "Chorvoq", countryBadge: "O‘zbekiston • Toshkent viloyati", fullAddress: "Chorvoq, Bo‘stonliq tumani, Toshkent viloyati, O‘zbekiston", lat: 41.6289, lon: 69.9744, type: "Hudud" },
-    { name: "Bektemir tumani", countryBadge: "O‘zbekiston • Toshkent shahri", fullAddress: "Bektemir tumani, Toshkent shahri, O‘zbekiston", lat: 41.2116, lon: 69.3344, type: "Tuman" },
-    { name: "Buxoro shahri", countryBadge: "O‘zbekiston • Buxoro viloyati", fullAddress: "Buxoro shahri, Buxoro viloyati, O‘zbekiston", lat: 39.7681, lon: 64.4556, type: "Shahar" },
-    { name: "Berlin", countryBadge: "Germaniya", fullAddress: "Berlin, Germaniya", lat: 52.52, lon: 13.405, type: "Davlat poytaxti" },
-    { name: "Braziliya", countryBadge: "Braziliya • Janubiy Amerika", fullAddress: "Braziliya", lat: -14.235, lon: -51.9253, type: "Davlat" },
-    { name: "Toshkent shahri", countryBadge: "O‘zbekiston • Toshkent shahri", fullAddress: "Toshkent shahri, O‘zbekiston", lat: 41.2995, lon: 69.2401, type: "Shahar" },
-    { name: "Samarqand shahri", countryBadge: "O‘zbekiston • Samarqand viloyati", fullAddress: "Samarqand shahri, Samarqand viloyati, O‘zbekiston", lat: 39.6542, lon: 66.9597, type: "Shahar" },
-  ];
-
-  let searchTimer = null;
-  let reqId = 0;
-
-  function hideSuggestions() {
-    document.getElementById("mainSuggestionsBox").classList.add("hidden");
-    document.getElementById("modalSuggestionsBox").classList.add("hidden");
-  }
-
-  function goToPlace(place) {
-    const targetZoom = place.type === "Davlat" ? 4 : 13;
-    map.flyTo([place.lat, place.lon], targetZoom, { duration: 0.75 });
-    marker.setLatLng([place.lat, place.lon])
-      .bindPopup("<div style='font-size:11px;font-weight:700;color:#1d4ed8'>" + esc(place.countryBadge) + "</div><b>" + esc(place.name) + "</b>")
-      .openPopup();
-    updateOtchyot(place);
-    hideSuggestions();
-    document.getElementById("mainSearchMsg").classList.add("hidden");
-    document.getElementById("modalSearchMsg").classList.add("hidden");
-  }
-
-  function buildBadge(addr) {
-    const country = addr.country || "";
-    const region = addr.state || addr.region || addr.county || addr.city || "";
-    if (country && region && country.toLowerCase() !== region.toLowerCase()) return country + " • " + region;
-    return country || region || "Dunyo";
-  }
-
-  function renderSuggestionList(items, box) {
-    if (!items || items.length === 0) { box.classList.add("hidden"); return; }
-
-    box.innerHTML = items.map(function (item, i) {
-      return '<button type="button" data-i="' + i + '" class="w-full text-left px-3.5 py-2.5 hover:bg-emerald-50 transition-colors flex flex-col gap-1 cursor-pointer min-w-0">' +
-        '<div class="flex items-center justify-between gap-2">' +
-        '<span class="inline-block text-[10px] font-extrabold uppercase tracking-wider px-2 py-0.5 rounded-md bg-blue-50 text-blue-700 border border-blue-100 truncate">' + esc(item.countryBadge) + '</span>' +
-        '<span class="text-[10px] font-bold text-gray-400 shrink-0">' + esc(item.type) + '</span></div>' +
-        '<div class="text-xs sm:text-sm font-black text-gray-900 truncate">' + esc(item.name) + '</div>' +
-        '<div class="text-[11px] text-gray-500 truncate">' + esc(item.fullAddress) + '</div></button>';
-    }).join("");
-
-    box.querySelectorAll("button").forEach(function (btn, idx) {
-      btn.addEventListener("click", function () {
-        const chosen = items[idx];
-        document.getElementById("mapSearchInput").value = chosen.name;
-        document.getElementById("modalMapSearchInput").value = chosen.name;
-        goToPlace(chosen);
-      });
-    });
-    box.classList.remove("hidden");
-  }
-
-  async function nominatim(q, limit) {
-    const url = "https://nominatim.openstreetmap.org/search?format=json&addressdetails=1&accept-language=uz,en&limit=" + limit + "&q=" + encodeURIComponent(q);
-    const res = await fetch(url, { headers: { Accept: "application/json" } });
-    return res.json();
-  }
-
-  function handleLiveSuggestions(raw, source) {
-    const q = raw.trim().toLowerCase();
-    const box = document.getElementById(source === "modal" ? "modalSuggestionsBox" : "mainSuggestionsBox");
-
-    if (!q) { box.classList.add("hidden"); return; }
-
-    const local = quickPlaces.filter(function (p) {
-      return p.name.toLowerCase().includes(q) || p.countryBadge.toLowerCase().includes(q) || p.fullAddress.toLowerCase().includes(q);
-    });
-    renderSuggestionList(local, box);
-
-    clearTimeout(searchTimer);
-    const my = ++reqId;
-    searchTimer = setTimeout(async function () {
-      try {
-        const data = await nominatim(raw.trim(), 6);
-        if (my !== reqId) return; // eski javob yangisini bosib ketmasin
-        const remote = (data || []).map(function (d) {
-          return {
-            name: d.display_name.split(",")[0],
-            countryBadge: buildBadge(d.address || {}),
-            fullAddress: d.display_name,
-            lat: parseFloat(d.lat), lon: parseFloat(d.lon),
-            type: d.type ? d.type.replace("_", " ") : "Manzil",
-          };
+    <script>
+      // ---------- Mobil menyu ----------
+      (function () {
+        var d = document.getElementById("drawer-navigation"),
+          b = document.getElementById("drawer-backdrop");
+        function set(o) {
+          d.classList.toggle("open", o);
+          b.classList.toggle("open", o);
+        }
+        document
+          .getElementById("drawerOpen")
+          .addEventListener("click", function () {
+            set(true);
+          });
+        document
+          .getElementById("drawerClose")
+          .addEventListener("click", function () {
+            set(false);
+          });
+        b.addEventListener("click", function () {
+          set(false);
         });
-        renderSuggestionList(local.concat(remote).slice(0, 8), box);
-      } catch (_) {}
-    }, 300);
-  }
+      })();
 
-  async function searchExactLocation(source) {
-    const inp = document.getElementById(source === "modal" ? "modalMapSearchInput" : "mapSearchInput");
-    const msg = document.getElementById(source === "modal" ? "modalSearchMsg" : "mainSearchMsg");
-    const q = inp.value.trim();
-    msg.classList.add("hidden");
-    if (!q) return;
-
-    const localMatch = quickPlaces.find(function (p) { return p.name.toLowerCase().includes(q.toLowerCase()); });
-    if (localMatch) { goToPlace(localMatch); return; }
-
-    try {
-      const results = await nominatim(q, 1);
-      if (!results || !results.length) {
-        msg.textContent = "“" + q + "” topilmadi. Boshqacha yozib ko‘ring.";
-        msg.classList.remove("hidden");
-        return;
-      }
-      const p = results[0];
-      goToPlace({
-        name: p.display_name.split(",")[0],
-        countryBadge: buildBadge(p.address || {}),
-        fullAddress: p.display_name,
-        lat: parseFloat(p.lat), lon: parseFloat(p.lon),
-        type: p.type ? p.type.replace("_", " ") : "Manzil",
+      // ---------- Jotform chat ----------
+      window.addEventListener("load", function () {
+        var go = function () {
+          var s = document.createElement("script");
+          s.src =
+            "https://cdn.jotfor.ms/agent/embedjs/01a17e2530e870008568395045f834f7cf64/embed.js";
+          s.async = true;
+          document.body.appendChild(s);
+        };
+        if ("requestIdleCallback" in window)
+          requestIdleCallback(go, { timeout: 3000 });
+        else setTimeout(go, 1500);
       });
-    } catch (_) {
-      msg.textContent = "Qidiruvda xatolik. Internetni tekshirib, qayta urinib ko‘ring.";
-      msg.classList.remove("hidden");
-    }
-  }
 
-  function copyOtchyot() {
-    const text = [
-      document.getElementById("repCountryBadge").textContent,
-      document.getElementById("repPlaceTitle").textContent,
-      document.getElementById("repYearBadge").textContent,
-      "Koordinatalar: " + document.getElementById("repCoords").textContent,
-      document.getElementById("repAddressLine").textContent,
-    ].join("\n");
-    const btn = document.getElementById("copyBtn");
-    const label = btn.querySelector("span");
-    const done = function () {
-      label.textContent = "Nusxalandi ✓";
-      setTimeout(function () { label.textContent = "Otchyotni nusxalash"; }, 1800);
-    };
-    if (navigator.clipboard && navigator.clipboard.writeText) {
-      navigator.clipboard.writeText(text).then(done, done);
-    } else { done(); }
-  }
+      function esc(s) {
+        return String(s == null ? "" : s).replace(/[&<>"']/g, function (c) {
+          return {
+            "&": "&amp;",
+            "<": "&lt;",
+            ">": "&gt;",
+            '"': "&quot;",
+            "'": "&#39;",
+          }[c];
+        });
+      }
 
-  // ---------- Kattalashtirilgan oyna ----------
-  const fsModal = document.getElementById("mapFullscreenModal");
+      // ---------- SPUTNIK MANBASI ----------
+      // Bo'sh qoldirsangiz: Esri World Imagery (kalitsiz, lekin ba'zi joylarda eski).
+      // MapTiler kalitini (bepul, karta kerak emas) shu yerga qo'ysangiz, yangiroq va aniqroq sputnik ishlaydi.
+      var MAPTILER_KEY = "";
 
-  function openFullscreenMap() {
-    document.getElementById("modalMapSlot").appendChild(document.getElementById("leafletMap"));
-    fsModal.classList.remove("hidden");
-    fsModal.classList.add("flex");
-    document.body.style.overflow = "hidden";
-    setTimeout(function () { map.invalidateSize(); }, 120);
-  }
-  function closeFullscreenMap() {
-    document.getElementById("mapHomeSlot").appendChild(document.getElementById("leafletMap"));
-    fsModal.classList.add("hidden");
-    fsModal.classList.remove("flex");
-    document.body.style.overflow = "";
-    hideSuggestions();
-    setTimeout(function () { map.invalidateSize(); }, 120);
-  }
-  fsModal.addEventListener("click", function (e) { if (e.target === fsModal) closeFullscreenMap(); });
-  document.addEventListener("keydown", function (e) {
-    if (e.key === "Escape" && !fsModal.classList.contains("hidden")) closeFullscreenMap();
-  });
-  document.addEventListener("click", function (e) {
-    if (!e.target.closest("#mainSuggestionsBox, #mapSearchInput, #modalSuggestionsBox, #modalMapSearchInput")) hideSuggestions();
-  });
+      // GOOGLE kaliti (Map Tiles API): qo'ysangiz, xarita VA sputnik Google'ning o'z tayllariga o'tadi.
+      // Hamma zoomda bir xil, eng yangi rasm. Kalit: console.cloud.google.com -> "Map Tiles API" ni yoqing
+      // va kalitni "HTTP referrer" bilan faqat o'z saytingizga cheklang.
+      var GOOGLE_KEY = "";
+      var googleActive = false;
 
-  // ---------- Forma ----------
-  document.getElementById("contactForm").addEventListener("submit", function (e) {
-    e.preventDefault();
-    const box = document.getElementById("formSuccess");
-    box.classList.remove("hidden");
-    box.classList.add("flex");
-    this.reset();
-    setTimeout(function () { box.classList.add("hidden"); box.classList.remove("flex"); }, 5000);
-  });
+      // Yuklanmay qolgan tayllarni 3 martagacha qayta urinadi
+      function retryTiles(layer) {
+        layer.on("tileerror", function (e) {
+          var t = e.tile;
+          if (!t || (t._retry || 0) >= 3) return;
+          t._retry = (t._retry || 0) + 1;
+          if (!t._base)
+            t._base = t.src.replace(/([?&])_r=\d+/, "").replace(/[?&]$/, "");
+          setTimeout(function () {
+            if (!t.parentNode) return;
+            t.src =
+              t._base + (t._base.indexOf("?") > -1 ? "&" : "?") + "_r=" + t._retry;
+          }, 500 * t._retry);
+        });
+      }
 
-  applyYearToMap(2026);
-</script>
+      // Qotib qolmaslik uchun vaqt chegarali so'rov
+      async function fetchJson(url, ms) {
+        var ctl = new AbortController(),
+          id = setTimeout(function () {
+            ctl.abort();
+          }, ms || 6000);
+        try {
+          var r = await fetch(url, {
+            signal: ctl.signal,
+            headers: { Accept: "application/json" },
+          });
+          if (!r.ok) throw new Error("HTTP " + r.status);
+          return await r.json();
+        } finally {
+          clearTimeout(id);
+        }
+      }
 
-<script src="https://cdn.jsdelivr.net/npm/flowbite@2.5.2/dist/flowbite.min.js"></script>
-<script src="https://cdn.jotfor.ms/agent/embedjs/01a17e2530e870008568395045f834f7cf64/embed.js"></script>
-</body>
+      // Birinchi bo'sh bo'lmagan javobni qaytaradi (qaysi biri tez bo'lsa)
+      function firstNonEmpty(promises) {
+        return new Promise(function (resolve) {
+          var left = promises.length,
+            done = false;
+          function miss() {
+            if (!done && --left === 0) resolve([]);
+          }
+          promises.forEach(function (p) {
+            p.then(function (v) {
+              if (done) return;
+              if (v && v.length) {
+                done = true;
+                resolve(v);
+              } else miss();
+            }, miss);
+          });
+        });
+      }
+
+      // Apostrof va yozilish variantlari bilan qayta qidirish
+      function queryVariants(q) {
+        var a = q.replace(/[‘’ʻʼ`´]/g, "'"),
+          b = a.replace(/'/g, ""),
+          out = [q];
+        [a, b, q + ", Uzbekistan"].forEach(function (v) {
+          if (out.indexOf(v) < 0) out.push(v);
+        });
+        return out;
+      }
+
+      // ---------- Global holat ----------
+      var map,
+        marker,
+        standardTiles = null,
+        satelliteGroup = null,
+        activeMode = "standard";
+      var officeLat = 41.3111,
+        officeLng = 69.2797,
+        worldCenter = [22, 18],
+        worldZoom = 2;
+      var searchTimer = null,
+        reqId = 0;
+      var meMarker = null;
+
+      // Sputnik: "Map data not yet available" tayllari uchun zoom chegarasi
+      var satLayers = [],
+        satCap = 18,
+        satCapCenter = null;
+
+      // ---------- Xaritani ishga tushirish (Leaflet tayyor bo'lgach) ----------
+      document.addEventListener("DOMContentLoaded", function () {
+        map = L.map("leafletMap", {
+          worldCopyJump: true,
+          minZoom: 2,
+          maxZoom: 21,
+          zoomControl: false,
+          zoomSnap: 1,
+          zoomDelta: 1,
+          wheelPxPerZoomLevel: 80,
+          wheelDebounceTime: 30,
+          inertia: true,
+        }).setView(worldCenter, worldZoom);
+
+        // Google Maps kabi: zoom tugmalari pastki o'ngda, masshtab pastki chapda
+        L.control.zoom({ position: "bottomright" }).addTo(map);
+        L.control.scale({ position: "bottomleft", imperial: false }).addTo(map);
+
+        // "Mening joylashuvim" tugmasi
+        var LocateCtl = L.Control.extend({
+          options: { position: "bottomright" },
+          onAdd: function () {
+            var b = L.DomUtil.create("button", "gm-locate");
+            b.type = "button";
+            b.title = "Mening joylashuvim";
+            b.setAttribute("aria-label", "Mening joylashuvim");
+            b.innerHTML =
+              '<svg class="ic" style="width:22px;height:22px"><use href="#i-locate"/></svg>';
+            L.DomEvent.disableClickPropagation(b);
+            L.DomEvent.on(b, "click", locateMe);
+            return b;
+          },
+        });
+        map.addControl(new LocateCtl());
+
+        // ---------- "Map data not yet available" tayllarini aniqlash ----------
+        function isMissingTile(img) {
+          try {
+            var c = document.createElement("canvas");
+            c.width = c.height = 16;
+            var x = c.getContext("2d", { willReadFrequently: true });
+            x.drawImage(img, 0, 0, 16, 16);
+            var d = x.getImageData(0, 0, 16, 16).data,
+              gray = 0;
+            for (var i = 0; i < d.length; i += 4) {
+              var r = d[i],
+                g = d[i + 1],
+                b = d[i + 2];
+              if (
+                Math.abs(r - g) < 5 &&
+                Math.abs(g - b) < 5 &&
+                r > 195 &&
+                r < 213
+              )
+                gray++;
+            }
+            return gray > 200;
+          } catch (e) {
+            return false;
+          }
+        }
+
+        // Rasm yo'q joyda bir pog'ona past zoomdagi tayl kattalashtirib ko'rsatiladi
+        var capLayers = [];
+        var satImagery = null;
+
+        // Rasm haqiqatan mavjud bo'lgan zoomdan ortiq yaqinlashtirishga yo'l qo'ymaydi (xira bo'lmasin)
+        function applyMaxZoom() {
+          var m = 19;
+          if (googleActive) m = 21;
+          else {
+            var l = activeMode === "satellite" ? satImagery : standardTiles;
+            if (l && l._cap) m = l._cap;
+          }
+          if (map.getMaxZoom() !== m) map.setMaxZoom(m);
+        }
+        function makeCapLayer(url, opts, startCap) {
+          var Cls = L.TileLayer.extend({
+            createTile: function (coords, done) {
+              var self = this;
+              return L.TileLayer.prototype.createTile.call(
+                this,
+                coords,
+                function (err, tile) {
+                  if (
+                    !err &&
+                    coords.z > 3 &&
+                    coords.z <= self._cap &&
+                    isMissingTile(tile)
+                  ) {
+                    self._cap = coords.z - 1;
+                    self._capCenter = map.getCenter();
+                    self.options.maxNativeZoom = self._cap;
+                    (self._followers || []).forEach(function (f) {
+                      f.options.maxNativeZoom = Math.min(
+                        f._baseNative || 99,
+                        self._cap,
+                      );
+                      f.redraw();
+                    });
+                    setTimeout(function () {
+                      self.redraw();
+                      applyMaxZoom();
+                    }, 0);
+                  }
+                  done(err, tile);
+                },
+              );
+            },
+          });
+          var layer = new Cls(
+            url,
+            Object.assign({}, opts, {
+              maxNativeZoom: startCap,
+              crossOrigin: true,
+              detectRetina: false,
+              keepBuffer: 2,
+              updateInterval: 100,
+              updateWhenIdle: false,
+            }),
+          );
+          layer._cap = layer._startCap = layer.options.maxNativeZoom;
+          layer._followers = [];
+          retryTiles(layer);
+          capLayers.push(layer);
+          return layer;
+        }
+        window.resetSatCap = function (force) {
+          capLayers.forEach(function (l) {
+            if (l._cap === l._startCap) return;
+            if (
+              !force &&
+              l._capCenter &&
+              map.getCenter().distanceTo(l._capCenter) < 40000
+            )
+              return;
+            l._cap = l._startCap;
+            l._capCenter = null;
+            l.options.maxNativeZoom = l._startCap;
+            l._followers.forEach(function (f) {
+              f.options.maxNativeZoom = f._baseNative || l._startCap;
+              f.redraw();
+            });
+            l.redraw();
+          });
+          applyMaxZoom();
+        };
+        map.on("moveend", function () {
+          window.resetSatCap(false);
+        });
+
+        // ---------- Oddiy xarita: Esri ko'cha xaritasi (asl holat), zaxira: OSM ----------
+        function loadStandard(i) {
+          if (standardTiles && map.hasLayer(standardTiles))
+            map.removeLayer(standardTiles);
+          var loaded = 0,
+            errors = 0;
+          if (i === 0) {
+            standardTiles = makeCapLayer(
+              "https://server.arcgisonline.com/ArcGIS/rest/services/World_Street_Map/MapServer/tile/{z}/{y}/{x}",
+              { maxZoom: 20, attribution: "&copy; Esri" },
+              19,
+            );
+          } else {
+            standardTiles = L.tileLayer(
+              "https://tile.openstreetmap.org/{z}/{x}/{y}.png",
+              {
+                maxZoom: 20,
+                maxNativeZoom: 19,
+                detectRetina: false,
+                keepBuffer: 2,
+                updateInterval: 100,
+                updateWhenIdle: false,
+                attribution: "&copy; OpenStreetMap",
+              },
+            );
+          }
+          retryTiles(standardTiles);
+          standardTiles.on("tileload", function () {
+            loaded++;
+          });
+          standardTiles.on("tileerror", function () {
+            errors++;
+            if (!loaded && errors >= 4 && i === 0 && !googleActive)
+              loadStandard(1);
+          });
+          if (activeMode === "standard") standardTiles.addTo(map);
+        }
+        loadStandard(0);
+        applyMaxZoom();
+
+        // ---------- Sputnik: Esri rasmlari + nomlar ----------
+        function makeSatellite() {
+          if (MAPTILER_KEY) {
+            satLayers = [];
+            satelliteGroup = L.layerGroup([
+              L.tileLayer(
+                "https://api.maptiler.com/maps/hybrid/256/{z}/{x}/{y}.jpg?key=" +
+                  encodeURIComponent(MAPTILER_KEY),
+                {
+                  maxZoom: 20,
+                  maxNativeZoom: 19,
+                  detectRetina: false,
+                  keepBuffer: 2,
+                  updateInterval: 100,
+                  updateWhenIdle: false,
+                  attribution: "&copy; MapTiler &copy; OpenStreetMap",
+                },
+              ),
+            ]);
+            return;
+          }
+          var imagery = makeCapLayer(
+            "https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}",
+            { maxZoom: 21, attribution: "&copy; Esri Sputnik" },
+            20,
+          );
+          var labels = L.tileLayer(
+            "https://server.arcgisonline.com/ArcGIS/rest/services/Reference/World_Boundaries_and_Places/MapServer/tile/{z}/{y}/{x}",
+            {
+              maxZoom: 21,
+              maxNativeZoom: 19,
+              detectRetina: false,
+              keepBuffer: 2,
+              updateInterval: 100,
+              updateWhenIdle: false,
+            },
+          );
+          retryTiles(labels);
+          labels._baseNative = 19;
+          satImagery = imagery;
+          imagery._followers.push(labels);
+          satelliteGroup = L.layerGroup([imagery, labels]);
+        }
+
+        window.setMapMode = function (mode) {
+          activeMode = mode;
+          if (mode === "satellite") {
+            if (!satelliteGroup) makeSatellite();
+            if (standardTiles && map.hasLayer(standardTiles))
+              map.removeLayer(standardTiles);
+            if (!map.hasLayer(satelliteGroup)) satelliteGroup.addTo(map);
+          } else {
+            if (satelliteGroup && map.hasLayer(satelliteGroup))
+              map.removeLayer(satelliteGroup);
+            if (standardTiles && !map.hasLayer(standardTiles))
+              standardTiles.addTo(map);
+          }
+          document.querySelectorAll("[data-mode-btn]").forEach(function (b) {
+            b.classList.toggle(
+              "active",
+              b.getAttribute("data-mode-btn") === mode,
+            );
+          });
+          var text = mode === "satellite" ? "Sputnik" : "Xarita";
+          var badge = document.getElementById("mapStatusBadge");
+          badge.textContent = text;
+          badge.className =
+            mode === "satellite" ? "badge badge-blue" : "badge badge-green";
+          document.getElementById("repLayerState").textContent = text;
+          applyMaxZoom();
+        };
+
+        // ---------- Google Map Tiles API (kalit qo'yilsa) ----------
+        async function googleSession(mapType, layerTypes) {
+          var body = { mapType: mapType, language: "en-US", region: "US" };
+          if (layerTypes) body.layerTypes = layerTypes;
+          var r = await fetch(
+            "https://tile.googleapis.com/v1/createSession?key=" +
+              encodeURIComponent(GOOGLE_KEY),
+            {
+              method: "POST",
+              headers: { "Content-Type": "application/json" },
+              body: JSON.stringify(body),
+            },
+          );
+          if (!r.ok) throw new Error("Google " + r.status);
+          return (await r.json()).session;
+        }
+        async function initGoogle() {
+          if (!GOOGLE_KEY) return;
+          try {
+            var ss = await Promise.all([
+              googleSession("roadmap"),
+              googleSession("satellite", ["layerRoadmap"]),
+            ]);
+            var mk = function (sess) {
+              return L.tileLayer(
+                "https://tile.googleapis.com/v1/2dtiles/{z}/{x}/{y}?session=" +
+                  sess +
+                  "&key=" +
+                  encodeURIComponent(GOOGLE_KEY),
+                {
+                  maxZoom: 22,
+                  maxNativeZoom: 20,
+                  detectRetina: true,
+                  keepBuffer: 2,
+                  updateInterval: 100,
+                  updateWhenIdle: false,
+                  attribution: "Map data &copy; Google",
+                },
+              );
+            };
+            if (standardTiles && map.hasLayer(standardTiles))
+              map.removeLayer(standardTiles);
+            if (satelliteGroup && map.hasLayer(satelliteGroup))
+              map.removeLayer(satelliteGroup);
+            capLayers.length = 0; // Google'da kulrang tayl yo'q, kerak emas
+            googleActive = true;
+            standardTiles = mk(ss[0]);
+            retryTiles(standardTiles);
+            var gSat = mk(ss[1]);
+            retryTiles(gSat);
+            satelliteGroup = L.layerGroup([gSat]);
+            window.setMapMode(activeMode);
+          } catch (e) {
+            console.warn("Google tayllari ishlamadi, zaxira manba qoldi:", e);
+          }
+        }
+        initGoogle();
+
+        // ---------- Google Maps uslubidagi qizil pin ----------
+        var pinIcon = L.divIcon({
+          className: "gm-pin",
+          html:
+            '<svg width="34" height="44" viewBox="0 0 24 32" xmlns="http://www.w3.org/2000/svg">' +
+            '<path d="M12 .5C5.7.5.5 5.7.5 12c0 8.6 11.5 19.5 11.5 19.5S23.5 20.6 23.5 12C23.5 5.7 18.3.5 12 .5z" fill="#EA4335" stroke="#B31412"/>' +
+            '<circle cx="12" cy="12" r="4.6" fill="#7B1713"/></svg>',
+          iconSize: [34, 44],
+          iconAnchor: [17, 44],
+          popupAnchor: [0, -40],
+        });
+        window.__pinIcon = pinIcon;
+
+        map.on("click movestart", hideSuggestions);
+        marker = L.marker([officeLat, officeLng], { icon: pinIcon })
+          .addTo(map)
+          .bindPopup(
+            "<div style='font-size:11px;font-weight:700;color:#1d4ed8'>O‘zbekiston • Toshkent shahri</div><b>Pro Hisobchi Ofisi</b>",
+          );
+
+        fsModal.addEventListener("click", function (e) {
+          if (e.target === fsModal) closeFullscreenMap();
+        });
+      });
+
+      // ---------- Mening joylashuvim ----------
+      function locateMe() {
+        if (!navigator.geolocation) {
+          alert("Brauzeringiz joylashuvni qo‘llab-quvvatlamaydi.");
+          return;
+        }
+        navigator.geolocation.getCurrentPosition(
+          function (pos) {
+            var lat = pos.coords.latitude,
+              lon = pos.coords.longitude;
+            if (window.resetSatCap) resetSatCap(true);
+            if (meMarker) map.removeLayer(meMarker);
+            meMarker = L.marker([lat, lon], {
+              icon: L.divIcon({
+                className: "",
+                html: '<div class="gm-me"></div>',
+                iconSize: [16, 16],
+                iconAnchor: [8, 8],
+              }),
+            }).addTo(map);
+            map.flyTo([lat, lon], 16, { duration: 0.75 });
+            updateOtchyot({
+              name: "Sizning joylashuvingiz",
+              countryBadge: "Joriy joylashuv",
+              fullAddress: lat.toFixed(5) + ", " + lon.toFixed(5),
+              lat: lat,
+              lon: lon,
+            });
+          },
+          function () {
+            alert("Joylashuvni aniqlab bo‘lmadi. Brauzerda ruxsat bering.");
+          },
+          { enableHighAccuracy: true, timeout: 10000 },
+        );
+      }
+
+      function resetToGlobalView() {
+        if (window.resetSatCap) resetSatCap(true);
+        map.flyTo(worldCenter, worldZoom, { duration: 0.7 });
+      }
+
+      function calcDistanceKm(lat1, lon1, lat2, lon2) {
+        var R = 6371,
+          dLat = ((lat2 - lat1) * Math.PI) / 180,
+          dLon = ((lon2 - lon1) * Math.PI) / 180;
+        var a =
+          Math.sin(dLat / 2) ** 2 +
+          Math.cos((lat1 * Math.PI) / 180) *
+            Math.cos((lat2 * Math.PI) / 180) *
+            Math.sin(dLon / 2) ** 2;
+        return R * 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+      }
+
+      function updateOtchyot(place) {
+        var dist = calcDistanceKm(officeLat, officeLng, place.lat, place.lon);
+        document.getElementById("repCountryBadge").textContent =
+          place.countryBadge;
+        document.getElementById("repPlaceTitle").textContent = place.name;
+        document.getElementById("repCoords").textContent =
+          Number(place.lat).toFixed(6) + ", " + Number(place.lon).toFixed(6);
+        document.getElementById("repDistance").textContent =
+          dist < 0.05
+            ? "0.0 km (Bosh ofis)"
+            : dist.toFixed(1) + " km (Ofisdan)";
+        document.getElementById("repAddressLine").textContent =
+          "Manzil: " + place.fullAddress;
+        document.getElementById("modalPlaceCaption").textContent =
+          place.countryBadge + " — " + place.name;
+      }
+
+      // Tezkor ro'yxat (1 harf yozilganda yoki internet bo'lmaganda)
+      var quickPlaces = [
+        {
+          name: "Toshkent shahri",
+          countryBadge: "O‘zbekiston • Toshkent shahri",
+          fullAddress: "Toshkent shahri, O‘zbekiston",
+          lat: 41.2995,
+          lon: 69.2401,
+          type: "Shahar",
+        },
+        {
+          name: "Samarqand shahri",
+          countryBadge: "O‘zbekiston • Samarqand viloyati",
+          fullAddress: "Samarqand shahri, Samarqand viloyati, O‘zbekiston",
+          lat: 39.6542,
+          lon: 66.9597,
+          type: "Shahar",
+        },
+        {
+          name: "Buxoro shahri",
+          countryBadge: "O‘zbekiston • Buxoro viloyati",
+          fullAddress: "Buxoro shahri, Buxoro viloyati, O‘zbekiston",
+          lat: 39.7681,
+          lon: 64.4556,
+          type: "Shahar",
+        },
+        {
+          name: "Chorvoq",
+          countryBadge: "O‘zbekiston • Toshkent viloyati",
+          fullAddress:
+            "Chorvoq, Bo‘stonliq tumani, Toshkent viloyati, O‘zbekiston",
+          lat: 41.6289,
+          lon: 69.9744,
+          type: "Hudud",
+        },
+        {
+          name: "Bektemir tumani",
+          countryBadge: "O‘zbekiston • Toshkent shahri",
+          fullAddress: "Bektemir tumani, Toshkent shahri, O‘zbekiston",
+          lat: 41.2116,
+          lon: 69.3344,
+          type: "Tuman",
+        },
+        {
+          name: "Berlin",
+          countryBadge: "Germaniya",
+          fullAddress: "Berlin, Germaniya",
+          lat: 52.52,
+          lon: 13.405,
+          type: "Shahar",
+        },
+        {
+          name: "Braziliya",
+          countryBadge: "Braziliya • Janubiy Amerika",
+          fullAddress: "Braziliya",
+          lat: -14.235,
+          lon: -51.9253,
+          type: "Davlat",
+          bounds: [
+            [-33.75, -73.99],
+            [5.27, -34.79],
+          ],
+        },
+      ];
+
+      function hideSuggestions() {
+        clearTimeout(searchTimer);
+        reqId++;
+        document.getElementById("mainSuggestionsBox").classList.add("hidden");
+        document.getElementById("modalSuggestionsBox").classList.add("hidden");
+      }
+
+      function goToPlace(place) {
+        if (window.resetSatCap) resetSatCap(true);
+        var far =
+          map.getCenter().distanceTo([place.lat, place.lon]) > 1500000;
+        if (place.bounds) {
+          if (far)
+            map.fitBounds(place.bounds, {
+              maxZoom: 16,
+              padding: [30, 30],
+              animate: false,
+            });
+          else
+            map.flyToBounds(place.bounds, {
+              maxZoom: 16,
+              padding: [30, 30],
+              duration: 0.6,
+            });
+        } else {
+          var z = place.type === "Davlat" ? 4 : 15;
+          if (far) map.setView([place.lat, place.lon], z, { animate: false });
+          else map.flyTo([place.lat, place.lon], z, { duration: 0.6 });
+        }
+        var slot = document.getElementById("mapHomeSlot");
+        if (slot && slot.contains(document.getElementById("leafletMap"))) {
+          var rc = slot.getBoundingClientRect();
+          if (rc.top < 90 || rc.bottom > window.innerHeight)
+            slot.scrollIntoView({ behavior: "smooth", block: "center" });
+        }
+        marker
+          .setLatLng([place.lat, place.lon])
+          .bindPopup(
+            "<div style='font-size:11px;font-weight:700;color:#1d4ed8'>" +
+              esc(place.countryBadge) +
+              "</div><b>" +
+              esc(place.name) +
+              "</b>",
+          )
+          .openPopup();
+        updateOtchyot(place);
+        hideSuggestions();
+        document.getElementById("mainSearchMsg").classList.add("hidden");
+        document.getElementById("modalSearchMsg").classList.add("hidden");
+      }
+
+      function buildBadge(addr) {
+        var country = addr.country || "",
+          region = addr.state || addr.region || addr.county || addr.city || "";
+        if (country && region && country.toLowerCase() !== region.toLowerCase())
+          return country + " • " + region;
+        return country || region || "Dunyo";
+      }
+
+      function renderSuggestionList(items, box) {
+        if (!items || !items.length) {
+          box.classList.add("hidden");
+          return;
+        }
+        box.innerHTML = items
+          .map(function (item, i) {
+            return (
+              '<button type="button" data-i="' +
+              i +
+              '" class="w-full text-left px-3.5 py-2.5 hover:bg-emerald-50 flex flex-col gap-1 cursor-pointer min-w-0">' +
+              '<div class="flex items-center justify-between gap-2">' +
+              '<span class="inline-block text-[10px] font-extrabold uppercase tracking-wider px-2 py-0.5 rounded-md bg-blue-50 text-blue-700 border border-blue-100 truncate">' +
+              esc(item.countryBadge) +
+              "</span>" +
+              '<span class="text-[10px] font-bold text-gray-400 shrink-0">' +
+              esc(item.type) +
+              "</span></div>" +
+              '<div class="text-xs sm:text-sm font-black text-gray-900 truncate">' +
+              esc(item.name) +
+              "</div>" +
+              '<div class="text-[11px] text-gray-500 truncate">' +
+              esc(item.fullAddress) +
+              "</div></button>"
+            );
+          })
+          .join("");
+        box.querySelectorAll("button").forEach(function (btn, idx) {
+          btn.addEventListener("click", function () {
+            var chosen = items[idx];
+            document.getElementById("mapSearchInput").value = chosen.name;
+            document.getElementById("modalMapSearchInput").value = chosen.name;
+            goToPlace(chosen);
+          });
+        });
+        box.classList.remove("hidden");
+      }
+
+      // ---------- QIDIRUV: Photon (yozganda) + Nominatim (Enter) ----------
+      function localMatches(q) {
+        q = q.toLowerCase();
+        return quickPlaces.filter(function (p) {
+          return (
+            p.name.toLowerCase().includes(q) ||
+            p.fullAddress.toLowerCase().includes(q)
+          );
+        });
+      }
+
+      function mapPhoton(f) {
+        var p = f.properties || {},
+          c = f.geometry.coordinates;
+        var parts = [
+          p.name,
+          p.housenumber,
+          p.street,
+          p.district,
+          p.city,
+          p.state,
+          p.country,
+        ]
+          .filter(Boolean)
+          .filter(function (v, i, a) {
+            return a.indexOf(v) === i;
+          });
+        var e = p.extent; // [minLon, maxLat, maxLon, minLat]
+        var isCountry = p.osm_key === "place" && p.osm_value === "country";
+        return {
+          name: p.name || p.street || p.city || "Nomsiz joy",
+          countryBadge: buildBadge({
+            country: p.country,
+            state: p.state || p.city,
+          }),
+          fullAddress: parts.join(", "),
+          lat: c[1],
+          lon: c[0],
+          type: isCountry
+            ? "Davlat"
+            : p.osm_value
+              ? p.osm_value.replace(/_/g, " ")
+              : "Manzil",
+          bounds: e
+            ? [
+                [e[3], e[0]],
+                [e[1], e[2]],
+              ]
+            : null,
+        };
+      }
+
+      function mapNominatim(d) {
+        var b = d.boundingbox; // [south, north, west, east]
+        return {
+          name: d.display_name.split(",")[0],
+          countryBadge: buildBadge(d.address || {}),
+          fullAddress: d.display_name,
+          lat: parseFloat(d.lat),
+          lon: parseFloat(d.lon),
+          type: d.type ? d.type.replace(/_/g, " ") : "Manzil",
+          bounds: b
+            ? [
+                [parseFloat(b[0]), parseFloat(b[2])],
+                [parseFloat(b[1]), parseFloat(b[3])],
+              ]
+            : null,
+        };
+      }
+
+      async function photon(q, limit) {
+        var j = await fetchJson(
+          "https://photon.komoot.io/api/?limit=" +
+            limit +
+            "&lat=41.31&lon=69.28&q=" +
+            encodeURIComponent(q),
+          6000,
+        );
+        return (j.features || []).map(mapPhoton);
+      }
+
+      async function nominatim(q, limit) {
+        var data = await fetchJson(
+          "https://nominatim.openstreetmap.org/search?format=json&addressdetails=1&accept-language=uz,en&limit=" +
+            limit +
+            "&q=" +
+            encodeURIComponent(q),
+          7000,
+        );
+        return (data || []).map(mapNominatim);
+      }
+
+      // Ikkala manbani birlashtiradi, takrorlarini olib tashlaydi
+      async function searchPlaces(q, limit) {
+        var rs = await Promise.allSettled([
+          nominatim(q, limit),
+          photon(q, limit),
+        ]);
+        var all = [];
+        rs.forEach(function (r) {
+          if (r.status === "fulfilled") all = all.concat(r.value);
+        });
+        var seen = {};
+        return all.filter(function (p) {
+          var k =
+            p.name.toLowerCase() +
+            "|" +
+            p.lat.toFixed(2) +
+            "," +
+            p.lon.toFixed(2);
+          if (seen[k]) return false;
+          seen[k] = 1;
+          return true;
+        });
+      }
+
+      async function findPlaces(q, limit) {
+        var vs = queryVariants(q);
+        for (var i = 0; i < vs.length; i++) {
+          var r = await searchPlaces(vs[i], limit);
+          if (r.length) return r;
+        }
+        return [];
+      }
+
+      function handleLiveSuggestions(raw, source) {
+        var q = raw.trim();
+        var box = document.getElementById(
+          source === "modal" ? "modalSuggestionsBox" : "mainSuggestionsBox",
+        );
+        if (!q) {
+          hideSuggestions();
+          return;
+        }
+
+        clearTimeout(searchTimer);
+        var my = ++reqId;
+
+        if (q.length < 2) {
+          renderSuggestionList(localMatches(q), box);
+          return;
+        }
+
+        searchTimer = setTimeout(async function () {
+          var info = function (t) {
+            box.innerHTML =
+              '<div class="px-3.5 py-2.5 text-xs font-bold text-gray-500">' +
+              t +
+              "</div>";
+            box.classList.remove("hidden");
+          };
+          try {
+            var lm = localMatches(q);
+            if (lm.length) renderSuggestionList(lm, box);
+            else info("Qidirilmoqda...");
+            var list = await firstNonEmpty([photon(q, 8), nominatim(q, 8)]);
+            if (my !== reqId) return;
+            if (!list.length) list = await findPlaces(q, 8);
+            if (my !== reqId) return;
+            if (!list.length) list = lm;
+            if (list.length) renderSuggestionList(list, box);
+            else info("Hech narsa topilmadi. Boshqacha yozib ko‘ring.");
+          } catch (_) {
+            if (my === reqId) renderSuggestionList(localMatches(q), box);
+          }
+        }, 300);
+      }
+
+      async function searchExactLocation(source) {
+        var inp = document.getElementById(
+          source === "modal" ? "modalMapSearchInput" : "mapSearchInput",
+        );
+        var msg = document.getElementById(
+          source === "modal" ? "modalSearchMsg" : "mainSearchMsg",
+        );
+        var q = inp.value.trim();
+        msg.classList.add("hidden");
+        hideSuggestions();
+        if (!q) return;
+
+        try {
+          var list = await findPlaces(q, 5);
+          if (!list.length) list = localMatches(q);
+          if (!list.length) {
+            msg.textContent = "“" + q + "” topilmadi. Boshqacha yozib ko‘ring.";
+            msg.classList.remove("hidden");
+            return;
+          }
+          goToPlace(list[0]);
+        } catch (_) {
+          var l = localMatches(q);
+          if (l.length) {
+            goToPlace(l[0]);
+            return;
+          }
+          msg.textContent =
+            "Qidiruvda xatolik. Internetni tekshirib, qayta urinib ko‘ring.";
+          msg.classList.remove("hidden");
+        }
+      }
+
+      function copyOtchyot() {
+        var text = [
+          document.getElementById("repCountryBadge").textContent,
+          document.getElementById("repPlaceTitle").textContent,
+          "Koordinatalar: " + document.getElementById("repCoords").textContent,
+          document.getElementById("repAddressLine").textContent,
+        ].join("\n");
+        var label = document.getElementById("copyBtn").querySelector("span");
+        var done = function () {
+          label.textContent = "Nusxalandi ✓";
+          setTimeout(function () {
+            label.textContent = "Otchyotni nusxalash";
+          }, 1800);
+        };
+        if (navigator.clipboard && navigator.clipboard.writeText)
+          navigator.clipboard.writeText(text).then(done, done);
+        else done();
+      }
+
+      // ---------- Kattalashtirilgan oyna ----------
+      var fsModal = document.getElementById("mapFullscreenModal");
+      function openFullscreenMap() {
+        hideSuggestions();
+        document
+          .getElementById("modalMapSlot")
+          .appendChild(document.getElementById("leafletMap"));
+        fsModal.classList.remove("hidden");
+        fsModal.classList.add("flex");
+        document.body.style.overflow = "hidden";
+        map.invalidateSize({ pan: false });
+        setTimeout(function () {
+          map.invalidateSize({ pan: false });
+        }, 120);
+      }
+      function closeFullscreenMap() {
+        document
+          .getElementById("mapHomeSlot")
+          .appendChild(document.getElementById("leafletMap"));
+        fsModal.classList.add("hidden");
+        fsModal.classList.remove("flex");
+        document.body.style.overflow = "";
+        hideSuggestions();
+        map.invalidateSize({ pan: false });
+        setTimeout(function () {
+          map.invalidateSize({ pan: false });
+        }, 120);
+      }
+      document.addEventListener("keydown", function (e) {
+        if (e.key !== "Escape") return;
+        hideSuggestions();
+        if (!fsModal.classList.contains("hidden")) closeFullscreenMap();
+      });
+      ["click", "touchstart"].forEach(function (ev) {
+        document.addEventListener(
+          ev,
+          function (e) {
+            if (
+              !e.target.closest(
+                "#mainSuggestionsBox, #mapSearchInput, #modalSuggestionsBox, #modalMapSearchInput",
+              )
+            )
+              hideSuggestions();
+          },
+          { passive: true },
+        );
+      });
+
+      // ---------- Forma ----------
+      document
+        .getElementById("contactForm")
+        .addEventListener("submit", function (e) {
+          e.preventDefault();
+          var box = document.getElementById("formSuccess");
+          box.classList.remove("hidden");
+          box.classList.add("flex");
+          this.reset();
+          setTimeout(function () {
+            box.classList.add("hidden");
+            box.classList.remove("flex");
+          }, 5000);
+        });
+    </script>
+  </body>
 </html>

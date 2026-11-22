@@ -30,3 +30,4 @@ setInterval(() => {
   count++;
   counter.innerText = count + " s";
 }, 1000);
+
